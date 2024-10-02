@@ -1,0 +1,193 @@
+import React, { useContext, useEffect, useState } from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import { AppContext } from "../contexts/AppContext";
+import { UserContext } from "../contexts/UserContext";
+
+// icons
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import HomeIcon from "@mui/icons-material/Home";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+
+// styles
+import "../styles/side-nav.css";
+
+// components
+import Tooltip from "@mui/material/Tooltip";
+
+// images
+import barndLogo from "../assets/eaac-logo-240.png";
+import fallbackImageUrl from "../assets/profileImg.webp";
+const Navbar = () => {
+  const [closed, setClosed] = useState("");
+  const { pathname } = useLocation();
+  const { logout, user } = useContext(UserContext);
+
+  const [currentImageUrl, setCurrentImageUrl] = useState(user.Image);
+  const [isImageValid, setIsImageValid] = useState(null);
+
+  const handleImageError = () => {
+    if (currentImageUrl !== fallbackImageUrl) {
+      setCurrentImageUrl(fallbackImageUrl); // Switch to fallback image
+      setIsImageValid(null); // Reset validation state to "checking" for fallback
+    } else {
+      setIsImageValid(false); // If fallback fails, mark as invalid
+    }
+  };
+
+  const handleImageLoad = () => {
+    setIsImageValid(true); // Image successfully loaded
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleCollapse = () => {
+    setClosed("closed");
+  };
+
+  const handleExpand = () => {
+    setClosed("");
+  };
+
+  // each navlink can have multiple nested paths
+  const routes = [
+    { paths: ["/"], icon: <HomeIcon></HomeIcon>, label: "Home" },
+    {
+      paths: ["/rooms"],
+      icon: <MeetingRoomIcon></MeetingRoomIcon>,
+      label: "Rooms",
+    },
+    {
+      paths: ["/courses"],
+      icon: <LocalLibraryIcon></LocalLibraryIcon>,
+      label: "Courses",
+    },
+    {
+      paths: ["/companies"],
+      icon: <ApartmentIcon></ApartmentIcon>,
+      label: "Companies",
+    },
+    {
+      paths: ["/attendance", "/attendance/students", "/attendance/instructors"],
+      icon: <AssignmentIcon></AssignmentIcon>,
+      label: "Attendance",
+    },
+    {
+      paths: ["/settings"],
+      icon: <SettingsIcon></SettingsIcon>,
+      label: "Settings",
+    },
+  ];
+
+  // Navlinks on small screens
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      if (window.innerWidth < 1000) {
+        setClosed("closed");
+      } else {
+        setClosed("");
+      }
+    };
+    checkScreenWidth();
+    window.addEventListener("resize", checkScreenWidth);
+    return () => {
+      window.removeEventListener("resize", checkScreenWidth);
+    };
+  }, []);
+
+  return (
+    <div className={`nav-page ${closed}`}>
+      <div className={`side-menu`}>
+        <div className="side-menu-bg"></div>
+        <div className="top">
+          <h3>EAAC Dashboard</h3>
+
+          {closed == "" && (
+            <ArrowBackIosIcon
+              onClick={handleCollapse}
+              className="nav-collapse-icon"
+              sx={{ fontSize: "20px", cursor: "pointer" }}
+            ></ArrowBackIosIcon>
+          )}
+
+          {closed !== "" && (
+            <ArrowForwardIosIcon
+              onClick={handleExpand}
+              className="nav-collapse-icon"
+              sx={{ fontSize: "20px", cursor: "pointer" }}
+            ></ArrowForwardIosIcon>
+          )}
+        </div>
+        <div className="links">
+          {routes.map((route) => {
+            return (
+              <Link
+                key={route.paths[0]}
+                to={route.paths[0]}
+                className={`link ${
+                  route.paths.includes(pathname.replace(/\/\d+$/, ""))
+                    ? "active"
+                    : ""
+                }`}
+              >
+                {closed == "closed" ? (
+                  <>
+                    <Tooltip title={route.label} arrow placement="right">
+                      {route.icon}
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>{route.icon}</>
+                )}
+                <span>{route.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+      <div className="nav-content">
+        <div className="dashboard-header">
+          <div className="brand-logo">
+            <img src={barndLogo}></img>
+          </div>
+          <div className="current-page-title">
+            <h2>
+              {routes.find((ele) => pathname == ele.path)?.label || "dashboard"}{" "}
+            </h2>
+          </div>
+          <div className="profile-actions">
+            <div>
+              <Tooltip title="Logout" placement="bottom" arrow>
+                <LogoutIcon onClick={handleLogout}></LogoutIcon>
+              </Tooltip>
+            </div>
+            <div className="profile-data">
+              <div className="profile-img-container">
+                <img
+                  alt="img"
+                  src={currentImageUrl}
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
+                ></img>
+              </div>
+              <span className="profile-name">{user.Name}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="nav-content-outlet">
+          <Outlet></Outlet>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;

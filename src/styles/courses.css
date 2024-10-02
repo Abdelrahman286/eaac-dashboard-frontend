@@ -1,0 +1,139 @@
+@import url(variables.css);
+
+.courses-page {
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 12px;
+
+  .page-actions {
+    /* border-bottom: 1px solid var(--light-border); */
+    /* background: red; */
+    padding-bottom: 20px;
+    display: flex;
+    min-height: 40px;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+
+    .search-wrapper {
+      width: 30%;
+      /* background: #02542d; */
+    }
+
+    .buttons {
+      /* styles at media query  */
+      display: flex;
+
+      .archive-btn {
+        color: var(--secondary-color);
+        background: #fff1c2;
+
+        margin-left: 40px;
+        min-width: 160px;
+
+        * {
+          color: var(--secondary-color);
+        }
+      }
+
+      .xls-btn {
+        background: #5a5a5a;
+        margin-left: 10px;
+        min-width: 160px;
+      }
+
+      .add-course-btn {
+        min-width: 160px;
+        background: #02542d;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+/*------------ company forms -----------------  */
+.separator {
+  border-top: 1px dashed var(--dark-border);
+}
+.course-form-page {
+  .form-add-btn {
+    width: 200px;
+    align-self: flex-start;
+    justify-self: flex-start;
+    font-size: 16px;
+  }
+  .course-form {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    .right {
+      width: 50%;
+    }
+    .left {
+      width: 50%;
+    }
+  }
+
+  .form-actions {
+    /* background: red; */
+    padding: 20px 0px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    p {
+      margin: 0 10px;
+    }
+  }
+}
+.action-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 10px;
+
+  button {
+    width: 150px;
+  }
+}
+
+.course-type-badge {
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: orange;
+  font-size: 12px;
+  font-weight: 500;
+}
+.blue-badge {
+  background: #4379f2;
+  color: #fff;
+}
+.yellow-badge {
+  background: #ffeb00;
+}
+.green-badge {
+  background: #6ec207;
+  color: #fff;
+}
+
+@media (max-width: 1200px) {
+  .search-wrapper {
+    width: 100% !important;
+  }
+  .buttons {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 20px;
+    width: 100%;
+  }
+}
+
+.course-form-width {
+  /* min-width: 800px; */
+  /* width: 70%; */
+}

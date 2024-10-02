@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"); */
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background: #e6e4e4;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to your element */
+.fade-in-animation {
+  opacity: 0; /* Initial opacity */
+  animation: fadeIn 0.2s ease-in-out forwards;
+}
+
+.huge-text {
+  font-size: 200px;
+}
+
+.dis-none {
+  display: none;
+}
+
+/* //-------- common dashboard classes ------------------ */
+
+mx-2 {
+  margin: 0px 2px;
+}
+
+.dashboard-actions-btn {
+  background: var(--primary-color);
+  color: white;
+  padding: 8px 12px;
+  /* width: 100%; */
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  text-align: center;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.table-cell-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  vertical-align: middle;
+  /* overflow: hidden; */
+  .logo-container {
+    width: 40px;
+    height: 40px;
+    background: rgb(207, 207, 207);
+    border-radius: 50%;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill; /* Ensures the image covers the container */
+    }
+  }
+}
+
+/* // ------------ modal classes ----------------- */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.fixed-inset-gray-opacity {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: #d1d5db;
+  opacity: 0.8; */
+  background-color: rgba(209, 213, 219, 0.8); /* Gray with 0.8 opacity */
+  z-index: 999;
+}
+
+.fixed-inset-40-padded-flex {
+  padding: 0.6rem 0.5rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  /* overflow-y: auto; */
+  /* overflow-x: auto; */
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .modal-content {
+    padding: 0px 10px;
+    overflow-y: auto;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px; /* Thin scrollbar width */
+      height: 8px; /* Thin scrollbar height */
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f0f0f0; /* Grayish background color for the track */
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #b0b0b0; /* Grayish color for the scrollbar thumb */
+      border-radius: 10px; /* Rounded corners for the thumb */
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #888888; /* Darker gray for the thumb on hover */
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* justify-content: space-between; */
+    flex-direction: column;
+
+    /* border-bottom: 1px solid var(--light-border); */
+    /* margin-bottom: 10px; */
+    /* background: blue; */
+
+    .title {
+      /* background: green; */
+      width: 95%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: -20px;
+      margin-bottom: 10px;
+      /* background: green; */
+    }
+
+    .close-modal {
+      justify-items: flex-end;
+      align-self: flex-end;
+      /* display: none; */
+      width: 34px;
+      height: 34px;
+      /* background: red; */
+
+      /* padding-bottom: 40px;
+      padding-top: 10px;
+      background-color: red;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end; */
+    }
+  }
+}
+
+.fixed-inset-40-padded-flex::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar width */
+  height: 8px; /* Thin scrollbar height */
+}
+
+.fixed-inset-40-padded-flex::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Grayish background color for the track */
+}
+
+.fixed-inset-40-padded-flex::-webkit-scrollbar-thumb {
+  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.fixed-inset-40-padded-flex::-webkit-scrollbar-thumb:hover {
+  background: #888888; /* Darker gray for the thumb on hover */
+}
+
+/* // data grid scrollbar fix  */
+
+.MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal {
+  z-index: auto;
+}
+.h-60per {
+  height: 60%;
+}
+
+.h-70per {
+  height: 70%;
+}
+
+.h-80per {
+  height: 80%;
+}
+
+/*  delete confimation window */
+
+.delete-confirmation {
+  min-width: 300px;
+
+  .actions {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+
+    .delete-btn {
+      background: var(--red-color);
+    }
+    .cancel-btn {
+      background: transparent;
+      color: #000;
+      margin-right: 10px;
+    }
+  }
+}
+
+.page-go-back-icon-wrapper {
+  /* background: red; */
+  margin-right: 10px;
+  display: flex;
+  /* justify-content: flex-start;
+  align-items: flex-start;
+  align-self: flex-start; */
+  /* margin-bottom: 10px; */
+}
+
+.search-wrapper {
+  width: 30%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  & form {
+    width: 100%;
+  }
+}
+
+.red {
+  background: red;
+  margin: 0px 20px;
+}

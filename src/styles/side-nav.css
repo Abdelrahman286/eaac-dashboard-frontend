@@ -1,0 +1,274 @@
+@import url(variables.css);
+
+.nav-page {
+  overflow: hidden; /* Prevent horizontal scrolling */
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh; /* Ensure the full viewport height */
+
+  .side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--primary-color);
+    width: 250px;
+    height: 100vh;
+
+    overflow-y: auto; /* Allow vertical scrolling for side menu */
+
+    .side-menu-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: url("../assets/sidebar-bg-0fnU7Fm6.jpg");
+      background-size: cover; /* This ensures the image covers the parent */
+      opacity: 0.1;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      box-sizing: content-box;
+    }
+    .top {
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      border-bottom: 1px solid #bcb6b686;
+      padding: 0px 8px;
+      height: 45px;
+
+      h3 {
+        font-size: 18px;
+        margin: 0;
+        padding: 12px 0px;
+      }
+    }
+
+    .links {
+      /* z-index: 3; */
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      padding: 10px 8px;
+
+      .link {
+        color: white;
+        text-decoration: none;
+        padding: 6px 4px;
+        border-radius: 8px;
+        margin: 2px 0px;
+        display: flex;
+        align-items: center;
+        vertical-align: center;
+
+        &:hover {
+          background-color: #ffffff46;
+        }
+
+        svg {
+          font-size: 36px;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+
+  .nav-content {
+    background: var(--gray-bg1);
+    margin-left: 250px;
+    width: calc(100vw - 250px);
+    height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+.active {
+  background-color: #ffffff46;
+}
+
+.side-menu::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.side-menu::-webkit-scrollbar-thumb {
+  /* background-color: var(--gray-bg1);
+  border-radius: 10px; */
+  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.side-menu::-webkit-scrollbar-track {
+  /* background: transparent; */
+  background: #f0f0f0; /* Grayish background color for the track */
+}
+
+/* ------------------Scrollbar for content area-------------- */
+.nav-content::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.nav-content::-webkit-scrollbar-thumb {
+  /* background-color: var(--secondary-color);
+  border-radius: 10px; */
+
+  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.nav-content::-webkit-scrollbar-track {
+  background: transparent;
+  background: #f0f0f0; /* Grayish background color for the track */
+}
+
+/* For Firefox */
+.side-menu {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-bg1) transparent;
+}
+
+.nav-content {
+  /* scrollbar-width: thin; */
+  /* scrollbar-color: var(--secondary-color) transparent; */
+}
+
+.nav-content::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar width */
+  height: 8px; /* Thin scrollbar height */
+}
+
+.nav-content::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Grayish background color for the track */
+}
+
+.nav-content::-webkit-scrollbar-thumb {
+  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.nav-content::-webkit-scrollbar-thumb:hover {
+  background: #888888; /* Darker gray for the thumb on hover */
+}
+
+/* handle collapse and expand of the .side-menu */
+
+.nav-page.closed .side-menu h3 {
+  display: none;
+}
+
+.nav-page.closed .side-menu span {
+  display: none;
+}
+.nav-page.closed .side-menu {
+  width: 60px;
+}
+
+.nav-page.closed .dashboard-header {
+  width: calc(100% - 60px);
+}
+
+.nav-page.closed .side-menu .nav-collapse-icon {
+  font-size: 28px;
+  padding: 6px;
+  vertical-align: middle;
+  margin: auto;
+}
+.nav-page.closed .nav-content {
+  margin-left: 60px !important;
+  width: calc(100vw - 60px);
+}
+
+/* ------------dashboard-header------------ */
+
+.nav-content .dashboard-header {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  margin-top: 0px;
+  padding: 0;
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 1;
+
+  width: -webkit-calc(100% - 250px);
+  width: -moz-calc(100% - 250px);
+
+  width: calc(100% - 250px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  height: 45px;
+
+  .brand-logo {
+    width: 74px;
+    padding: 2px;
+    border-radius: 6px;
+    margin-left: 20px;
+    /* background: var(--secondary-color); */
+    background: var(--primary-color);
+
+    img {
+      width: 100%;
+    }
+  }
+  .current-page-title h2 {
+    vertical-align: middle;
+    align-self: center;
+    justify-self: center;
+    padding: 0;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .profile-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 0px 10px;
+
+    svg {
+      font-size: 30px;
+      vertical-align: middle;
+    }
+
+    .profile-data {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      margin-right: 20px;
+
+      padding: 1px 4px;
+      border-radius: 10px;
+
+      .profile-img-container {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin: 0px 4px;
+        img {
+          width: 100%;
+        }
+      }
+      &:hover {
+        background-color: #d7d2d245;
+      }
+    }
+  }
+}
+
+/* ------------ content outlet ------------------- */
+.nav-content-outlet {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: var(--gray-bg1);
+  margin-top: 45px;
+}

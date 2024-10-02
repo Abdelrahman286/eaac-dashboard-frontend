@@ -1,0 +1,117 @@
+@import url(variables.css);
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: auto;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Roboto", sans-serif;
+  background: url("../assets/abstractBg.jpg");
+  background-size: cover; /* Ensure the image covers the entire element */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent repeating the image */
+}
+h2 {
+  padding: 0;
+  margin: 0;
+  margin-top: 14px;
+}
+.company-logo {
+  width: 100px;
+  img {
+    width: 100%;
+    background: var(--dark-text-color);
+  }
+}
+.invalid-message {
+  padding: 0;
+  margin-bottom: 10px;
+  /* color: var(--primary-color); */
+  color: rgb(234, 69, 69);
+  font-size: 14px;
+}
+.login-content {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  /* Box shadow */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-form {
+  /* background: red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.forget-password,
+.back-to-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid var(--light-border);
+  width: 100%;
+  margin-top: 20px;
+  color: var(--gray-text-color);
+  p {
+    cursor: pointer;
+  }
+  p:hover {
+    opacity: 0.7;
+  }
+}
+
+.back-to-login span,
+.back-to-login svg {
+  vertical-align: middle;
+}
+
+.forgot-password-page {
+  max-width: 330px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  p {
+    font-weight: 300;
+  }
+}
+
+.main-btn {
+  margin-top: 16px;
+  background: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  padding: 8px 0px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  vertical-align: middle;
+}
+.main-btn * {
+  vertical-align: middle;
+}
+
+.main-btn:hover {
+  background-color: var(--secondary-color); /* Blue color */
+  transform: translateY(-2px);
+}
+.main-btn:active {
+  transform: translateY(0); /* Reset button position on click */
+}
