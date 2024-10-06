@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import html2pdf from "html2pdf.js";
 import "../../styles/companies.css";
 import PrintIcon from "@mui/icons-material/Print";

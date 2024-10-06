@@ -73,7 +73,7 @@ const ForgotPass = () => {
       <h2>Forgot Password</h2>
 
       <p>
-        Please enter your email to change password An OTP code will be sent to
+        Please enter your email to change password. An OTP code will be sent to
         your mail inbox.
       </p>
 

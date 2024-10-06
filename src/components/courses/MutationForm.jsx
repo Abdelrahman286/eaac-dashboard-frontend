@@ -334,7 +334,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 helperText={formErrors?.courseCode}
                 value={formData?.courseCode || ""}
                 fullWidth
-                label="Course Code"
+                label="Course Code *"
                 variant="outlined"
               />
               {/* Box for Course Hours and Requires PC */}

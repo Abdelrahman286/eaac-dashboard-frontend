@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, Suspense, lazy } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,8 +7,6 @@ import { UserContext } from "../../contexts/UserContext";
 import { AppContext } from "../../contexts/AppContext";
 import { getDataForTableRows } from "../../utils/tables";
 
-import ViewCompany from "./ViewCompany";
-import Modal from "../Modal";
 // table controls
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,9 +18,16 @@ import Tooltip from "@mui/material/Tooltip";
 // request functions
 import { deleteCompanyFn } from "../../requests/companies";
 
+// components 
+import Modal from "../Modal";
+import LoadingSpinner from "../LoadingSpinner";
 import DeleteConfirmation from "../DeleteConfirmation";
 import RestoreConfirmation from "../RestoreConfirmation";
-import MutationForm from "./MutationForm";
+
+// lazy loaded components
+const MutationForm = lazy(() => import("./MutationForm"));
+const ViewCompany = lazy(() => import("./ViewCompany"));
+
 const CompaniesTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
@@ -412,11 +417,15 @@ const CompaniesTable = ({ onDataChange }) => {
           title={"Edit Company"}
           onClose={() => setShowEditModal(false)}
         >
-          <MutationForm
-            onClose={() => setShowEditModal(false)}
-            isEditData={true}
-            data={dataToEdit}
-          ></MutationForm>
+          <Suspense
+            fallback={<LoadingSpinner minWidth={"50vw"}></LoadingSpinner>}
+          >
+            <MutationForm
+              onClose={() => setShowEditModal(false)}
+              isEditData={true}
+              data={dataToEdit}
+            ></MutationForm>
+          </Suspense>
         </Modal>
       )}
 
@@ -446,7 +455,11 @@ const CompaniesTable = ({ onDataChange }) => {
           onClose={handleClose}
           classNames={"h-70per"}
         >
-          <ViewCompany rowData={companyToShow}></ViewCompany>
+          <Suspense
+            fallback={<LoadingSpinner minWidth={"40vw"}></LoadingSpinner>}
+          >
+            <ViewCompany rowData={companyToShow}></ViewCompany>
+          </Suspense>
         </Modal>
       )}
 

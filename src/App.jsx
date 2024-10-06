@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, lazy, Suspense } from "react";
 import axios from "axios";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -14,13 +14,21 @@ import RoomsPage from "./pages/RoomsPage";
 import HomePage from "./pages/HomePage";
 import Components from "./pages/Components";
 
+// lazy loaded pages
+const AttendancePage = lazy(() => import("./pages/AttendancePage"));
+const StudentAttendance = lazy(() =>
+  import("./components/attendance/StudentAttendance")
+);
+const InstructorAttendace = lazy(() =>
+  import("./components/attendance/InstructorAttendace")
+);
+
 // context
 import { AppContext } from "./contexts/AppContext";
 import { UserContext } from "./contexts/UserContext";
-import AttendancePage from "./pages/AttendancePage";
-import StudentAttendance from "./components/attendance/StudentAttendance";
-import InstructorAttendace from "./components/attendance/InstructorAttendace";
 
+// loader
+import LoadingSpinner from "./components/LoadingSpinner";
 function App() {
   const { isLoggedIn } = useContext(UserContext);
 
@@ -49,23 +57,46 @@ function App() {
           <Route path="/rooms" element={<RoomsPage></RoomsPage>}></Route>
 
           {/* //------------------- attendance-------------------------------------- */}
-          <Route path="/attendance" element={<AttendancePage></AttendancePage>}>
+          <Route
+            path="/attendance"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <AttendancePage></AttendancePage>
+              </Suspense>
+            }
+          >
             <Route
               path="/attendance/students"
-              element={<StudentAttendance></StudentAttendance>}
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <StudentAttendance></StudentAttendance>
+                </Suspense>
+              }
             ></Route>
             <Route
               path="/attendance/students/:studentId"
-              element={<StudentAttendance></StudentAttendance>}
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <StudentAttendance></StudentAttendance>
+                </Suspense>
+              }
             ></Route>
 
             <Route
               path="/attendance/instructors"
-              element={<InstructorAttendace></InstructorAttendace>}
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <InstructorAttendace></InstructorAttendace>
+                </Suspense>
+              }
             ></Route>
             <Route
               path="/attendance/instructors/:instructorId"
-              element={<InstructorAttendace></InstructorAttendace>}
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <InstructorAttendace></InstructorAttendace>
+                </Suspense>
+              }
             ></Route>
           </Route>
 

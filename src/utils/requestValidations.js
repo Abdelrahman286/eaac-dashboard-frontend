@@ -131,6 +131,10 @@ export const validateEditCompany = (formData) => {
 export const validateAddCourse = (formData) => {
   const errors = {};
 
+  if (isBlank(formData?.branchId)) {
+    errors.branchId = "Branch Can not be empty";
+  }
+
   if (isBlank(formData.name_en)) {
     errors.name_en = "Course Name Can not be empty";
   }
@@ -199,6 +203,9 @@ export const validateAddCourse = (formData) => {
 export const validateEditCourse = (formData) => {
   const errors = {};
 
+  if (isBlank(formData?.branchId)) {
+    errors.branchId = "Branch Can not be empty";
+  }
   if (isBlank(formData.name_en)) {
     errors.name_en = "Course Name Can not be empty";
   }
@@ -232,6 +239,18 @@ export const validateEditCourse = (formData) => {
 
   if (isBlank(formData.nonMemberPrice)) {
     errors.nonMemberPrice = "Non Memmber Can not be empty";
+  }
+
+  if (!isValidPositiveNumber(formData?.courseTime)) {
+    errors.courseTime = "Please enter a valid number";
+  }
+
+  if (!isValidPositiveNumber(formData?.memberPrice)) {
+    errors.memberPrice = "Please enter a valid number";
+  }
+
+  if (!isValidPositiveNumber(formData?.nonMemberPrice)) {
+    errors.nonMemberPrice = "Please enter a valid number";
   }
 
   // validate extras

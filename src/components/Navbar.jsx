@@ -13,6 +13,9 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import EventRepeatIcon from "@mui/icons-material/EventRepeat";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import Groups2Icon from "@mui/icons-material/Groups2";
 
 // styles
 import "../styles/side-nav.css";
@@ -60,6 +63,23 @@ const Navbar = () => {
   const routes = [
     { paths: ["/"], icon: <HomeIcon></HomeIcon>, label: "Home" },
     {
+      paths: ["/rounds"],
+      icon: <EventRepeatIcon></EventRepeatIcon>,
+      label: "Rounds",
+    },
+
+    {
+      paths: ["/students"],
+      icon: <PeopleAltIcon></PeopleAltIcon>,
+      label: "Students",
+    },
+
+    {
+      paths: ["/instructors"],
+      icon: <Groups2Icon></Groups2Icon>,
+      label: "Instructors",
+    },
+    {
       paths: ["/rooms"],
       icon: <MeetingRoomIcon></MeetingRoomIcon>,
       label: "Rooms",
@@ -79,6 +99,7 @@ const Navbar = () => {
       icon: <AssignmentIcon></AssignmentIcon>,
       label: "Attendance",
     },
+
     {
       paths: ["/settings"],
       icon: <SettingsIcon></SettingsIcon>,

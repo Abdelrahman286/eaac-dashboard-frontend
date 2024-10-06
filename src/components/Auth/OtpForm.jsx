@@ -36,7 +36,7 @@ const OtpForm = () => {
     },
   };
 
-  const { handleAuthPageTransition } = useContext(AppContext);
+  const { handleAuthPageTransition, showSnackbar } = useContext(AppContext);
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({});
 
@@ -66,7 +66,10 @@ const OtpForm = () => {
   } = useMutation({
     mutationFn: resetPasswordFn,
     onSuccess: (response) => {
-      handleAuthPageTransition("loginPage");
+      showSnackbar("Password Updated Successfully ", "success");
+      setTimeout(() => {
+        handleAuthPageTransition("loginPage");
+      }, 500);
     },
     onError: (error) => {
       console.error("login failed", error);
@@ -80,7 +83,9 @@ const OtpForm = () => {
       <p>An OTP Code is sent to your mail</p>
 
       {isError && (
-        <p className="invalid-message">Incorrect OTP code, please try again!</p>
+        <p className="invalid-message">
+          Invalid email or OTP code. Please try again!
+        </p>
       )}
       <form>
         <TextInputAdornment
