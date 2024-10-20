@@ -30,7 +30,10 @@ import {
 } from "../../requests/courseCategories";
 
 // validations
-import { validateAddCourseCategory } from "../../utils/requestValidations";
+import {
+  validateAddCourseCategory,
+  validateEditCourseCategory,
+} from "../../utils/requestValidations";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
@@ -170,7 +173,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     e.preventDefault();
 
     const isSubcategory = Boolean(data?.ParentID?.id);
-    const errors = validateAddCourseCategory(formData, isSubcategory);
+    const errors = validateEditCourseCategory(formData, isSubcategory);
     console.log(errors);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -352,7 +355,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.categoryCode)}
                 helperText={formErrors?.categoryCode}
                 value={formData?.categoryCode || ""}
-                label="Category Code"
+                label={isEditData ? "Category Code" : "Category Code *"}
                 name="categoryCode"
               />
               <TextField

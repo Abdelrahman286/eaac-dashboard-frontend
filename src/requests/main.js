@@ -108,9 +108,13 @@ export const makeRequest = async (
     if (!response.ok) {
       const errorData = await response.json();
 
-      // Try to access the error message in a safer way
+      const validationErrorMessages = errorData?.failed?.response?.errors;
+      const combinedErrorMsgs = Object.values(validationErrorMessages).join(
+        ", "
+      );
+
       const errorMsg =
-        errorData?.failed?.response?.msg ||
+        `${errorData?.failed?.response?.msg} , ${combinedErrorMsgs}` ||
         "Something went wrong. Please try again!";
 
       // Create a new error object and manually assign properties

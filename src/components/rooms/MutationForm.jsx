@@ -190,7 +190,15 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   setFormData({ ...formData, branchId: value.id })
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Branch" />
+                  <TextField
+                    id="branchId"
+                    error={Boolean(formErrors?.branchId)}
+                    helperText={formErrors?.branchId}
+                    {...params}
+                    label="Branch *"
+                    autoComplete="off"
+                    autoCorrect="off"
+                  />
                 )}
               />
               <TextField

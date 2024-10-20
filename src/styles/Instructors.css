@@ -1,6 +1,6 @@
 @import url(variables.css);
 
-.companies-page {
+.instructors-page {
   background: white;
   padding: 20px;
   box-sizing: border-box;
@@ -18,8 +18,6 @@
     flex-wrap: wrap;
 
     .search-wrapper {
-      width: 30%;
-      /* background: #02542d; */
     }
 
     .buttons {
@@ -44,7 +42,7 @@
         min-width: 160px;
       }
 
-      .add-company-btn {
+      .add-instructor-btn {
         min-width: 160px;
         background: #02542d;
         margin-left: 10px;
@@ -53,31 +51,24 @@
   }
 }
 
-/*------------ company forms -----------------  */
-.separator {
-  border-top: 1px dashed var(--dark-border);
+.instructor-mutation-form {
+  min-width: 40%;
 }
-.company-form-page {
+.instructor-form-page {
   .form-add-btn {
     width: 200px;
     align-self: flex-start;
     justify-self: flex-start;
     font-size: 16px;
   }
-  .company-form {
+  .instructor-form {
     display: flex;
     flex-direction: row;
     width: 100%;
-
-    .right {
-      width: 50%;
-    }
-    .left {
-      width: 50%;
-    }
   }
 
   .form-actions {
+    /* background: red; */
     padding: 20px 0px;
     display: flex;
     justify-content: flex-end;
@@ -97,65 +88,6 @@
   button {
     width: 150px;
   }
-}
-.view-single-company-page {
-  padding: 10px 20px;
-  /* min-width: 600px; */
-  /* max-width: 630px; */
-  width: 700px;
-
-  label {
-    font-weight: 600;
-    margin-right: 10px;
-  }
-  span {
-    margin: 6px 16px;
-  }
-  .data-row {
-    margin-bottom: 14px;
-  }
-  .img-row {
-    width: 100%;
-    display: flex;
-    margin-bottom: 14px;
-    justify-content: center;
-    align-items: center;
-    .img-container {
-      width: 20%;
-      overflow: hidden;
-      img {
-        width: 100%;
-      }
-    }
-  }
-
-  h2 {
-    text-align: center;
-    margin: 10px 0px;
-  }
-}
-
-.companies-table-wrapper {
-  /* background: rgb(255, 132, 132); */
-  /* height: 50%; */
-}
-
-.company-type-badge {
-  padding: 4px 8px;
-  border-radius: 10px;
-  background: orange;
-  font-size: 12px;
-  font-weight: 500;
-}
-.blue-badge {
-  background: #4379f2;
-  color: #fff;
-}
-.yellow-badge {
-  background: #ffeb00;
-}
-.green-badge {
-  background: #6ec207;
 }
 
 @media (max-width: 1200px) {

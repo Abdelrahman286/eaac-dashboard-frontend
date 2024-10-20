@@ -13,6 +13,7 @@ import CoursesPage from "./pages/CoursesPage";
 import RoomsPage from "./pages/RoomsPage";
 import HomePage from "./pages/HomePage";
 import Components from "./pages/Components";
+import InstructorsPage from "./pages/InstructorsPage";
 
 // lazy loaded pages
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
@@ -55,6 +56,11 @@ function App() {
             element={<CompaniesPage></CompaniesPage>}
           ></Route>
           <Route path="/rooms" element={<RoomsPage></RoomsPage>}></Route>
+
+          <Route
+            path="/instructors"
+            element={<InstructorsPage></InstructorsPage>}
+          ></Route>
 
           {/* //------------------- attendance-------------------------------------- */}
           <Route

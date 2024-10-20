@@ -38,6 +38,7 @@ import {
   validateAddCompany,
   validateEditCompany,
 } from "../../utils/requestValidations";
+
 const MutationForm = ({ onClose, isEditData, data }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -49,6 +50,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   const [files, setFiles] = useState([]);
   const [image, setImage] = useState(null);
+  const [imageErrorMsg, setImageErrorMsg] = useState(false);
   const [contacts, setContacts] = useState([]);
 
   const companyTypes = [
@@ -72,9 +74,16 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   // Handle image selection
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
+    console.log(selectedImage);
+
+    // check if user upload non image data
+    if (!selectedImage?.type?.startsWith("image")) {
+      return setImageErrorMsg(true);
+    }
     if (selectedImage) {
       setFormData({ ...formData, logo: [selectedImage] });
       setImage(URL.createObjectURL(selectedImage));
+      setImageErrorMsg(false);
     }
   };
 
@@ -580,6 +589,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   sx={{
                     display: "flex",
                     justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
                     marginTop: "8px",
                   }}
                 >
@@ -592,6 +603,21 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                       borderRadius: "8px",
                     }}
                   />
+
+                  {imageErrorMsg && (
+                    <p className="invalid-message">
+                      Please upload an image file
+                    </p>
+                  )}
+
+                  <IconButton
+                    onClick={() => {
+                      setFormData({ ...formData, logo: [] });
+                      setImage(null);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </Box>
               )}
             </Box>

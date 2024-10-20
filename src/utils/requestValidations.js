@@ -117,6 +117,10 @@ export const validateEditCompany = (formData) => {
     errors.nameAr = "Company Name Can not be empty";
   }
 
+  if (isBlank(formData.clientFlag)) {
+    errors.clientFlag = "Company Type can not be empty";
+  }
+
   if (isBlank(formData.mainPhone)) {
     errors.mainPhone = "Main phone can not be empty";
   }
@@ -185,16 +189,15 @@ export const validateAddCourse = (formData) => {
 
   // validate extras
   if (formData?.extras.length > 0) {
-    if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
-      errors.extras =
-        "Please complete the empty fields or remove any empty rows";
-    }
-
     formData.extras.forEach((extra) => {
       if (!isValidPositiveNumber(extra?.price)) {
         errors.extras = "Please enter a valid price";
       }
     });
+    if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
+      errors.extras =
+        "Please complete the empty fields or remove any empty rows";
+    }
   }
 
   return errors;
@@ -225,9 +228,9 @@ export const validateEditCourse = (formData) => {
     errors.courseSubCategoryId = "Course sub category Can not be empty";
   }
 
-  if (isBlank(formData.courseCode)) {
-    errors.courseCode = "Course Code Can not be empty";
-  }
+  //   if (isBlank(formData.courseCode)) {
+  //     errors.courseCode = "Course Code Can not be empty";
+  //   }
 
   if (isBlank(formData.courseTime)) {
     errors.courseTime = "Course Hours Can not be empty";
@@ -255,16 +258,15 @@ export const validateEditCourse = (formData) => {
 
   // validate extras
   if (formData?.extras.length > 0) {
-    if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
-      errors.extras =
-        "Please complete the empty fields or remove any empty rows";
-    }
-
     formData.extras.forEach((extra) => {
       if (!isValidPositiveNumber(extra?.price)) {
         errors.extras = "Please enter a valid price";
       }
     });
+    if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
+      errors.extras =
+        "Please complete the empty fields or remove any empty rows";
+    }
   }
 
   return errors;
@@ -273,30 +275,27 @@ export const validateEditCourse = (formData) => {
 export const validateAddRoom = (formData) => {
   const errors = {};
 
-  if (isBlank(formData?.nameEn)) {
+  if (isBlank(formData?.branchId))
+    errors.branchId = "Please fill the Branch field";
+
+  if (isBlank(formData?.nameEn))
     errors.nameEn = "Please fill the Name (EN) field";
-  }
 
-  if (isBlank(formData?.nameAr)) {
+  if (isBlank(formData?.nameAr))
     errors.nameAr = "Please fill the Name (AR) field";
-  }
 
-  if (isBlank(formData?.roomCode)) {
+  if (isBlank(formData?.roomCode))
     errors.roomCode = "Please fill the Room Code field";
-  }
 
-  if (isBlank(formData?.capacity)) {
+  if (isBlank(formData?.capacity))
     errors.capacity = "Please fill the Capacity field";
-  }
 
   // validate positive numbers
-  if (!isValidPositiveNumber(formData?.capacity)) {
+  if (!isValidPositiveNumber(formData?.capacity))
     errors.capacity = "Please enter a valid number";
-  }
 
-  if (isBlank(formData?.descriptionEn)) {
+  if (isBlank(formData?.descriptionEn))
     errors.descriptionEn = "Please fill the Description (EN) field";
-  }
 
   return errors;
 };
@@ -307,15 +306,108 @@ export const validateAddCourseCategory = (formData, isSubCategory) => {
   if (isBlank(formData.name_ar)) {
     errors.name_ar = "Please fill the Name (AR) field";
   }
+
   if (isBlank(formData.name_en)) {
     errors.name_en = "Please fill the Name (EN) field";
   }
   if (isBlank(formData.branchId)) {
     errors.branchId = "Please fill the Branch field";
   }
+  if (isBlank(formData.categoryCode)) {
+    errors.categoryCode = "Please fill the Category Code field";
+  }
   if (isBlank(formData.parentId) && isSubCategory) {
     errors.parentId = "Please fill the Main Category field";
   }
+
+  return errors;
+};
+
+export const validateEditCourseCategory = (formData, isSubCategory) => {
+  const errors = {};
+
+  if (isBlank(formData.name_ar)) {
+    errors.name_ar = "Please fill the Name (AR) field";
+  }
+
+  if (isBlank(formData.name_en)) {
+    errors.name_en = "Please fill the Name (EN) field";
+  }
+  if (isBlank(formData.branchId)) {
+    errors.branchId = "Please fill the Branch field";
+  }
+
+  if (isBlank(formData.parentId) && isSubCategory) {
+    errors.parentId = "Please fill the Main Category field";
+  }
+
+  return errors;
+};
+
+export const validateAddInstructor = (formData) => {
+  const errors = {};
+  if (isBlank(formData?.name))
+    errors.name = "Please Fill in the instructor's name";
+
+  if (isBlank(formData?.jobTitle))
+    errors.jobTitle = "Please Fill in the instructor's Job Title";
+
+  if (!validatePhoneNumber(formData.phone)) {
+    errors.phone = "Please Enter a Valid Phone Number";
+  }
+  if (!validatePhoneNumber(formData.whatsappNum)) {
+    errors.whatsappNum = "Please Enter a Valid Phone Number";
+  }
+
+  if (isBlank(formData?.birthDate)) {
+    errors.birthDate = "Please Fill in Birth Date";
+  }
+
+  if (isBlank(formData?.branchId))
+    errors.branchId = "Please Provide the Branch";
+
+  if (isBlank(formData?.courseId))
+    errors.courseId = "Please fill in the course name";
+
+  if (isBlank(formData?.govIssuedId))
+    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+
+  if (isBlank(formData.email) || !isValidEmail(formData.email))
+    errors.email = "Please enter a valid email address";
+
+  return errors;
+};
+
+export const validateEditInstuctor = (formData) => {
+  const errors = {};
+  if (isBlank(formData?.name))
+    errors.name = "Please Fill in the instructor's name";
+
+  if (isBlank(formData?.jobTitle))
+    errors.jobTitle = "Please Fill in the instructor's Job Title";
+
+  if (!validatePhoneNumber(formData.phone)) {
+    errors.phone = "Please Enter a Valid Phone Number";
+  }
+  if (!validatePhoneNumber(formData.whatsappNum)) {
+    errors.whatsappNum = "Please Enter a Valid Phone Number";
+  }
+
+  if (isBlank(formData?.birthDate)) {
+    errors.birthDate = "Please Fill in Birth Date";
+  }
+
+  if (isBlank(formData?.branchId))
+    errors.branchId = "Please Provide the Branch";
+
+  if (isBlank(formData?.courseId))
+    errors.courseId = "Please fill in the course name";
+
+  if (isBlank(formData?.govIssuedId))
+    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+
+  if (isBlank(formData.email) || !isValidEmail(formData.email))
+    errors.email = "Please enter a valid email address";
 
   return errors;
 };

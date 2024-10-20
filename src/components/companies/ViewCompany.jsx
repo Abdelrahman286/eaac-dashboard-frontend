@@ -21,6 +21,7 @@ const ViewCompany = ({ rowData }) => {
       return getCompanyContactsFn(
         {
           companyId: `${rowData.id}`,
+          //   companyId: "1",
           numOfElements: "20000",
         },
         token,
@@ -29,12 +30,11 @@ const ViewCompany = ({ rowData }) => {
         }
       );
     },
-    queryKey: ["company-contacts"],
+    queryKey: ["company-contacts", rowData.id],
   });
   const contacts = contactsList?.success?.response?.data;
 
   // fetch branches
-
   const { data: branchesList } = useQuery({
     queryFn: () => {
       return getCompanyBranchesFn(
@@ -55,7 +55,7 @@ const ViewCompany = ({ rowData }) => {
   // company attachement
   const attachements = rowData?.CompanyAttach;
 
-  const handlePrintDocument = () => {
+  const handlePrintDocument = async () => {
     const documentClass = "view-single-company-page";
     const element = document.querySelector(`.${documentClass}`);
 
@@ -64,8 +64,20 @@ const ViewCompany = ({ rowData }) => {
         margin: 1,
         filename: "document.pdf",
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        html2canvas: {
+          scale: 2, // Use a scale that better fits your div size
+          logging: true,
+          width: 740, // Set width explicitly to match your div size
+          windowWidth: 740, // Ensures the capture size is correct
+          // Adjust the following if needed for better image rendering
+          allowTaint: true, // Allows cross-origin images to be drawn
+          useCORS: true, // Enables CORS if images are from a different origin
+        },
+        jsPDF: {
+          unit: "in",
+          format: [7.4, 11], // Match the width (740px ~ 7.4 inches), height is a standard letter size
+          orientation: "portrait",
+        },
       };
 
       // Use html2pdf to convert the element to PDF
@@ -95,7 +107,7 @@ const ViewCompany = ({ rowData }) => {
 
           <label>Code</label>
 
-          <span>#.....</span>
+          <span>{rowData?.ClientCode}</span>
         </div>
 
         <div className="data-row">
@@ -125,59 +137,191 @@ const ViewCompany = ({ rowData }) => {
         <h2>Branches</h2>
 
         <div className="group">
-          {branches?.length > 0 &&
-            branches.map((ele, index) => {
-              return (
-                <div key={index}>
-                  <div className="data-row">
-                    <label># {index + 1}</label>
-                    <span>{ele.Name_ar || ""}</span>
-                    <span>{ele.Name_en || ""}</span>
-                    <span>{ele.MainPhone || ""}</span>
+          {branches?.length > 0
+            ? branches.map((ele, index) => {
+                return (
+                  <div key={index}>
+                    <div className="data-row">
+                      <label># {index + 1}</label>
+                      <span>{ele.Name_ar || ""}</span>
+                      <span>{ele.Name_en || ""}</span>
+                      <span>{ele.MainPhone || ""}</span>
 
-                    <label htmlFor="">opens at</label>
-                    <span>{ele.OpensAt || ""}</span>
+                      <label htmlFor="">opens at</label>
+                      <span>{ele.OpensAt || ""}</span>
 
-                    <label htmlFor="">closes at</label>
-                    <span>{ele.ClosesAt || ""}</span>
+                      <label htmlFor="">closes at</label>
+                      <span>{ele.ClosesAt || ""}</span>
 
-                    <p>{ele.AddressID.Address || ""}</p>
+                      <p>{ele.AddressID.Address || ""}</p>
 
-                    <br></br>
-                    <br></br>
+                      <br></br>
+                      <br></br>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            : ""}
         </div>
 
         <h2>Contacts</h2>
 
         {contacts?.length > 0 && (
           <div className="group">
-            <div className="data-row">
-              {contacts.map((contact, index) => {
-                return (
-                  <div key={index}>
-                    <label>
-                      <p>
-                        # {index + 1} | {contact?.Name || ""}
-                      </p>
-                      {/* <span>{contact?.Name || ""}</span> */}
-                    </label>
-
-                    <span>{contact?.JobTitle || ""}</span>
-
-                    <span>{contact?.Email1 || ""}</span>
-
-                    <span>{contact?.PhoneNum1 || ""}</span>
-                    <span>{contact?.PhoneNum2 || ""}</span>
-
-                    <span>{contact?.Notes || ""}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <table
+              style={{
+                maxWidth: "600px",
+                borderCollapse: "collapse",
+                tableLayout: "fixed",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "50px", // Set a fixed width for the index column
+                    }}
+                  >
+                    #
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "150px", // Fixed width for name column
+                      wordWrap: "break-word", // Ensure long text wraps
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal", // Ensure wrapping
+                    }}
+                  >
+                    Name
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "150px", // Fixed width for title column
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    Title
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "150px", // Fixed width for phone number column
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    Phone Number
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "200px", // Fixed width for email column
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    Email
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f2f2f2",
+                      width: "200px", // Fixed width for notes column
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    Notes
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {contacts.map((contact, index) => (
+                  <tr key={index}>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        wordWrap: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {index + 1}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {contact?.Name || ""}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {contact?.Title || ".."}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {contact?.PhoneNum1 || ".."}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {contact?.Email1 || ".."}
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px",
+                        border: "1px solid #ddd",
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {contact?.Notes || ".."}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
@@ -198,8 +342,6 @@ const ViewCompany = ({ rowData }) => {
             );
           })}
       </div>
-
-      <div className="separator"></div>
 
       <div className="action-btn-wrapper">
         <FormButton
