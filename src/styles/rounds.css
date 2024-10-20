@@ -1,0 +1,121 @@
+@import url(variables.css);
+
+.rounds-page {
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 12px;
+
+  .page-actions {
+    /* border-bottom: 1px solid var(--light-border); */
+    /* background: red; */
+    padding-bottom: 20px;
+    display: flex;
+    min-height: 40px;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+
+    .search-wrapper {
+    }
+
+    .buttons {
+      /* styles at media query  */
+      display: flex;
+
+      .archive-btn {
+        color: var(--secondary-color);
+        background: #fff1c2;
+
+        margin-left: 40px;
+        min-width: 160px;
+
+        * {
+          color: var(--secondary-color);
+        }
+      }
+
+      .xls-btn {
+        background: #5a5a5a;
+        margin-left: 10px;
+        min-width: 160px;
+      }
+
+      .add-round-btn {
+        min-width: 160px;
+        background: #02542d;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+.round-mutation-form {
+  min-width: 40%;
+}
+.round-form-page {
+  .form-add-btn {
+    width: 200px;
+    align-self: flex-start;
+    justify-self: flex-start;
+    font-size: 16px;
+  }
+  .round-form {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .form-actions {
+    /* background: red; */
+    padding: 20px 0px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    p {
+      margin: 0 10px;
+    }
+  }
+}
+.action-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 10px;
+
+  button {
+    width: 150px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .search-wrapper {
+    width: 100% !important;
+  }
+  .buttons {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 20px;
+    width: 100%;
+  }
+}
+
+.wrapContent {
+  white-space: normal !important;
+  overflow: visible !important;
+  line-height: 1.5;
+  height: auto !important; /* Allow the height to adjust */
+}
+
+.show-sessions {
+  margin: 0;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 6px 4px;
+  font-weight: bold;
+  background: #3463d0;
+}

@@ -20,7 +20,6 @@ export const createInstrctorFn = ({ reqBody, token, config }) => {
     config
   );
 };
-``;
 
 export const editInstructorFn = ({ reqBody, token, config }) => {
   return makeRequest(

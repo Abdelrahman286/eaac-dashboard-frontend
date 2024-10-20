@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 
-import "../../styles/Instructors.css";
+import "../../styles/rounds.css";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
 import Paper from "@mui/material/Paper";
@@ -22,6 +22,7 @@ import MutationForm from "./MutationForm";
 
 // utils
 import ExportToExcel from "../ExportToExcel";
+import CustomIconButton from "../CustomIconButton";
 const HeaderActions = ({ data }) => {
   const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
@@ -54,7 +55,7 @@ const HeaderActions = ({ data }) => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setSearchResults({
-      key: "instructor",
+      key: "round",
       searchTerm: searchTerm,
     });
   };
@@ -67,10 +68,10 @@ const HeaderActions = ({ data }) => {
   const handleDisabled = (e) => {
     // toogle show disabled list
 
-    if (disabledList?.key == "instructor") {
+    if (disabledList?.key == "round") {
       setDisabledList({});
     } else {
-      setDisabledList({ key: "instructor" });
+      setDisabledList({ key: "round" });
     }
   };
 
@@ -81,7 +82,7 @@ const HeaderActions = ({ data }) => {
   return (
     <div className="page-actions">
       <div className="search-wrapper">
-        {disabledList?.key == "instructor" && (
+        {disabledList?.key == "round" && (
           <div className="page-go-back-icon-wrapper">
             <IconButton
               sx={{
@@ -118,11 +119,11 @@ const HeaderActions = ({ data }) => {
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder={
-              disabledList?.key == "instructor"
-                ? "Search Deleted Instructors"
-                : "Search Instructors"
+              disabledList?.key == "round"
+                ? "Search Deleted Rounds"
+                : "Search Rounds"
             }
-            inputProps={{ "aria-label": "search instructors" }}
+            inputProps={{ "aria-label": "search rounds" }}
             onChange={handleSearchChange}
             value={searchTerm}
           />
@@ -151,14 +152,14 @@ const HeaderActions = ({ data }) => {
       <div className="buttons">
         <ExportToExcel
           data={data}
-          fileName={"instructors"}
+          fileName={"Rounds"}
           headers={headers}
         ></ExportToExcel>
 
         <FormButton
           onClick={handleDisabled}
           icon={
-            disabledList?.key == "instructor" ? (
+            disabledList?.key == "round" ? (
               <ArchiveIcon
                 sx={{ verticalAlign: "middle", margin: "0px 3px" }}
               ></ArchiveIcon>
@@ -169,9 +170,7 @@ const HeaderActions = ({ data }) => {
             )
           }
           buttonText={
-            disabledList?.key == "instructor"
-              ? "Hide Disabled"
-              : "Show Disabled"
+            disabledList?.key == "round" ? "Hide Disabled" : "Show Disabled"
           }
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
@@ -183,15 +182,15 @@ const HeaderActions = ({ data }) => {
               sx={{ verticalAlign: "middle", margin: "0px 3px" }}
             ></AddCircleIcon>
           }
-          buttonText={"Add Instructor"}
-          className="add-instructor-btn dashboard-actions-btn"
+          buttonText={"Add Round"}
+          className="add-round-btn dashboard-actions-btn"
         ></FormButton>
       </div>
       {showModal && (
         <Modal
-          title={"Add Instructor"}
+          title={"Add Round"}
           onClose={handleClose}
-          classNames="instructor-mutation-form "
+          classNames="round-mutation-form "
         >
           <MutationForm onClose={handleClose}></MutationForm>
         </Modal>
