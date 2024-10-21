@@ -25,6 +25,19 @@ export const restoreRoundsFn = ({ reqBody, token, config }) => {
 // get branches
 export const getBranchesFn = (reqBody, token, config) =>
   makeRequest(`${URL}/branch/getBranch`, reqBody, token, config);
+
 // get courses
 export const getCoursesFn = (reqBody, token, config) =>
   makeRequest(`${URL}/course/getCourse`, reqBody, token, config);
+
+// get rooms
+export const getRoomsFn = (reqBody, token, config) =>
+  makeRequest(`${URL}/room/getRoom`, reqBody, token, config);
+
+// get instructors
+export const getInstructorsFn = (reqBody, token, config) =>
+  makeRequest(`${URL}/instructor/getInstructor`, reqBody, token, config);
+
+// get sessions
+export const getSessionsFn = (reqBody, token, config) =>
+  makeRequest(`${URL}/session/getSession`, reqBody, token, config);

@@ -159,7 +159,7 @@ const InstructorsTable = ({ onDataChange }) => {
   // handle delete
   const handleDelete = (rowData) => {
     setShowDeleteModal(true);
-    setIdToDelete(rowData?.id);
+    setIdToDelete(rowData?.InstructorID);
   };
   const confirmDelete = () => {
     deleteInstructor({
@@ -176,7 +176,7 @@ const InstructorsTable = ({ onDataChange }) => {
   // restore
   const handleRestore = (rowData) => {
     setShowRestoreModal(true);
-    setIdToRestore(`${rowData?.id}`);
+    setIdToRestore(`${rowData?.InstructorID}`);
   };
   const confirmRestore = () => {
     restoreInstructor({
@@ -352,6 +352,8 @@ const InstructorsTable = ({ onDataChange }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
+
+  console.log(updatedDataList);
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (
@@ -404,6 +406,7 @@ const InstructorsTable = ({ onDataChange }) => {
               showLastButton: true,
             },
           }}
+          getRowId={(row) => row.InstructorID} // Custom ID logic
           autoHeight
           rows={updatedDataList || []} // Use the modified dataList
           columns={columns}

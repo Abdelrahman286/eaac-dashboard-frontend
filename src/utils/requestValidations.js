@@ -411,3 +411,13 @@ export const validateEditInstuctor = (formData) => {
 
   return errors;
 };
+
+export const validateAddRound = (formData) => {
+  const errors = {};
+  return errors;
+};
+
+export const validateEditRound = (formData) => {
+  const errors = {};
+  return errors;
+};

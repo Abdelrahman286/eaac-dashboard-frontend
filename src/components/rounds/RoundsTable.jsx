@@ -33,6 +33,7 @@ import Modal from "../Modal";
 import dayjs from "dayjs"; // To help with formatting
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import FormButton from "../FormButton";
+import SessionsList from "./SessionsList";
 dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
 const RoundsTable = ({ onDataChange }) => {
@@ -45,6 +46,9 @@ const RoundsTable = ({ onDataChange }) => {
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [showSessionsList, setShowSessionsList] = useState(false);
+  const [sessionsRoundId, setSessionsRoundId] = useState("");
 
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -226,8 +230,6 @@ const RoundsTable = ({ onDataChange }) => {
     },
   });
 
-  console.log(updatedDataList);
-
   const columns = [
     {
       field: "rowIndex",
@@ -269,7 +271,7 @@ const RoundsTable = ({ onDataChange }) => {
         );
       },
       flex: 1.2,
-      minWidth: 100, // Increase width for better visibility
+      minWidth: 200, // Increase width for better visibility
     },
     {
       field: "Name",
@@ -336,7 +338,8 @@ const RoundsTable = ({ onDataChange }) => {
               className="show-sessions main-btn"
               buttonText={"Show"}
               onClick={() => {
-                console.log("show sessions");
+                setShowSessionsList(true);
+                setSessionsRoundId(params?.row?.id);
               }}
             ></FormButton>
           </div>
@@ -360,7 +363,7 @@ const RoundsTable = ({ onDataChange }) => {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 100,
+      minWidth: 250,
       renderCell: (params) => {
         if (disabledList?.key == "round") {
           return (
@@ -448,6 +451,19 @@ const RoundsTable = ({ onDataChange }) => {
             restoreFn={confirmRestore}
             isLoading={restoreLoading}
           ></RestoreConfirmation>
+        </Modal>
+      )}
+
+      {showSessionsList && (
+        <Modal
+          classNames={"sessions-modal"}
+          title={"Sessions"}
+          onClose={() => setShowSessionsList(false)}
+        >
+          <SessionsList
+            closeFn={() => setShowSessionsList(false)}
+            roundId={sessionsRoundId}
+          ></SessionsList>
         </Modal>
       )}
 

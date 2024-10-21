@@ -129,7 +129,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
     const rawFormData = {
-      id: [data.id],
+      id: [data.InstructorID],
       branchId: data?.BranchID?.id || "",
       name: data?.Name || "",
       jobTitle: data?.JobTitle || "",
@@ -141,7 +141,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       birthDate: data?.BirthDate,
     };
 
-    console.log("---------", rawFormData.birthDate);
     // Remove properties with empty string, null, or undefined values
     const newFormData = Object.fromEntries(
       Object.entries(rawFormData).filter(([_, value]) => value)
@@ -253,18 +252,11 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 helperText={formErrors?.birthDate}
                 label="Birth Date *"
                 type="date"
-                value={
-                  formData?.birthDate
-                    ? dayjs(formData.birthDate, "DD/MM/YYYY", true).format(
-                        "YYYY-MM-DD"
-                      ) // Use strict parsing
-                    : ""
-                }
+                value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
-                  const inputDate = e.target.value;
-                  const formattedDate = dayjs(inputDate).format("DD/MM/YYYY"); // Convert to dd/mm/yyyy
-                  console.log(formattedDate);
-                  setFormData({ ...formData, birthDate: formattedDate });
+                  console.log(e.target.value);
+                  const inputDate = e.target.value; // YYYY-MM-DD
+                  setFormData({ ...formData, birthDate: inputDate });
                 }}
                 // to prevent the label from going inside the input field
                 InputLabelProps={{
