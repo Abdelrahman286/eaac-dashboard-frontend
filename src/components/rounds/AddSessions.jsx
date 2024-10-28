@@ -5,18 +5,10 @@ import "../../styles/rounds.css";
 // components
 
 import OneByOneSection from "./OneByOneSection";
+import AddBulkSection from "./AddBulkSection";
 
-const AddSessions = () => {
+const AddSessions = ({ mainFormData, onClose, instructors, rooms }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [sessionForm, setSessionForm] = useState({
-    sessionName: "",
-    sessionRoom: "",
-    sessionDate: "",
-    sessionStartTime: "",
-    sessionEndTime: "",
-    instructorId: null,
-    roomId: null,
-  });
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -30,9 +22,23 @@ const AddSessions = () => {
       </Tabs>
 
       <Box sx={{ p: 2 }}>
-        {selectedTab === 0 && <OneByOneSection></OneByOneSection>}
+        {selectedTab === 0 && (
+          <OneByOneSection
+            mainFormData={mainFormData}
+            onClose={onClose}
+            instructors={instructors}
+            rooms={rooms}
+          ></OneByOneSection>
+        )}
 
-        {selectedTab === 1 && <div>Add bulk sessions form here</div>}
+        {selectedTab === 1 && (
+          <div>
+            <AddBulkSection
+              mainFormData={mainFormData}
+              onClose={onClose}
+            ></AddBulkSection>
+          </div>
+        )}
       </Box>
     </Box>
   );

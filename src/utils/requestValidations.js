@@ -414,10 +414,52 @@ export const validateEditInstuctor = (formData) => {
 
 export const validateAddRound = (formData) => {
   const errors = {};
+
+  if (isBlank(formData?.nameEn)) {
+    errors.nameEn = "Please Fill in Session Name";
+  }
+
+  if (isBlank(formData?.branchId)) {
+    errors.branchId = "Please Select The Branch";
+  }
+
+  if (isBlank(formData?.roomId)) {
+    errors.roomId = "Please Select The Room";
+  }
+
+  if (isBlank(formData?.courseId)) {
+    errors.courseId = "Please Select The Course";
+  }
+
+  if (isBlank(formData?.instructorId)) {
+    errors.instructorId = "Please Select The Instructor";
+  }
+
   return errors;
 };
 
 export const validateEditRound = (formData) => {
   const errors = {};
+
+  if (isBlank(formData?.nameEn)) {
+    errors.nameEn = "Please Fill in Session Name";
+  }
+
+  if (isBlank(formData?.branchId)) {
+    errors.branchId = "Please Select The Branch";
+  }
+
+  if (isBlank(formData?.roomId)) {
+    errors.roomId = "Please Select The Room";
+  }
+
+  if (isBlank(formData?.courseId)) {
+    errors.courseId = "Please Select The Course";
+  }
+
+  if (isBlank(formData?.instructorId)) {
+    errors.instructorId = "Please Select The Instructor";
+  }
+
   return errors;
 };

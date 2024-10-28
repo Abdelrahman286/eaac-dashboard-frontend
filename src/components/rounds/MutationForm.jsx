@@ -1,22 +1,20 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import "../../styles/rounds.css";
 // MUI
 import { Box, TextField, Autocomplete, IconButton } from "@mui/material";
 
 // icons
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 // contexts
 import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 // components
 import FormButton from "../FormButton";
+import AddSessions from "./AddSessions";
 
 // Requests
 import {
-  EditRoundFn,
-  createRoundFn,
   getBranchesFn,
   getCoursesFn,
   getInstructorsFn,
@@ -35,7 +33,6 @@ import { getDataForTableRows } from "../../utils/tables";
 // dates
 import dayjs from "dayjs"; // To help with formatting
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import AddSessions from "./AddSessions";
 dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
 const MutationForm = ({ onClose, isEditData, data }) => {
@@ -46,6 +43,10 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   const [formErrors, setFormErrors] = useState({});
 
   const [pageIndex, setPageIndex] = useState(0);
+
+  const handleFormChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
   // --------- request data for dropdowns -----------
 
@@ -64,10 +65,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     queryKey: ["branches"],
   });
   const branches = getDataForTableRows(branchesList?.success?.response?.data);
-
-  const handleFormChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
 
   //----- courses
   const { data: coursesList, isLoading: coursesLoading } = useQuery({
@@ -118,105 +115,19 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   const instructors = getDataForTableRows(
     instructorsList?.success?.response?.data
   );
-  // send course data
-  const {
-    mutate: sendRoundData,
-    isPending: addLoading,
-    isError: isAddError,
-    error: addError,
-  } = useMutation({
-    mutationFn: createRoundFn,
-    onSuccess: () => {
-      onClose();
-      queryClient.invalidateQueries(["round-pagination"]);
-      queryClient.invalidateQueries(["round-list"]);
-      showSnackbar("Round Added Successfully", "success");
-    },
-    onError: (error) => {
-      console.log("Error at adding new Round", error);
-      showSnackbar("Failed to Add New Round", "error");
-    },
-  });
 
-  const handleSubmit = (e) => {
+  const moveNext = (e) => {
     e.preventDefault();
+    // check all inputs before moving to next page
     const errors = validateAddRound(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      sendRoundData({
-        reqBody: formData,
-        token,
-      });
+      setPageIndex(pageIndex + 1);
     }
   };
-
-  //   initialize edit data filling
-  useEffect(() => {
-    // if (!isEditData || !data) return;
-    // console.log(data);
-    // // Handle edit data initialization
-    // // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
-    // const rawFormData = {
-    //   id: [data.id],
-    //   branchId: data?.BranchID?.id || "",
-    //   name: data?.Name || "",
-    //   jobTitle: data?.JobTitle || "",
-    //   phone: data?.PhoneNumber || "",
-    //   govIssuedId: data?.GovIssuedID || "",
-    //   email: data?.Email || "",
-    //   whatsappNum: data?.WhatsappNumber || "",
-    //   courseId: data?.CourseID?.id || "",
-    //   birthDate: data?.BirthDate,
-    // };
-    // // Remove properties with empty string, null, or undefined values
-    // const newFormData = Object.fromEntries(
-    //   Object.entries(rawFormData).filter(([_, value]) => value)
-    // );
-    // setFormData(newFormData);
-  }, [isEditData, data]);
-
-  const {
-    mutate: editRound,
-    isPending: editLoading,
-    isError: isEditError,
-    error: editingError,
-  } = useMutation({
-    mutationFn: EditRoundFn,
-    onSuccess: () => {
-      onClose();
-      queryClient.invalidateQueries(["round-pagination"]);
-      queryClient.invalidateQueries(["round-list"]);
-      showSnackbar("Round Edited Successfully", "success");
-    },
-    onError: (error) => {
-      console.log("Error at editing Round data", error);
-      showSnackbar("Faild to edit Round Data", "error");
-    },
-  });
-
-  const handleEdit = (e) => {
-    e.preventDefault();
-
-    const errors = validateEditRound(formData);
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-    } else {
-      setFormErrors({});
-      EditRoundFn({
-        reqBody: formData,
-        token,
-      });
-    }
-  };
-
-  //   for DEBUG
-  useEffect(() => {
-    // console.log(formData);
-  }, [formData]);
 
   return (
     <div className="round-form-page">
@@ -286,8 +197,9 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     }
                     options={rooms}
                     getOptionLabel={(option) => {
-                      //   return `${option?.Name_en} | ${option?.RoomCode}`;
-                      return ` ${option?.RoomCode}`;
+                      //   return `${option?.Name_en} | ${option?.RoomCode}`;\
+                      return `${option?.Name_en} ( ${option?.RoomCode})`;
+                      //   return ` ${option?.RoomCode}`;
                     }}
                     onChange={(e, value) =>
                       setFormData({
@@ -349,18 +261,21 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   <Autocomplete
                     loading={instructorsLoading}
                     value={
-                      instructors.find(
-                        (instructor) => instructor.id === formData.instructorId
-                      ) || null
+                      formData?.instructorId
+                        ? instructors.find(
+                            (instructor) =>
+                              instructor?.InstructorID === formData.instructorId
+                          ) || null
+                        : null
                     }
                     options={instructors}
                     getOptionLabel={(option) => option?.Name}
-                    onChange={(e, value) =>
+                    onChange={(e, value) => {
                       setFormData({
                         ...formData,
-                        instructorId: value ? value.id : null,
-                      })
-                    }
+                        instructorId: value ? value.InstructorID : null,
+                      });
+                    }}
                     renderInput={(params) => (
                       <TextField
                         id="instructorId"
@@ -377,7 +292,12 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               </>
             ) : (
               <div style={{ width: "100%", padding: "0", margin: "0" }}>
-                <AddSessions></AddSessions>
+                <AddSessions
+                  instructors={instructors}
+                  rooms={rooms}
+                  mainFormData={formData}
+                  onClose={onClose}
+                ></AddSessions>
               </div>
             )}
             {/* Left Side */}
@@ -387,7 +307,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         <div className="form-actions">
           {pageIndex !== 0 ? (
             <FormButton
-              isLoading={addLoading}
               buttonText="Go Back"
               className=" go-back-btn "
               onClick={(e) => {
@@ -395,7 +314,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 setPageIndex(0);
               }}
               icon={<NavigateBeforeIcon></NavigateBeforeIcon>}
-              type="submit"
             />
           ) : (
             ""
@@ -404,47 +322,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             <FormButton
               buttonText="Next"
               className="main-btn form-add-btn"
-              onClick={(e) => {
-                e.preventDefault();
-                setPageIndex(pageIndex + 1);
-              }}
-              type="submit"
-            />
-          ) : (
-            ""
-          )}
-
-          {isEditError && pageIndex > 0 ? (
-            <p className="invalid-message">{String(editingError)}</p>
-          ) : (
-            ""
-          )}
-
-          {isAddError && pageIndex > 0 ? (
-            <p className="invalid-message">{String(addError)}</p>
-          ) : (
-            ""
-          )}
-
-          {isEditData && pageIndex !== 0 ? (
-            <FormButton
-              isLoading={editLoading}
-              buttonText="Edit"
-              className="main-btn form-add-btn"
-              onClick={handleEdit}
-              type="submit"
-            />
-          ) : (
-            ""
-          )}
-
-          {!isEditData && pageIndex !== 0 ? (
-            <FormButton
-              isLoading={addLoading}
-              buttonText="Add"
-              className="main-btn form-add-btn"
-              onClick={handleSubmit}
-              type="submit"
+              onClick={moveNext}
             />
           ) : (
             ""

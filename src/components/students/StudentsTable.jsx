@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import "../../styles/rounds.css";
+
 // MUI
-import { Box } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import CustomIconButton from "../CustomIconButton";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
+import Tooltip from "@mui/material/Tooltip";
 // contexts
 import { UserContext } from "../../contexts/UserContext";
 import { AppContext } from "../../contexts/AppContext";
@@ -14,25 +18,51 @@ import { getDataForTableRows } from "../../utils/tables";
 
 // requests
 import {
-  deleteRoundsFn,
-  getRoundsFn,
-  restoreRoundsFn,
-} from "../../requests/rounds";
+  deleteStudentFn,
+  getStudentFn,
+  restoreStudentFn,
+} from "../../requests/students";
+
 // components
 import DeleteConfirmation from "../DeleteConfirmation";
 import RestoreConfirmation from "../RestoreConfirmation";
 import MutationForm from "./MutationForm";
 import Modal from "../Modal";
-import ViewRound from "./ViewRound";
-import EditPage from "./Edit/EditPage";
-//dates
-import dayjs from "dayjs"; // To help with formatting
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import FormButton from "../FormButton";
-import SessionsList from "./SessionsList";
-dayjs.extend(customParseFormat); // Ensure the plugin is loaded
+import CustomIconButton from "../CustomIconButton";
+import GroupsModal from "./GroupsModal";
 
-const RoundsTable = ({ onDataChange }) => {
+//---------- Dummy Data
+const students = [
+  {
+    rowIndex: 1,
+    StudentID: 1,
+    Name: "test 1",
+    companyName: "company name (test)",
+    branch: "All",
+    Email: "test@gmail.com",
+    PhoneNumber: "010321343",
+    WhatsappNumber: "010423423423",
+    GovIssuedID: "8675054",
+    MemebershipCode: "12345",
+    blocked: true,
+    notes: ".....",
+  },
+  {
+    rowIndex: 2,
+    StudentID: 2,
+    Name: "test 2",
+    companyName: "company name (test)",
+    branch: "All",
+    Email: "test2@gmail.com",
+    PhoneNumber: "010321343",
+    WhatsappNumber: "010423423423",
+    GovIssuedID: "12114324",
+    MemebershipCode: "12314",
+    blocked: false,
+    notes: ".....",
+  },
+];
+const StudentsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -42,11 +72,8 @@ const RoundsTable = ({ onDataChange }) => {
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showRoundModal, setShowRoundModal] = useState(false);
-  const [roundData, setRoundData] = useState({});
 
-  const [showSessionsList, setShowSessionsList] = useState(false);
-  const [sessionsRoundId, setSessionsRoundId] = useState("");
+  const [showGroupsModal, setShowGroupsModal] = useState(false);
 
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -64,14 +91,14 @@ const RoundsTable = ({ onDataChange }) => {
   };
 
   // check if there's search term
-  if (searchResults?.key == "round" && searchResults?.searchTerm) {
+  if (searchResults?.key == "student" && searchResults?.searchTerm) {
     paginationReqBody.search = searchResults?.searchTerm;
     dataListReqBody.search = searchResults?.searchTerm;
   }
 
   // check disabled key in request body
 
-  if (disabledList?.key == "round") {
+  if (disabledList?.key == "student") {
     paginationReqBody.disabled = "1"; // get pagination data
     dataListReqBody.disabled = "1"; // get the list
   }
@@ -84,13 +111,13 @@ const RoundsTable = ({ onDataChange }) => {
   } = useQuery({
     queryFn: () => {
       // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getRoundsFn(paginationReqBody, token, {
+      return getStudentFn(paginationReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
     queryKey: [
-      "round-pagination",
+      "student-pagination",
       paginationReqBody,
       dataListReqBody,
       disabledList?.key,
@@ -105,7 +132,7 @@ const RoundsTable = ({ onDataChange }) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "round-list",
+      "student-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
@@ -113,7 +140,7 @@ const RoundsTable = ({ onDataChange }) => {
       disabledList?.key,
     ],
     queryFn: () => {
-      return getRoundsFn(dataListReqBody, token, {
+      return getStudentFn(dataListReqBody, token, {
         isFormData: true,
         urlParams: `page=${paginationModel.page + 1}`, // Use the dynamic page number
       });
@@ -144,34 +171,34 @@ const RoundsTable = ({ onDataChange }) => {
     }
   }, [listData]);
 
-  //------------- delete Round-------------------------
-  const { mutate: deleteRound, isPending: deleteLoading } = useMutation({
-    mutationFn: deleteRoundsFn,
+  //------------- delete Student-------------------------
+  const { mutate: deleteStudent, isPending: deleteLoading } = useMutation({
+    mutationFn: deleteStudentFn,
     onSuccess: () => {
-      console.log("Round deleted successfully");
+      console.log("Student deleted successfully");
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
-        queryKey: ["round-pagination"],
+        queryKey: ["student-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["round-list"],
+        queryKey: ["student-list"],
       });
-      showSnackbar("Round Deleted Successfully ", "info");
+      showSnackbar("Student Deleted Successfully ", "info");
       setShowDeleteModal(false);
     },
     onError: (error) => {
-      console.log("Error at Deleting Round ", error);
-      showSnackbar("Failed to Delete Round Data", "error");
+      console.log("Error at Deleting Student ", error);
+      showSnackbar("Failed to Delete Student Data", "error");
     },
   });
 
   // handle delete
   const handleDelete = (rowData) => {
     setShowDeleteModal(true);
-    setIdToDelete(rowData?.id);
+    setIdToDelete(rowData?.StudentID); // it can be id OR studentID
   };
   const confirmDelete = () => {
-    deleteRound({
+    deleteStudent({
       reqBody: {
         id: idToDelete,
       },
@@ -185,10 +212,10 @@ const RoundsTable = ({ onDataChange }) => {
   // restore
   const handleRestore = (rowData) => {
     setShowRestoreModal(true);
-    setIdToRestore(`${rowData?.id}`);
+    setIdToRestore(`${rowData?.StudentID}`);
   };
   const confirmRestore = () => {
-    restoreRound({
+    restoreStudent({
       reqBody: {
         id: [idToRestore],
         statusId: "1",
@@ -201,44 +228,37 @@ const RoundsTable = ({ onDataChange }) => {
   };
 
   // handle edit
+
   const handleEdit = (row) => {
     setShowEditModal(true);
     setDataToEdit(row);
   };
 
   // restore deleted company
-  const { mutate: restoreRound, isPending: restoreLoading } = useMutation({
-    mutationFn: restoreRoundsFn,
+  const { mutate: restoreStudent, isPending: restoreLoading } = useMutation({
+    mutationFn: restoreStudentFn,
 
     onSuccess: () => {
-      console.log("Round restored");
+      console.log("student restored");
       queryClient.invalidateQueries({
-        queryKey: ["round-pagination"],
+        queryKey: ["student-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["round-list"],
+        queryKey: ["student-list"],
       });
       setShowRestoreModal(false);
-      showSnackbar("Round Data Restored Successfully ", "success");
+      showSnackbar("Student Data Restored Successfully ", "success");
     },
     onError: (error) => {
-      console.log("error at restoring Round data", error);
-      showSnackbar("Failed to Restore Round Data", "error");
+      console.log("error at restoring Student data", error);
+      showSnackbar("Failed to Restore Student Data", "error");
     },
   });
 
-  // handle sessions modal
-  const handleShowSessions = (id) => {
-    setSessionsRoundId(id);
-    setShowSessionsList(true);
+  const handleGroupsPopup = (row) => {
+    setShowGroupsModal(true);
   };
 
-  // handle show round data + sessions list
-
-  const handleShowRound = (row) => {
-    setShowRoundModal(true);
-    setRoundData(row);
-  };
   const columns = [
     {
       field: "rowIndex",
@@ -247,48 +267,67 @@ const RoundsTable = ({ onDataChange }) => {
     },
 
     {
-      field: "startEndDate",
-      headerName: "Start/End Dates",
-
-      renderCell: (params) => {
-        const startDate = dayjs(params.row?.StartDate?.split(" ")[0]).format(
-          "D MMMM YYYY"
-        );
-        const endDate = dayjs(params.row?.EndDate?.split(" ")[0]).format(
-          "D MMMM YYYY"
-        );
-
-        return (
-          <div
-            style={{
-              paddingTop: "4px",
-              display: "flex",
-              flexDirection: "column",
-              lineHeight: "1.5", // Adjust line spacing for better readability
-              alignItems: "flex-start", // Ensure start of the text is aligned
-              overflow: "visible", // Allow content to be visible
-              wrap: "nowrap",
-            }}
-          >
-            <p style={{ margin: 0 }}>
-              <strong>Start:</strong> {startDate}
-            </p>
-            <p style={{ margin: 0 }}>
-              <strong>End:</strong> {endDate}
-            </p>
-          </div>
-        );
-      },
-      flex: 1.2,
-      minWidth: 200, // Increase width for better visibility
-    },
-    {
       field: "Name",
-      headerName: "Round Name",
+      headerName: "Name",
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        return `${row?.Name || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+    {
+      field: "companyName",
+      headerName: "Company Name",
+      valueGetter: (value, row) => {
+        return `${row?.companyName || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "Email",
+      headerName: "Email",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.Email || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+    {
+      field: "PhoneNumber",
+      headerName: "Phone Number",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.PhoneNumber || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "WhatsappNumber",
+      headerName: "WhatsApp Number",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.WhatsappNumber || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+    {
+      field: "GovIssuedID",
+      headerName: "Government ID",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.GovIssuedID || ""}`;
       },
       flex: 1.2,
       minWidth: 100,
@@ -299,95 +338,74 @@ const RoundsTable = ({ onDataChange }) => {
       valueGetter: (value, row) => {
         return `${row?.BranchID?.Name_en || ""}`;
       },
-      flex: 1,
+      flex: 1, // This column will take up more space compared to others
+      minWidth: 100,
+    },
+
+    {
+      field: "notes",
+      headerName: "notes",
+
+      flex: 1, // This column will take up more space compared to others
       minWidth: 100,
     },
     {
-      field: "Instructor",
-      headerName: "Instructor",
-
-      //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.InstructorID?.Name || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 100,
-    },
-    {
-      field: "room",
-      headerName: "Room",
-
-      //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.RoomID?.RoomCode || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 100,
-    },
-    {
-      field: "course",
-      headerName: "Course",
-
-      //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.CourseID?.Name_en || ""}`;
-      },
-      flex: 1,
-      minWidth: 100,
-    },
-    {
-      field: "Sessions",
-      headerName: "Sessions",
-
-      //   editable: true,
+      field: "Blocked",
+      headerName: "Blocked",
       renderCell: (params) => {
+        if (params.row.blocked) {
+          return (
+            <Chip
+              label={"Blocked"}
+              color="error"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "12px" }}
+            />
+          );
+        }
+
         return (
-          <div>
-            <FormButton
-              className="show-sessions main-btn"
-              buttonText={"Show"}
-              onClick={() => {
-                handleShowSessions(params?.row?.id);
-              }}
-            ></FormButton>
-          </div>
+          <Chip
+            label={"Active"}
+            color="success"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "12px" }}
+          />
         );
       },
-      flex: 0.7,
-      minWidth: 80,
+      flex: 1, // This column will take up more space compared to others
+      minWidth: 100,
     },
-    {
-      field: "capacity",
-      headerName: "Capacity",
-
-      valueGetter: (value, row) => {
-        return `${row?.Capacity || ""}`;
-      },
-      flex: 0.7,
-      minWidth: 80,
-    },
-
     {
       field: "controls",
       headerName: "Controls",
-      flex: 1.5,
-      minWidth: 250,
+      flex: 3,
+      minWidth: 400,
       renderCell: (params) => {
-        if (disabledList?.key == "round") {
+        if (disabledList?.key == "student") {
           return (
-            <CustomIconButton
-              icon={"restore"}
-              title="Restore"
-              onClick={() => handleRestore(params.row)}
-            ></CustomIconButton>
+            <Tooltip title="Restore">
+              <IconButton
+                color="primary"
+                aria-label="restore"
+                onClick={() => handleRestore(params.row)}
+              >
+                <RestoreFromTrashIcon />
+              </IconButton>
+            </Tooltip>
           );
         }
         return (
           <div>
             <CustomIconButton
+              icon={"roundsClasses"}
+              title="Groups"
+              onClick={() => handleGroupsPopup(params.row)}
+            ></CustomIconButton>
+            <CustomIconButton
               icon={"view"}
               title="view"
-              onClick={() => handleShowRound(params?.row)}
+              onClick={() => console.log("show session")}
             ></CustomIconButton>
             <CustomIconButton
               icon={"attendance"}
@@ -395,10 +413,21 @@ const RoundsTable = ({ onDataChange }) => {
               onClick={() => console.log("show attendance")}
             ></CustomIconButton>
             <CustomIconButton
-              icon={"enroll"}
-              title="Enroll Student"
-              onClick={() => console.log("Enroll Student")}
+              icon={"memberships"}
+              title="Membership"
+              onClick={() => console.log("show attendance")}
             ></CustomIconButton>
+            <CustomIconButton
+              icon={"payments"}
+              title="Payments"
+              onClick={() => console.log("show attendance")}
+            ></CustomIconButton>
+            <CustomIconButton
+              icon={"blockUser"}
+              title="Block"
+              onClick={() => handleEdit(params.row)}
+            ></CustomIconButton>
+
             <CustomIconButton
               icon={"edit"}
               title="Edit"
@@ -419,6 +448,7 @@ const RoundsTable = ({ onDataChange }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
+
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (
@@ -430,14 +460,15 @@ const RoundsTable = ({ onDataChange }) => {
       {showEditModal && (
         <Modal
           //   classNames={"h-70per"}
-          title={"Edit Round"}
-          classNames={"round-mutation-form"}
+          title={"Edit Student"}
+          classNames={"student-mutation-form"}
           onClose={() => setShowEditModal(false)}
         >
-          <EditPage
+          <MutationForm
             onClose={() => setShowEditModal(false)}
+            isEditData={true}
             data={dataToEdit}
-          ></EditPage>
+          ></MutationForm>
         </Modal>
       )}
 
@@ -461,29 +492,13 @@ const RoundsTable = ({ onDataChange }) => {
         </Modal>
       )}
 
-      {showSessionsList && (
+      {showGroupsModal && (
         <Modal
-          classNames={"sessions-modal"}
-          title={"Sessions"}
-          onClose={() => setShowSessionsList(false)}
+          classNames={"student-mutation-form"}
+          title={""}
+          onClose={() => setShowGroupsModal(false)}
         >
-          <SessionsList
-            closeFn={() => setShowSessionsList(false)}
-            roundId={sessionsRoundId}
-          ></SessionsList>
-        </Modal>
-      )}
-
-      {showRoundModal && (
-        <Modal
-          classNames={"view-round-modal"}
-          //   title={"Round"}
-          onClose={() => setShowRoundModal(false)}
-        >
-          <ViewRound
-            closeFn={() => setShowRoundModal(false)}
-            roundData={roundData}
-          ></ViewRound>
+          <GroupsModal closeFn={() => setShowGroupsModal(false)}></GroupsModal>
         </Modal>
       )}
 
@@ -496,8 +511,10 @@ const RoundsTable = ({ onDataChange }) => {
               showLastButton: true,
             },
           }}
+          getRowId={(row) => row.StudentID} // Custom ID logic
           autoHeight
-          rows={updatedDataList || []} // Use the modified dataList
+          //   rows={updatedDataList || []} // Use the modified dataList
+          rows={students}
           columns={columns}
           paginationMode="server" // Enable server-side pagination
           rowCount={totalElements} // Total rows from server response
@@ -540,4 +557,4 @@ const RoundsTable = ({ onDataChange }) => {
   );
 };
 
-export default RoundsTable;
+export default StudentsTable;

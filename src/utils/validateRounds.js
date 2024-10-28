@@ -34,3 +34,29 @@ export const validateRoundRow = (dataRow) => {
 
   return errors;
 };
+
+export const validateBulkSuggestion = (formData) => {
+  const errors = {};
+
+  if (isBlank(formData?.sessionNameDynamic))
+    errors.sessionNameDynamic = "Please Fill in Session Name";
+
+  if (isBlank(formData?.sessionStartTime))
+    errors.sessionStartTime = "Please Fill in Session Start Time";
+
+  if (isBlank(formData?.sessionEndTime))
+    errors.sessionEndTime = "Please Fill in Session End Time";
+
+  if (isBlank(formData?.startDate))
+    errors.startDate = "Please Fill in Start Date";
+
+  if (isBlank(formData?.endDate))
+    errors.endDate = "Please Fill in Session End Date";
+
+  //   if (formData?.weekDays) errors.weekDays = "Please Select Session Days";
+  if (!formData?.weekDays) {
+    errors.weekDays = "Please Select Session Days";
+  }
+
+  return errors;
+};

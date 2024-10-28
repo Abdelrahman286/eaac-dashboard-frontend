@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
+import { Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import CloseIcon from "@mui/icons-material/Close";
@@ -35,7 +36,11 @@ const Modal = ({ onClose, children, title, actionBar = "", classNames }) => {
             </div>
 
             <div className="title">
-              <h2>{title}</h2>
+              {/* <h2>{title}</h2> */}
+
+              <Typography variant="h6" align="center" fontWeight={400}>
+                {title}
+              </Typography>
             </div>
           </div>
 

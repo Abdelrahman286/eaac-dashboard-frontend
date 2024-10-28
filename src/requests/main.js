@@ -84,6 +84,7 @@ export const makeRequest = async (
   } else {
     // Otherwise, send the request body as JSON
     requestOptions.body = JSON.stringify(reqBody);
+    requestOptions.headers["Content-Type"] = "application/json";
   }
 
   // If token exists, add Authorization and X-Security-Key headers
@@ -93,37 +94,59 @@ export const makeRequest = async (
     requestOptions.headers["X-Security-Key"] = "66d5b04289662"; // Add the custom header
   }
 
-  try {
-    // Enable/disable requests
-    const response = await fetch(fullUrl, requestOptions);
+  //   try {
+  // Enable/disable requests
+  const response = await fetch(fullUrl, requestOptions);
 
-    // if (!response.ok) {
-    //   const errorData = await response.json();
-    //   throw new Error(
-    //     errorData.message || `Request failed with status ${response.status}`,
-    //     errorData.code || `${response.status}`
-    //   );
-    // }
+  // Check the content type of the response
+  const contentType = response.headers.get("content-type");
 
-    if (!response.ok) {
+  if (!response.ok) {
+    if (contentType && contentType.includes("application/json")) {
       const errorData = await response.json();
 
       const validationErrorMessages = errorData?.failed?.response?.errors;
-      const combinedErrorMsgs = Object.values(validationErrorMessages).join(
-        ", "
-      );
+
+      let combinedErrorMsgs = "";
+
+      // Check if validationErrorMessages is an object
+      if (
+        typeof validationErrorMessages === "object" &&
+        validationErrorMessages !== null
+      ) {
+        combinedErrorMsgs = Object.values(validationErrorMessages).join(", ");
+      } else if (typeof validationErrorMessages === "string") {
+        // If it's a single string, just use it as the error message
+        combinedErrorMsgs = validationErrorMessages;
+      }
 
       const errorMsg =
-        `${errorData?.failed?.response?.msg} , ${combinedErrorMsgs}` ||
+        `${errorData?.failed?.response?.msg},  ${combinedErrorMsgs}` ||
         "Something went wrong. Please try again!";
 
-      // Create a new error object and manually assign properties
-      const error = new Error(errorMsg); // You can also pass the message here
+      const finalError = new Error(errorMsg);
+      finalError.responseError = errorData;
 
-      throw error;
+      //   throw finalError;
+      throw {
+        message: errorMsg,
+        responseError: errorData,
+      };
+    } else {
+      // If not JSON, handle non-JSON error response
+      const errorMsg = await response.text();
+      throw new Error(errorMsg || "Something went wrong. Please try again!");
     }
-    return response.json();
-  } catch (error) {
-    throw new Error(error.message || "Network error");
   }
+
+  // Handle successful responses
+  if (contentType && contentType.includes("application/json")) {
+    return await response.json(); // Parse as JSON
+  } else {
+    // If it's not JSON, return the text response
+    return await response.text(); // This will handle plain text like "OK"
+  }
+  //   } catch (error) {
+  //     throw new Error(error?.message || "Network error");
+  //   }
 };

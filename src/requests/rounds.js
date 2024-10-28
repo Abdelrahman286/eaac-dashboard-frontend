@@ -8,8 +8,10 @@ export const deleteRoundsFn = ({ reqBody, token, config }) => {
 };
 
 export const createRoundFn = ({ reqBody, token, config }) => {
-  return makeRequest(`${URL}/round/createRound`, reqBody, token, config);
+  console.log(reqBody);
+  return makeRequest(`${URL}/round/createRound1`, reqBody, token, config);
 };
+
 export const EditRoundFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/round/updateRound`, reqBody, token, config);
 };
@@ -39,5 +41,6 @@ export const getInstructorsFn = (reqBody, token, config) =>
   makeRequest(`${URL}/instructor/getInstructor`, reqBody, token, config);
 
 // get sessions
-export const getSessionsFn = (reqBody, token, config) =>
-  makeRequest(`${URL}/session/getSession`, reqBody, token, config);
+export const getSessionsFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/session/getSession`, reqBody, token, config);
+};

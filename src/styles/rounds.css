@@ -69,10 +69,10 @@
   }
 
   .form-actions {
-    /* background: red; */
-    padding: 20px 0px;
+    padding: 20px 40px;
     display: flex;
-    justify-content: flex-end;
+
+    justify-content: flex-start;
     align-items: center;
     p {
       margin: 0 10px;
@@ -183,10 +183,8 @@
   }
 
   .added-sessions-list {
-    /* background: red; */
     width: 100%;
     margin-top: 10px;
-    padding: 10px 0px;
     border-top: 1px solid #dfdedec4;
   }
 
@@ -195,11 +193,163 @@
     justify-content: flex-end;
     align-items: flex-end;
     width: 100%;
-
     .add-btn {
       width: 120px;
       background: #02542d;
       margin: 0;
+    }
+  }
+
+  .submit-form {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+.add-bulk-section {
+  .sumbit-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px;
+  }
+
+  .submit-form {
+    display: flex;
+    justify-content: flex-end;
+    justify-items: center;
+    .checkbox {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+.one-by-one-sessionsList {
+  width: 100%;
+  overflow-x: auto;
+  .header {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    background: rgb(227, 227, 227);
+    padding: 6px 0px;
+    white-space: nowrap;
+    width: max-content;
+    min-width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    span {
+      width: 100px;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    span:nth-of-type(1) {
+      width: 50px;
+      text-align: center;
+    }
+
+    span:nth-of-type(2) {
+      width: 160px;
+    }
+  }
+
+  .session-row {
+    /* background: rgba(244, 243, 243, 0.407); */
+    padding: 0;
+    margin: 0;
+    padding: 10px 0px;
+    border-bottom: 1px solid #c1c1c1cd;
+    min-width: 100%;
+    width: max-content;
+    .data-row {
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      flex-wrap: nowrap;
+      box-sizing: border-box;
+
+      white-space: nowrap;
+      width: max-content;
+      min-width: 100%;
+
+      span {
+        width: 100px;
+        flex-grow: 1;
+        text-align: center;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+      }
+
+      span:nth-of-type(1) {
+        width: 50px;
+      }
+
+      span:nth-of-type(2) {
+        width: 160px;
+      }
+      span:last-of-type {
+        /* background: red; */
+      }
+
+      * {
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    .conflict-msg {
+      /* background-color: blue; */
+      max-width: 400px;
+      padding: 10px;
+      font-size: 14px;
+      color: rgb(244, 64, 64);
+    }
+  }
+}
+
+.view-sessions-modal {
+  max-height: 68vh;
+  /* background: red; */
+  width: 100%;
+
+  .data-list {
+    background: white;
+    span {
+      font-size: 14px;
+      fcolor: #262626;
+    }
+    .data-row {
+      /* background: red; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+.view-round-modal {
+  max-height: 70vh;
+  width: 70%;
+}
+
+/* // Edit Modal */
+
+.edit-page {
+  .edit-round {
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        width: 150px;
+      }
     }
   }
 }

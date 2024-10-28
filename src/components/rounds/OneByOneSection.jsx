@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Tabs, Tab, Box, TextField, Autocomplete, Button } from "@mui/material";
 import "../../styles/rounds.css";
 
@@ -11,24 +12,29 @@ import AddIcon from "@mui/icons-material/Add";
 // validation
 
 import { validateRoundRow } from "../../utils/validateRounds";
+import FormSessionsTable from "./FormSessionsTable-old";
+import OneByOneSessionsList from "./OneByOneSessionsList";
 
-const instructors = [
-  { id: 1, name: "Instructor 1" },
-  { id: 2, name: "Instructor 2" },
-  // Add more instructors here
-];
+// utils
+import { URL } from "../../requests/main";
+import {
+  convertDateFromDashToSlash,
+  convertDateFormat,
+  formatDate,
+  formatDate2,
+} from "../../utils/functions";
 
-const rooms = [
-  { id: 1, name: "Room 101" },
-  { id: 2, name: "Room 102" },
-  // Add more rooms here
-];
-
-const OneByOneSection = () => {
+// contexts
+import { AppContext } from "../../contexts/AppContext";
+import { UserContext } from "../../contexts/UserContext";
+const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
+  const { token } = useContext(UserContext);
+  const { showSnackbar } = useContext(AppContext);
+  const queryClient = useQueryClient();
   const [showAddForm, setShowAddForm] = useState(true);
   const [sessionForm, setSessionForm] = useState({
     sessionName: "",
-    sessionDescribtion: "",
+    sessionDescription: "",
     sessionDate: "",
     sessionStartTime: "",
     sessionEndTime: "",
@@ -38,7 +44,11 @@ const OneByOneSection = () => {
 
   const [sessionsList, setSessionsList] = useState([]);
 
+  // here we add room and instructor name to view them in the table
+  const [sessionsView, setSessionsView] = useState([]);
+
   const [formErrors, setFormErrors] = useState({});
+  const [conflictsList, setConflictsList] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -55,47 +65,298 @@ const OneByOneSection = () => {
     });
   };
 
+  // initial select for rooms and instructors
+  useEffect(() => {
+    setSessionForm({
+      sessionName: "",
+      sessionDescription: "",
+      sessionDate: "",
+      sessionStartTime: "",
+      sessionEndTime: "",
+      instructorId: `${mainFormData?.instructorId || " "}`,
+      sessionRoomId: `${mainFormData?.roomId || " "}`,
+    });
+  }, [mainFormData.instructorId, mainFormData.roomId]);
+
   const addSessionRow = () => {
     // validate the entered session
-
     const errors = validateRoundRow(sessionForm);
-
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      // format keys arrengement
-      //   const newSessionObject = {
-      //     sessionName: sessionForm.sessionName,
-      //     sessionDescription: sessionForm.sessionDescription,
-      //     sessionDate: sessionForm.sessionDate,
-      //     sessionStartTime: sessionForm.sessionStartTime,
-      //     sessionEndTime: sessionForm.sessionEndTime,
-      //     instructorId: sessionForm.instructorId,
-      //     sessionRoomId: sessionForm.sessionRoomId,
-      //   };
-      const newSessionObject = {
-        sessionName: `${sessionForm.sessionName}`,
-        sessionDescription: `${sessionForm?.sessionDescription || "-"}`,
-        sessionDate: `${sessionForm.sessionDate}`,
-        sessionStartTime: `${sessionForm.sessionStartTime}`,
-        sessionEndTime: `${sessionForm.sessionEndTime}`,
-        instructorId: `${sessionForm.instructorId}`,
-        sessionRoomId: `${sessionForm.sessionRoomId}`,
-      };
-      for (const key in newSessionObject) {
-        if (newSessionObject.hasOwnProperty(key)) {
-          console.log(`${key}: ${newSessionObject[key]}`);
-        }
-      }
-      //   console.log(newSessionObject);
-      // add it to sessions list
+      const newSessionsArray = [...sessionsList, sessionForm];
+
+      const sortedSessions = newSessionsArray.sort((a, b) => {
+        return new Date(a.sessionDate) - new Date(b.sessionDate);
+      });
+
+      // sort sessions based on date
+      setSessionsList(sortedSessions);
+      // clear session Add form except roomId & instructorId
+      setSessionForm((prevState) => ({
+        ...prevState,
+        sessionName: "",
+        sessionDescription: "",
+        sessionDate: "",
+      }));
     }
   };
 
-  //   useEffect(() => {
-  //     console.log(sessionForm);
-  //   }, [sessionForm]);
+  // Formate Session List to view instructor and Room Id Names
+  useEffect(() => {
+    const newList = sessionsList.map((session) => {
+      if (session?.sessionRoomId && session?.instructorId) {
+        const matchingRoom = rooms.find(
+          (room) => room.id == session.sessionRoomId
+        );
+
+        const matchingInstrctor = instructors.find(
+          (instructor) => instructor.InstructorID == session.instructorId
+        );
+
+        return {
+          ...session,
+          sessionRoomId: matchingRoom || session.sessionRoomId,
+          instructorId: matchingInstrctor || session.instructorId,
+        };
+      }
+      return session;
+    });
+
+    setSessionsView(newList);
+  }, [sessionsList, rooms, instructors]);
+
+  const handleDeleteRow = (index) => {
+    setSessionsList((prevSessionsList) =>
+      prevSessionsList.filter((_, i) => i !== index)
+    );
+  };
+
+  // send sessions data
+  const {
+    mutate: sendSessions,
+    isPending: addLoading,
+    data: sessionFetchedData,
+    error,
+    isError,
+  } = useMutation({
+    onSuccess: (res) => {
+      console.log("new round added");
+      queryClient.invalidateQueries(["round-pagination"]);
+      queryClient.invalidateQueries(["round-list"]);
+      onClose();
+      showSnackbar("Round Added Successfully", "success");
+    },
+    onError: (error) => {
+      // Access the parsed error details here
+      console.log("Error at adding new Round with one by one sessions");
+      console.log(error.responseData?.failed?.response);
+    },
+    mutationFn: async (reqObj) => {
+      let requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Access-Control-Allow-Origin": true,
+          "X-Security-Key": "66d5b04289662",
+        },
+        body: JSON.stringify(reqObj),
+      };
+
+      const response = await fetch(`${URL}/round/createRound1`, requestOptions);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error("Network response was not ok");
+        error.responseData = errorData;
+        throw error;
+      }
+      return response.json();
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newObj = {
+      nameAr: mainFormData.nameEn,
+      nameEn: mainFormData.nameEn,
+      numberOfSessions: 27,
+      courseId: mainFormData.courseId,
+      roomId: mainFormData.roomId,
+      instructorId: mainFormData.instructorId,
+      branchId: mainFormData.branchId,
+      roundCode: mainFormData.nameEn,
+      sessionDinamicallyFlag: 0,
+    };
+
+    const formattedSessionList = sessionsList.map((session) => {
+      const {
+        sessionName,
+        sessionDescription,
+        sessionDate,
+        sessionStartTime,
+        sessionEndTime,
+        instructorId,
+        sessionRoomId,
+
+        ...rest
+      } = session;
+      return {
+        ...session,
+        startTime: `${sessionStartTime}:00`,
+        endTime: `${sessionEndTime}:00`,
+        sessionDate: convertDateFormat(sessionDate),
+        nameEn: sessionName,
+        descriptionEn: sessionDescription || "-",
+        roomId: sessionRoomId,
+        instructorId: instructorId,
+      };
+    });
+
+    newObj.sessions = formattedSessionList;
+
+    const { firstSessionDate, lastSessionDate } = sessionsList.reduce(
+      (acc, curr) => {
+        // Ensure curr.sessionDate is a valid date string
+        if (!curr.sessionDate) {
+          console.warn("Invalid sessionDate:", curr.sessionDate);
+          return acc; // Skip invalid entries
+        }
+
+        const currDate = new Date(curr.sessionDate);
+
+        // Check for valid date
+        if (isNaN(currDate.getTime())) {
+          console.warn("Invalid Date encountered:", curr.sessionDate);
+          return acc; // Skip invalid dates
+        }
+
+        // Update firstSessionDate if the current date is earlier
+        if (currDate < acc.firstSessionDate || acc.firstSessionDate === null) {
+          acc.firstSessionDate = currDate;
+        }
+
+        // Update lastSessionDate if the current date is later
+        if (currDate > acc.lastSessionDate || acc.lastSessionDate === null) {
+          acc.lastSessionDate = currDate;
+        }
+
+        return acc;
+      },
+      {
+        firstSessionDate: null, // Initial value for the earliest date
+        lastSessionDate: null, // Initial value for the latest date
+      }
+    );
+
+    newObj.startDate = formatDate2(firstSessionDate);
+    newObj.endDate = formatDate2(lastSessionDate);
+
+    sendSessions(newObj);
+
+    // sendSessions({
+    //   nameAr: "aaa",
+    //   nameEn: "aaa",
+    //   numberOfSessions: 27,
+    //   courseId: 1,
+    //   roomId: 1,
+    //   instructorId: 10,
+    //   branchId: 1,
+    //   roundCode: "aaa",
+    //   sessionDinamicallyFlag: 0,
+    //   sessions: [
+    //     {
+    //       sessionName: "aaa",
+    //       sessionDescription: "",
+    //       sessionDate: "12/06/2024",
+    //       sessionStartTime: "12:31",
+    //       sessionEndTime: "13:34",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "12:31:00",
+    //       endTime: "13:34:00",
+    //       nameEn: "aaa",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //     {
+    //       sessionName: "aaa",
+    //       sessionDescription: "",
+    //       sessionDate: "08/08/2024",
+    //       sessionStartTime: "17:21",
+    //       sessionEndTime: "21:21",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "17:21:00",
+    //       endTime: "21:21:00",
+    //       nameEn: "aaa",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //     {
+    //       sessionName: "aa",
+    //       sessionDescription: "",
+    //       sessionDate: "11/09/2024",
+    //       sessionStartTime: "14:19",
+    //       sessionEndTime: "18:16",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "14:19:00",
+    //       endTime: "18:16:00",
+    //       nameEn: "aa",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //     {
+    //       sessionName: "test 1",
+    //       sessionDescription: "",
+    //       sessionDate: "01/10/2024",
+    //       sessionStartTime: "14:19",
+    //       sessionEndTime: "18:16",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "14:19:00",
+    //       endTime: "18:16:00",
+    //       nameEn: "test 1",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //     {
+    //       sessionName: "aa",
+    //       sessionDescription: "",
+    //       sessionDate: "09/10/2024",
+    //       sessionStartTime: "15:20",
+    //       sessionEndTime: "17:18",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "15:20:00",
+    //       endTime: "17:18:00",
+    //       nameEn: "aa",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //     {
+    //       sessionName: "test 2",
+    //       sessionDescription: "",
+    //       sessionDate: "10/10/2024",
+    //       sessionStartTime: "14:19",
+    //       sessionEndTime: "18:16",
+    //       instructorId: "10",
+    //       sessionRoomId: "1",
+    //       startTime: "14:19:00",
+    //       endTime: "18:16:00",
+    //       nameEn: "test 2",
+    //       descriptionEn: "-",
+    //       roomId: "1",
+    //     },
+    //   ],
+    //   startDate: "12/06/2024",
+    //   endDate: "10/10/2024",
+    // });
+  };
+
   return (
     <div className="add-one-by-one">
       <div className="header">
@@ -114,13 +375,21 @@ const OneByOneSection = () => {
 
       {showAddForm && (
         <>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              width: "100%",
+            }}
+          >
             {/* First Row */}
             <Box sx={{ flex: "1 1 30%" }}>
               <TextField
+                size="small"
                 error={Boolean(formErrors?.sessionName)}
                 helperText={formErrors?.sessionName}
-                label="Session Name"
+                label="Session Name *"
                 name="sessionName"
                 value={sessionForm?.sessionName}
                 onChange={handleInputChange}
@@ -131,29 +400,37 @@ const OneByOneSection = () => {
 
             <Box sx={{ flex: "1 1 30%" }}>
               <Autocomplete
+                value={
+                  rooms.find((item) => item.id == sessionForm?.sessionRoomId) ||
+                  null
+                }
+                getOptionLabel={(option) => {
+                  return `${option?.Name_en} ( ${option?.RoomCode})`;
+                }}
+                size="small"
                 options={rooms}
-                getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
                   <TextField
                     error={Boolean(formErrors?.sessionRoomId)}
                     helperText={formErrors?.sessionRoomId}
                     {...params}
-                    label="Room"
+                    label="Room *"
                     margin="normal"
                     fullWidth
                   />
                 )}
-                onChange={(e, value) =>
-                  handleDropdownChange("sessionRoomId", value?.id)
-                }
+                onChange={(e, value) => {
+                  handleDropdownChange("sessionRoomId", value?.id);
+                }}
               />
             </Box>
 
             <Box sx={{ flex: "1 1 30%" }}>
               <TextField
+                size="small"
                 error={Boolean(formErrors?.sessionDate)}
                 helperText={formErrors?.sessionDate}
-                label="Session Date"
+                label="Session Date *"
                 name="sessionDate"
                 type="date"
                 value={sessionForm.sessionDate}
@@ -169,12 +446,13 @@ const OneByOneSection = () => {
             {/* Second Row */}
             <Box sx={{ flex: "1 1 30%" }}>
               <TextField
+                size="small"
                 error={Boolean(formErrors?.sessionStartTime)}
                 helperText={formErrors?.sessionStartTime}
-                label="Start Time"
-                name="sessionStartTime"
+                label="Start Time *"
                 type="time"
                 value={sessionForm.sessionStartTime}
+                name="sessionStartTime"
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -186,9 +464,10 @@ const OneByOneSection = () => {
 
             <Box sx={{ flex: "1 1 30%" }}>
               <TextField
+                size="small"
                 error={Boolean(formErrors?.sessionEndTime)}
                 helperText={formErrors?.sessionEndTime}
-                label="End Time"
+                label="End Time *"
                 name="sessionEndTime"
                 type="time"
                 value={sessionForm.sessionEndTime}
@@ -203,21 +482,42 @@ const OneByOneSection = () => {
 
             <Box sx={{ flex: "1 1 30%" }}>
               <Autocomplete
+                value={
+                  instructors.find(
+                    (item) => item.InstructorID == sessionForm?.instructorId
+                  ) || null
+                }
+                size="small"
                 options={instructors}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option?.Name || ""}
                 renderInput={(params) => (
                   <TextField
                     error={Boolean(formErrors?.instructorId)}
                     helperText={formErrors?.instructorId}
                     {...params}
-                    label="Instructor"
+                    label="Instructor *"
                     margin="normal"
                     fullWidth
                   />
                 )}
-                onChange={(e, value) =>
-                  handleDropdownChange("instructorId", value?.id)
-                }
+                onChange={(e, value) => {
+                  handleDropdownChange("instructorId", value?.InstructorID);
+                }}
+              />
+            </Box>
+
+            <Box sx={{ width: "100%" }}>
+              <TextField
+                size="small"
+                value={sessionForm.sessionDescription}
+                label="Description"
+                multiline
+                rows={2} // Specifies the number of rows (height of the text area)
+                variant="outlined" // You can use "filled" or "standard" as well
+                fullWidth
+                placeholder="Session Describtion"
+                name="sessionDescription"
+                onChange={handleInputChange}
               />
             </Box>
           </Box>
@@ -253,7 +553,33 @@ const OneByOneSection = () => {
         </div>
       )}
 
-      <div className="added-sessions-list">list</div>
+      <div className="added-sessions-list">
+        <OneByOneSessionsList
+          data={sessionsView}
+          handleDeleteRow={handleDeleteRow}
+        ></OneByOneSessionsList>
+      </div>
+
+      {sessionsList?.length > 0 ? (
+        <div className="submit-form">
+          <FormButton
+            isLoading={addLoading}
+            onClick={handleSubmit}
+            buttonText="Submit"
+            className="main-btn form-add-btn"
+          />
+        </div>
+      ) : (
+        ""
+      )}
+
+      {isError ? (
+        <p className="invalid-message">
+          {error.responseData?.failed?.response?.msg}
+        </p>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
