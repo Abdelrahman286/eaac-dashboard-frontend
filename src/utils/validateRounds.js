@@ -60,3 +60,32 @@ export const validateBulkSuggestion = (formData) => {
 
   return errors;
 };
+
+export const validateEditSession = (dataRow) => {
+  const errors = {};
+
+  if (isBlank(dataRow?.nameEn)) {
+    errors.nameEn = "Please Fill in Session Name";
+  }
+  if (isBlank(dataRow?.roomId)) {
+    errors.roomId = "Please Select Session Room ";
+  }
+
+  if (isBlank(dataRow?.sessionDate)) {
+    errors.sessionDate = "Please Fill in Session Date";
+  }
+
+  if (isBlank(dataRow?.startTime)) {
+    errors.startTime = "Please Fill in Session Start Time";
+  }
+
+  if (isBlank(dataRow?.endTime)) {
+    errors.endTime = "Please Fill in Session End Time";
+  }
+
+  if (isBlank(dataRow?.instructorId)) {
+    errors.instructorId = "Please Select Session Instructor";
+  }
+
+  return errors;
+};

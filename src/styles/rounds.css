@@ -352,4 +352,15 @@
       }
     }
   }
+
+  .edit-sessions {
+    .header {
+      width: 100%;
+      display: flex;
+    }
+    .sessions-list {
+      min-width: 100%;
+      width: max-content;
+    }
+  }
 }

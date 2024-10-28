@@ -44,3 +44,8 @@ export const getInstructorsFn = (reqBody, token, config) =>
 export const getSessionsFn = (reqBody, token, config) => {
   return makeRequest(`${URL}/session/getSession`, reqBody, token, config);
 };
+
+// update session
+export const updateSessionFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/session/updateSession`, reqBody, token, config);
+};
