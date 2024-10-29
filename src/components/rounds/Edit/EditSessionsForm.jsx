@@ -244,6 +244,7 @@ const EditSessionsForm = ({ data, onClose }) => {
                     {idToEdit == ele.id && (
                       <div>
                         <EditSessionForm
+                          roundId={data?.id}
                           session={ele}
                           onCancel={() => setIdToEdit("")}
                         ></EditSessionForm>

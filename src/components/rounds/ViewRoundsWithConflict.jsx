@@ -3,44 +3,16 @@ import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 // utils
-import { convertTo12HourFormat } from "../../utils/functions";
+import {
+  convertTo12HourFormat,
+  getConflictString,
+} from "../../utils/functions";
 const ViewRoundsWithConflict = ({ data, mainFormData }) => {
   // Add index for array objects
   const arrayWithIndex = data.map((item, index) => ({
     ...item,
     rowIndex: index + 1, // Add the index to each object
   }));
-
-  const getConflictString = (conflictsArray) => {
-    if (!Array.isArray(conflictsArray) || conflictsArray.length === 0) {
-      return ""; // Return empty string if input is not an array or is empty
-    }
-
-    let combinedConflictString = "";
-
-    conflictsArray.forEach((ele) => {
-      const sessionDate = ele?.SessionDate.split(" ")[0];
-      const startTime = convertTo12HourFormat(ele?.StartTime.split(" ")[1]);
-      const endTime = convertTo12HourFormat(ele?.EndTime.split(" ")[1]);
-
-      const roomConflict = ele?.Conflicts?.Room?.Name_en
-        ? `Room: (${ele.Conflicts.Room.Name_en} - ${ele.Conflicts.Room.RoomCode})`
-        : "";
-      const instructorConflict = ele?.Conflicts?.Instructor?.Name
-        ? `Instructor: ${ele.Conflicts.Instructor.Name}`
-        : "";
-
-      // Combine room and instructor conflicts with "&" if both exist
-      const conflictString =
-        roomConflict && instructorConflict
-          ? `${roomConflict} & ${instructorConflict}`
-          : `${roomConflict}${instructorConflict}`;
-
-      combinedConflictString += `At (${sessionDate}) from (${startTime}) to (${endTime}) at ${conflictString}\n\n`;
-    });
-
-    return combinedConflictString;
-  };
 
   return (
     <div className="one-by-one-sessionsList">

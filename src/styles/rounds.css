@@ -310,6 +310,7 @@
       padding: 10px;
       font-size: 14px;
       color: rgb(244, 64, 64);
+      white-space: "pre-line";
     }
   }
 }
@@ -323,7 +324,7 @@
     background: white;
     span {
       font-size: 14px;
-      fcolor: #262626;
+      color: #2a2a2a;
     }
     .data-row {
       /* background: red; */

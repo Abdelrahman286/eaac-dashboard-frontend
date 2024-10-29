@@ -11,6 +11,7 @@ import {
   Autocomplete,
   Button,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 
 // icons
@@ -30,13 +31,18 @@ import {
   EditRoundFn,
   getInstructorsFn,
   getRoomsFn,
-  getSessionsFn,
+  checkSessionConflictFn,
   updateSessionFn,
 } from "../../../requests/rounds";
 
 // validations
 import { validateEditSession } from "../../../utils/validateRounds";
-
+import {
+  convertDateFromDashToSlash,
+  getConflictString,
+  ensureSecondsInTime,
+  convertDateFormat,
+} from "../../../utils/functions";
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 
@@ -45,19 +51,26 @@ import dayjs from "dayjs"; // To help with formatting
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
-const EditSessionForm = ({ session, onCancel }) => {
+const EditSessionForm = ({ session, onCancel, roundId }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
+  const [isConflictExist, setIsConflictExist] = useState(false);
+  const [conflictMessage, setConflictMessage] = useState("");
+
+  const [localCheckData, setLocalCheckData] = useState(false);
+
   const handleInputChange = (e) => {
+    setLocalCheckData(false);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleDropdownChange = (name, value) => {
+    setLocalCheckData(false);
     setFormData({
       ...formData,
       [name]: value,
@@ -99,29 +112,70 @@ const EditSessionForm = ({ session, onCancel }) => {
 
   // initial data filling
   useEffect(() => {
-    // "nameEn" : "Test Update Session",
-    // "descriptionEn" : "Test Update Session Desc ",
-    // "sessionDate" : "13/10/2024",
-    // "startTime" : "7:00:00",
-    // "endTime" : "7:30:00",
-    // "roundId" : 32,
-    // "instructorId" : 10,
-    // "roomId" : 1,
-    // const { BranchID, CourseID, InstructorID, RoomID, Name_en } = data;
-    // const newObj = {
-    //   id: [data?.id],
-    //   nameEn: Name_en,
-    //   branchId: BranchID?.id || "",
-    //   roomId: RoomID?.id || "",
-    //   courseId: CourseID?.id || "",
-    //   instructorId: InstructorID?.id || "",
-    // };
-    // setFormData(newObj);
+    const {
+      Description_en,
+      EndTime,
+      InstructorID,
+      RoomID,
+      SessionDate,
+      StartTime,
+      Name_en,
+      BranchID,
+    } = session;
+
+    const intialFill = {
+      nameEn: Name_en,
+      sessionDate: SessionDate.split(" ")[0],
+      startTime: StartTime.split(" ")[1],
+      endTime: EndTime.split(" ")[1],
+      roomId: RoomID?.id,
+      instructorId: InstructorID?.id,
+      descriptionEn: Description_en,
+      branchId: BranchID?.id,
+    };
+
+    setFormData(intialFill);
   }, []);
+
+  // Check Request
+  const {
+    mutate: checkSessionConflict,
+    isPending: checkLoading,
+    isError: isCheckError,
+    error: checkError,
+    data: checkData,
+  } = useMutation({
+    onError: (error) => {
+      console.log("Error at editing Round data", error);
+      showSnackbar("Faild to edit Round Data", "error");
+    },
+    mutationFn: checkSessionConflictFn,
+    onSuccess: () => {
+      setLocalCheckData(true);
+    },
+  });
+
+  // check if there's conflict and assign it to a state
+  useEffect(() => {
+    if (checkData?.length > 0) {
+      let isConflict = false;
+      checkData.forEach((session) => {
+        if (Array.isArray(session?.conflicts) && session.conflicts.length > 0) {
+          isConflict = true;
+
+          const conflictmsg = getConflictString(session?.conflicts);
+          setConflictMessage(conflictmsg);
+        }
+      });
+      setIsConflictExist(isConflict);
+    } else {
+      setIsConflictExist(false);
+    }
+  }, [checkData]);
 
   // Edit Mutation
   const {
-    mutate: editRound,
+    mutate: editSession,
     isPending: editLoading,
     isError: isEditError,
     error,
@@ -131,28 +185,77 @@ const EditSessionForm = ({ session, onCancel }) => {
       console.log("Error at editing Round data", error);
       showSnackbar("Faild to edit Round Data", "error");
     },
-    mutationFn: EditRoundFn,
-    onSuccess: () => {
-      onClose();
-      queryClient.invalidateQueries(["round-pagination"]);
-      queryClient.invalidateQueries(["round-list"]);
-      showSnackbar("Round Edited Successfully", "success");
+    mutationFn: updateSessionFn,
+    onSuccess: (res) => {
+      onCancel();
+      queryClient.invalidateQueries(["roundSessions"]);
     },
   });
 
-  const handleSubmit = (e) => {};
-
-  const handleEditSession = () => {
+  const handleCheckConflict = () => {
     const errors = validateEditSession(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      //   editRound({
-      //     reqBody: formData,
-      //     token,
-      //   });
+
+      // make the check request
+
+      // the keys for check request
+      const dataToCheckConflict = {
+        startDate: convertDateFromDashToSlash(formData?.sessionDate),
+        endDate: convertDateFromDashToSlash(formData?.sessionDate),
+        startTime: ensureSecondsInTime(formData?.startTime),
+        endTime: ensureSecondsInTime(formData?.endTime),
+        roomId: formData?.roomId,
+        instructorId: formData.instructorId,
+        branchId: formData?.branchId,
+      };
+
+      checkSessionConflict({
+        reqBody: {
+          sessions: [dataToCheckConflict],
+        },
+        token,
+        config: {
+          isFormData: false,
+        },
+      });
+    }
+  };
+
+  const handlSubmitEdit = () => {
+    const errors = validateEditSession(formData);
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+    } else {
+      setFormErrors({});
+
+      // the keys for check request
+      const dataToSubmit = {
+        nameEn: formData.nameEn,
+        descriptionEn: formData.descriptionEn,
+        sessionDate: convertDateFormat(formData?.sessionDate), // dd/mm/yyyy
+        startTime: ensureSecondsInTime(formData?.startTime),
+        endTime: ensureSecondsInTime(formData?.endTime),
+        roundId: roundId,
+        instructorId: formData?.instructorId,
+        roomId: formData.instructorId,
+        branchId: formData?.branchId,
+      };
+
+      editSession({
+        reqBody: {
+          id: [session.id],
+          session: [dataToSubmit],
+        },
+        token,
+        config: {
+          isFormData: false,
+        },
+      });
     }
   };
 
@@ -283,6 +386,32 @@ const EditSessionForm = ({ session, onCancel }) => {
         margin="normal"
       />
 
+      {isConflictExist && (
+        <p
+          style={{
+            maxWidth: "320px",
+            whiteSpace: "pre-line",
+          }}
+          className="invalid-message"
+        >
+          {conflictMessage}
+        </p>
+      )}
+
+      {/*  Add server error here */}
+
+      {isEditError && (
+        <p
+          style={{
+            maxWidth: "320px",
+            whiteSpace: "pre-line",
+          }}
+          className="invalid-message"
+        >
+          {"An Error Occurred, please try again"}
+        </p>
+      )}
+
       <Box
         sx={{
           display: "flex",
@@ -299,20 +428,84 @@ const EditSessionForm = ({ session, onCancel }) => {
           Cancel
         </Button>
 
-        <Button
-          sx={{
-            marginLeft: "20px",
-          }}
-          variant="contained"
-          color="primary"
-          onClick={(e) => {
-            // addSessionRow();
-            // setShowAddForm(true);
-            handleEditSession();
-          }}
-        >
-          Edit
-        </Button>
+        {/* case : 1 check data exist and conflict */}
+
+        {localCheckData && isConflictExist ? (
+          <Button
+            sx={{
+              marginLeft: "20px",
+            }}
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              handlSubmitEdit();
+            }}
+          >
+            {editLoading ? (
+              <CircularProgress
+                size={24} // Adjust the spinner size as needed
+                color="inherit" // Inherit color from the button's color
+              />
+            ) : (
+              "Accept Conflict"
+            )}
+          </Button>
+        ) : (
+          ""
+        )}
+
+        {/* case : 2 check data exist and there's no conflict */}
+
+        {localCheckData && !isConflictExist ? (
+          <Button
+            sx={{
+              marginLeft: "20px",
+            }}
+            variant="contained"
+            color="success"
+            onClick={(e) => {
+              handlSubmitEdit();
+            }}
+            disabled={editLoading} // Disable the button when loading
+          >
+            {editLoading ? (
+              <CircularProgress
+                size={24} // Adjust the spinner size as needed
+                color="inherit" // Inherit color from the button's color
+              />
+            ) : (
+              "Edit"
+            )}
+          </Button>
+        ) : (
+          ""
+        )}
+
+        {/* case : 3 check data does not exist */}
+
+        {!localCheckData ? (
+          <Button
+            sx={{
+              marginLeft: "20px",
+            }}
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              handleCheckConflict();
+            }}
+          >
+            {checkLoading ? (
+              <CircularProgress
+                size={24} // Adjust the spinner size as needed
+                color="inherit" // Inherit color from the button's color
+              />
+            ) : (
+              "Edit"
+            )}
+          </Button>
+        ) : (
+          ""
+        )}
       </Box>
     </div>
   );

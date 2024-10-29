@@ -151,7 +151,8 @@ const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
     onError: (error) => {
       // Access the parsed error details here
       console.log("Error at adding new Round with one by one sessions");
-      console.log(error.responseData?.failed?.response);
+      //   console.log(error.responseData?.failed?.response);
+      setConflictsList(error.responseData?.failed?.response?.data);
     },
     mutationFn: async (reqObj) => {
       let requestOptions = {
@@ -255,106 +256,6 @@ const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
     newObj.endDate = formatDate2(lastSessionDate);
 
     sendSessions(newObj);
-
-    // sendSessions({
-    //   nameAr: "aaa",
-    //   nameEn: "aaa",
-    //   numberOfSessions: 27,
-    //   courseId: 1,
-    //   roomId: 1,
-    //   instructorId: 10,
-    //   branchId: 1,
-    //   roundCode: "aaa",
-    //   sessionDinamicallyFlag: 0,
-    //   sessions: [
-    //     {
-    //       sessionName: "aaa",
-    //       sessionDescription: "",
-    //       sessionDate: "12/06/2024",
-    //       sessionStartTime: "12:31",
-    //       sessionEndTime: "13:34",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "12:31:00",
-    //       endTime: "13:34:00",
-    //       nameEn: "aaa",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //     {
-    //       sessionName: "aaa",
-    //       sessionDescription: "",
-    //       sessionDate: "08/08/2024",
-    //       sessionStartTime: "17:21",
-    //       sessionEndTime: "21:21",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "17:21:00",
-    //       endTime: "21:21:00",
-    //       nameEn: "aaa",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //     {
-    //       sessionName: "aa",
-    //       sessionDescription: "",
-    //       sessionDate: "11/09/2024",
-    //       sessionStartTime: "14:19",
-    //       sessionEndTime: "18:16",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "14:19:00",
-    //       endTime: "18:16:00",
-    //       nameEn: "aa",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //     {
-    //       sessionName: "test 1",
-    //       sessionDescription: "",
-    //       sessionDate: "01/10/2024",
-    //       sessionStartTime: "14:19",
-    //       sessionEndTime: "18:16",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "14:19:00",
-    //       endTime: "18:16:00",
-    //       nameEn: "test 1",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //     {
-    //       sessionName: "aa",
-    //       sessionDescription: "",
-    //       sessionDate: "09/10/2024",
-    //       sessionStartTime: "15:20",
-    //       sessionEndTime: "17:18",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "15:20:00",
-    //       endTime: "17:18:00",
-    //       nameEn: "aa",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //     {
-    //       sessionName: "test 2",
-    //       sessionDescription: "",
-    //       sessionDate: "10/10/2024",
-    //       sessionStartTime: "14:19",
-    //       sessionEndTime: "18:16",
-    //       instructorId: "10",
-    //       sessionRoomId: "1",
-    //       startTime: "14:19:00",
-    //       endTime: "18:16:00",
-    //       nameEn: "test 2",
-    //       descriptionEn: "-",
-    //       roomId: "1",
-    //     },
-    //   ],
-    //   startDate: "12/06/2024",
-    //   endDate: "10/10/2024",
-    // });
   };
 
   return (
@@ -557,6 +458,7 @@ const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
         <OneByOneSessionsList
           data={sessionsView}
           handleDeleteRow={handleDeleteRow}
+          conflictArray={conflictsList}
         ></OneByOneSessionsList>
       </div>
 

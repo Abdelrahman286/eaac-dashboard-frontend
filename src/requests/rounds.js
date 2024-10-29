@@ -49,3 +49,14 @@ export const getSessionsFn = (reqBody, token, config) => {
 export const updateSessionFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/session/updateSession`, reqBody, token, config);
 };
+
+// check session conflict
+
+export const checkSessionConflictFn = ({ reqBody, token, config }) => {
+  return makeRequest(
+    `${URL}/round/getSessionDateTimesOneByOne`,
+    reqBody,
+    token,
+    config
+  );
+};
