@@ -5,7 +5,6 @@ import { Box, TextField, Typography } from "@mui/material";
 import SessionsList from "./SessionsList";
 
 const ViewRound = ({ onClose, roundData }) => {
-  console.log(roundData);
   return (
     <div>
       <Box sx={{ width: "100%" }}>

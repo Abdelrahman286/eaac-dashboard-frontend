@@ -21,25 +21,14 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 // components
-import FormButton from "../../FormButton";
+
 import CustomIconButton from "../../CustomIconButton";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import EditSessionForm from "./EditSessionForm";
+import AddNewSessions from "./AddNewSessions";
 
 // Requests
-import {
-  EditRoundFn,
-  getInstructorsFn,
-  getRoomsFn,
-  getSessionsFn,
-  updateSessionFn,
-} from "../../../requests/rounds";
-
-// validations
-import {
-  validateAddRound,
-  validateEditRound,
-} from "../../../utils/requestValidations";
+import { getSessionsFn, deleteSessionFn } from "../../../requests/rounds";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
@@ -47,6 +36,7 @@ import { getDataForTableRows } from "../../../utils/tables";
 // dates
 import dayjs from "dayjs"; // To help with formatting
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
 dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
 const EditSessionsForm = ({ data, onClose }) => {
@@ -94,7 +84,7 @@ const EditSessionsForm = ({ data, onClose }) => {
       console.log("Error at editing Round data", error);
       showSnackbar("Faild to edit Round Data", "error");
     },
-    mutationFn: updateSessionFn,
+    mutationFn: deleteSessionFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["roundSessions"]);
       showSnackbar("Session Deleted Successfully", "success");
@@ -102,37 +92,24 @@ const EditSessionsForm = ({ data, onClose }) => {
   });
 
   const handleDeleteSession = (session) => {
-    console.log(session);
-
-    //statusId = 4
-
     deleteSession({
-      reqBody: { id: [session.id], session: [{ statusId: 4 }] },
+      reqBody: { id: session.id },
       token,
       config: { isFormData: false },
     });
   };
+
   return (
     <div className="edit-sessions">
       {/* Add button */}
       <div className="header">
         {showAddForm && (
-          <IconButton
-            sx={{
-              backgroundColor: "#f5f5f5", // Lighter grayish color
-              "&:hover": {
-                backgroundColor: "#eeeeee", // Slightly darker light gray on hover
-              },
-
-              display: "flex",
-              justifySelf: "flex-end",
-            }}
-            color=""
-            aria-label="go back"
-            onClick={handleGoBack}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          <div>
+            <AddNewSessions
+              handleGoBack={handleGoBack}
+              data={data}
+            ></AddNewSessions>
+          </div>
         )}
 
         {!showAddForm && (
@@ -142,7 +119,6 @@ const EditSessionsForm = ({ data, onClose }) => {
             sx={{
               marginLeft: "auto",
             }}
-            //   disabled={showAddForm}
             startIcon={<AddIcon />}
             onClick={(e) => {
               setShowAddForm(true);
@@ -229,6 +205,7 @@ const EditSessionsForm = ({ data, onClose }) => {
                             sx={{
                               marginLeft: "20px",
                             }}
+                            disabled={deleteLoading}
                             variant="contained"
                             color="error"
                             onClick={(e) => {

@@ -2,33 +2,20 @@ import React, { useEffect, useState, useContext } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import "../../../styles/rounds.css";
 // MUI
-
 import {
-  Tabs,
-  Tab,
   Box,
   TextField,
   Autocomplete,
   Button,
-  IconButton,
   CircularProgress,
 } from "@mui/material";
-
-// icons
-import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
-// components
-import FormButton from "../../FormButton";
-import CustomIconButton from "../../CustomIconButton";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 
 // Requests
 import {
-  EditRoundFn,
   getInstructorsFn,
   getRoomsFn,
   checkSessionConflictFn,
@@ -146,8 +133,8 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
     data: checkData,
   } = useMutation({
     onError: (error) => {
-      console.log("Error at editing Round data", error);
-      showSnackbar("Faild to edit Round Data", "error");
+      //   console.log("Error at editing Round data", error);
+      //   showSnackbar("Faild to edit Round Data", "error");
     },
     mutationFn: checkSessionConflictFn,
     onSuccess: () => {
@@ -182,13 +169,14 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
   } = useMutation({
     onError: (error) => {
       //   console.log(error.responseError?.failed?.response?.msg);
-      console.log("Error at editing Round data", error);
-      showSnackbar("Faild to edit Round Data", "error");
+      console.log("Error at editing Session data", error);
+      showSnackbar("Faild to edit Session Data", "error");
     },
     mutationFn: updateSessionFn,
     onSuccess: (res) => {
       onCancel();
       queryClient.invalidateQueries(["roundSessions"]);
+      showSnackbar("Session Data Edited Successfully", "success");
     },
   });
 
@@ -242,8 +230,13 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
         endTime: ensureSecondsInTime(formData?.endTime),
         roundId: roundId,
         instructorId: formData?.instructorId,
-        roomId: formData.instructorId,
+        roomId: formData.roomId,
         branchId: formData?.branchId,
+
+        // additional data to pass the request
+        nameAr: "",
+        descriptionAr: "",
+        statusId: null,
       };
 
       editSession({
@@ -260,7 +253,7 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
   };
 
   return (
-    <div>
+    <div className="edit-session-inline-form">
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
           error={Boolean(formErrors?.nameEn)}
@@ -442,10 +435,7 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
             }}
           >
             {editLoading ? (
-              <CircularProgress
-                size={24} // Adjust the spinner size as needed
-                color="inherit" // Inherit color from the button's color
-              />
+              <CircularProgress size={24} color="inherit" />
             ) : (
               "Accept Conflict"
             )}

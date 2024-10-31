@@ -6,7 +6,7 @@ import { formatDate } from "../../utils/functions";
 
 import { convertTo12HourFormat } from "../../utils/functions";
 const OneByOneSessionsList = ({ data, handleDeleteRow, conflictArray }) => {
-  console.log(conflictArray);
+  //   console.log(conflictArray);
   // Add index for array objects
   let arrayWithIndex = data.map((item, index) => ({
     ...item,
@@ -80,8 +80,12 @@ const OneByOneSessionsList = ({ data, handleDeleteRow, conflictArray }) => {
                 <span>{ele?.rowIndex}</span>
                 <span>{ele?.sessionName}</span>
                 <span>{formatDate(ele?.sessionDate)}</span>
-                <span>{ele?.sessionStartTime}</span>
-                <span>{ele?.sessionEndTime}</span>
+                <span>
+                  {convertTo12HourFormat(`${ele?.sessionStartTime}:00`)}
+                </span>
+                <span>
+                  {convertTo12HourFormat(`${ele?.sessionEndTime}:00`)}
+                </span>
                 <span>{ele?.sessionDescription}</span>
                 <span>{`${ele?.sessionRoomId?.Name_en} (${ele?.sessionRoomId?.RoomCode})`}</span>
                 <span>{ele?.instructorId?.Name}</span>

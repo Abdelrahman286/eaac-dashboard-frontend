@@ -50,6 +50,11 @@ export const updateSessionFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/session/updateSession`, reqBody, token, config);
 };
 
+// delete session
+export const deleteSessionFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/session/deleteSession`, reqBody, token, config);
+};
+
 // check session conflict
 
 export const checkSessionConflictFn = ({ reqBody, token, config }) => {
@@ -59,4 +64,10 @@ export const checkSessionConflictFn = ({ reqBody, token, config }) => {
     token,
     config
   );
+};
+
+// create Sessions in edit
+
+export const createSessionsFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/session/createSession`, reqBody, token, config);
 };

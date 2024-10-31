@@ -234,7 +234,8 @@
     margin-top: 10px;
     display: flex;
     justify-content: space-between;
-    background: rgb(227, 227, 227);
+    /* background: rgb(227, 227, 227); */
+    background: #dddddd9d;
     padding: 6px 0px;
     white-space: nowrap;
     width: max-content;
@@ -284,7 +285,14 @@
         text-align: center;
         word-break: break-word;
         overflow-wrap: break-word;
-        white-space: normal;
+        white-space: normal; 
+
+    
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        line-height: 1.4;
+
       }
 
       span:nth-of-type(1) {
@@ -355,6 +363,15 @@
   }
 
   .edit-sessions {
+    .edit-session-inline-form {
+      padding: 20px;
+      /* border: 1px solid #c1c1c1cd; */
+      border: 2px solid #388ee496;
+      border-radius: 20px;
+
+      box-shadow: 0px 2px 5px rgba(49, 49, 49, 0.2);
+    }
+
     .header {
       width: 100%;
       display: flex;

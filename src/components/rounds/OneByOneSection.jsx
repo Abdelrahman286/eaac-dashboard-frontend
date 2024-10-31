@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { Tabs, Tab, Box, TextField, Autocomplete, Button } from "@mui/material";
+import { Box, TextField, Autocomplete, Button } from "@mui/material";
 import "../../styles/rounds.css";
 
 // components
@@ -10,19 +10,12 @@ import FormButton from "../FormButton";
 import AddIcon from "@mui/icons-material/Add";
 
 // validation
-
 import { validateRoundRow } from "../../utils/validateRounds";
-import FormSessionsTable from "./FormSessionsTable-old";
 import OneByOneSessionsList from "./OneByOneSessionsList";
 
 // utils
 import { URL } from "../../requests/main";
-import {
-  convertDateFromDashToSlash,
-  convertDateFormat,
-  formatDate,
-  formatDate2,
-} from "../../utils/functions";
+import { convertDateFormat, formatDate2 } from "../../utils/functions";
 
 // contexts
 import { AppContext } from "../../contexts/AppContext";
