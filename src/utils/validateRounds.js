@@ -89,3 +89,41 @@ export const validateEditSession = (dataRow) => {
 
   return errors;
 };
+
+export const validateAddBulkInEdit = (dataRow) => {
+  const errors = {};
+
+  if (isBlank(dataRow?.sessionNameDynamic)) {
+    errors.sessionNameDynamic = "Please Fill in Session Name";
+  }
+  if (isBlank(dataRow?.roomId)) {
+    errors.roomId = "Please Select Session Room ";
+  }
+
+  if (isBlank(dataRow?.startDate)) {
+    errors.startDate = "Please Fill in start Session Date";
+  }
+
+  if (isBlank(dataRow?.endDate)) {
+    errors.endDate = "Please Fill in End Session Date";
+  }
+
+  if (isBlank(dataRow?.sessionStartTime)) {
+    errors.sessionStartTime = "Please Fill in Session Start Time";
+  }
+
+  if (isBlank(dataRow?.sessionEndTime)) {
+    errors.sessionEndTime = "Please Fill in Session End Time";
+  }
+
+  if (isBlank(dataRow?.instructorId)) {
+    errors.instructorId = "Please Select Session Instructor";
+  }
+
+  //weekDays
+  if (isBlank(dataRow?.weekDays) || dataRow.weekDays?.length == 0) {
+    errors.weekDays = "Please Select Week Days";
+  }
+
+  return errors;
+};

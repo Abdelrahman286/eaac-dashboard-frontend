@@ -180,7 +180,8 @@ const Navbar = () => {
           </div>
           <div className="current-page-title">
             <h2>
-              {routes.find((ele) => pathname == ele.path)?.label || "dashboard"}{" "}
+              {routes.find((ele) => ele.paths.includes(pathname))?.label ||
+                "dashboard"}
             </h2>
           </div>
           <div className="profile-actions">

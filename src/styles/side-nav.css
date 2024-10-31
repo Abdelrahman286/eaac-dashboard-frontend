@@ -190,7 +190,7 @@
   padding: 0;
   box-sizing: content-box;
   position: fixed;
-  z-index: 1;
+  z-index: 3;
 
   width: -webkit-calc(100% - 250px);
   width: -moz-calc(100% - 250px);

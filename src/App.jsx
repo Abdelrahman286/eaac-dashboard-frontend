@@ -20,10 +20,10 @@ import StudentsPage from "./pages/StudentsPage";
 // lazy loaded pages
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
 const StudentAttendance = lazy(() =>
-  import("./components/attendance/StudentAttendance")
+  import("./components/attendance/student/StudentAttendance")
 );
 const InstructorAttendace = lazy(() =>
-  import("./components/attendance/InstructorAttendace")
+  import("./components/attendance/instructor/InstructorAttendace")
 );
 
 // context

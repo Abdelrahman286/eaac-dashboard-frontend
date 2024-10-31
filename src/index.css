@@ -100,7 +100,7 @@ mx-2 {
   /* background-color: #d1d5db;
   opacity: 0.8; */
   background-color: rgba(209, 213, 219, 0.8); /* Gray with 0.8 opacity */
-  z-index: 999;
+  z-index: 100;
 }
 
 .fixed-inset-40-padded-flex {

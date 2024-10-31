@@ -44,10 +44,8 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
   const { token } = useContext(UserContext);
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
-
   const [isConflictExist, setIsConflictExist] = useState(false);
   const [conflictMessage, setConflictMessage] = useState("");
-
   const [localCheckData, setLocalCheckData] = useState(false);
 
   const handleInputChange = (e) => {

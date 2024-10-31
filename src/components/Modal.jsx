@@ -8,9 +8,17 @@ import CloseIcon from "@mui/icons-material/Close";
 const Modal = ({ onClose, children, title, actionBar = "", classNames }) => {
   useEffect(() => {
     document.body.classList.add("overflow-hidden");
+    const header = document.querySelector(".dashboard-header");
+
+    if (header) {
+      header.style.zIndex = 0;
+    }
 
     return () => {
       document.body.classList.remove("overflow-hidden");
+      if (header) {
+        header.style.zIndex = 2;
+      }
     };
   }, []);
 

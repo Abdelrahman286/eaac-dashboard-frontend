@@ -1,5 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+// components
+import HeaderActions from "./HeaderActions";
 const InstructorAttendace = () => {
   const { instructorId } = useParams();
 
@@ -7,8 +9,7 @@ const InstructorAttendace = () => {
   return (
     <div>
       <div>
-        Iinstuctor Attendance
-        <p> {instructorId}</p>
+        {/* <HeaderActions></HeaderActions> */}
       </div>
     </div>
   );

@@ -1,14 +1,19 @@
 import React from "react";
 
 import { useParams } from "react-router-dom";
+
+// components
+import HeaderActions from "./HeaderActions";
+import DataTable from "./DataTable";
 const StudentAttendance = () => {
   const { studentId } = useParams();
 
   console.log(studentId);
   return (
     <div>
-      Student Attendance
-      <p>{studentId}</p>
+      {/* <HeaderActions></HeaderActions> */}
+
+      {/* <DataTable></DataTable> */}
     </div>
   );
 };

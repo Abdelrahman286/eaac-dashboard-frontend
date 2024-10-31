@@ -14,9 +14,6 @@ import {
 // icons
 import AddIcon from "@mui/icons-material/Add";
 
-// components
-import FormButton from "../../FormButton";
-
 // validation
 import { validateRoundRow } from "../../../utils/validateRounds";
 import OneByOneSessionsList from "../OneByOneSessionsList";
@@ -29,7 +26,6 @@ import {
   convertDateFormat,
   formatDate2,
 } from "../../../utils/functions";
-import { getDataForTableRows } from "../../../utils/tables";
 
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
@@ -37,14 +33,11 @@ import { UserContext } from "../../../contexts/UserContext";
 
 // Requests
 import {
-  getInstructorsFn,
-  getRoomsFn,
   checkSessionConflictFn,
   createSessionsFn,
 } from "../../../requests/rounds";
-import { ManOutlined, Padding } from "@mui/icons-material";
 
-const OneByOneForm = ({ mainFormData, handleGoBack }) => {
+const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -60,48 +53,12 @@ const OneByOneForm = ({ mainFormData, handleGoBack }) => {
   });
 
   const [sessionsList, setSessionsList] = useState([]);
-
   // here we add room and instructor name to view them in the table
   const [sessionsView, setSessionsView] = useState([]);
-
   const [formErrors, setFormErrors] = useState({});
   const [isConflictExist, setIsConflictExist] = useState(false);
   const [conflictsList, setConflictsList] = useState([]);
   const [localCheckData, setLocalCheckData] = useState(false);
-
-  //----- rooms
-  const { data: roomsList, isLoading: roomsLoading } = useQuery({
-    queryFn: () => {
-      return getRoomsFn(
-        {
-          numOfElements: "2000",
-          //   companyId: "1",
-        },
-        token
-      );
-    },
-
-    queryKey: ["rooms"],
-  });
-  const rooms = getDataForTableRows(roomsList?.success?.response?.data);
-
-  //----- Instructors
-  const { data: instructorsList, isLoading: instructorsLoading } = useQuery({
-    queryFn: () => {
-      return getInstructorsFn(
-        {
-          numOfElements: "2000",
-          //   companyId: "1",
-        },
-        token
-      );
-    },
-
-    queryKey: ["instructors"],
-  });
-  const instructors = getDataForTableRows(
-    instructorsList?.success?.response?.data
-  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
