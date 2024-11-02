@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
-import CustomIconButton from "../../CustomIconButton";
+import CalculateIcon from "@mui/icons-material/Calculate";
 
 import ClearIcon from "@mui/icons-material/Clear";
 // contexts
@@ -27,8 +27,8 @@ import { convertTo12HourFormat } from "../../../utils/functions";
 // requests
 
 import {
-  getStudentsAttendanceFn,
-  postStudentAttendanceFn,
+  getInstructorsAttendanceFn,
+  postInstructorAttendanceFn,
 } from "../../../requests/attendance";
 
 // components
@@ -40,7 +40,53 @@ const DataTable = ({}) => {
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
 
-  const handleAttendance = (id) => {};
+  const [startTime, setStartTime] = useState({
+    id: "",
+    value: "",
+  });
+
+  const [endTime, setEndTime] = useState({
+    id: "",
+    value: "",
+  });
+
+  const [timeErrors, setTimeErrors] = useState({});
+
+  const handleCalculateTime = (id) => {
+    // reset everything
+    setTimeErrors({});
+    // set errors
+    const errors = {};
+    if (startTime?.id !== id) {
+      errors.startTime = id;
+    }
+    if (endTime?.id !== id) {
+      errors.endTime = id;
+    }
+    setTimeErrors(errors);
+
+    // make the request if data is valid
+
+    if ((startTime.id == endTime.id) == id) {
+      console.log("mutate attendance data");
+      //   sendAttendanceData({
+      //     reqBody: {
+      //       instructorId: 10,
+      //       roundId: 40,
+      //       sessionId: 1657,
+      //       date: "2024/2/20",
+      //       attendTime: "7:30:00",
+      //       leaveTime: "08:00:00",
+      //       attendFlag: 1,
+      //       notes: "NOTES DAF",
+      //     },
+      //     token,
+      //     config: {
+      //       isFormData: false,
+      //     },
+      //   });
+    }
+  };
 
   // Mutate Attendance
 
@@ -51,14 +97,14 @@ const DataTable = ({}) => {
     error: attendanceError,
   } = useMutation({
     onError: (error) => {},
-    mutationFn: postStudentAttendanceFn,
+    mutationFn: postInstructorAttendanceFn,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["studentAttendance-pagination"],
+        queryKey: ["instructorAttendance-pagination"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["studentAttendance-list"],
+        queryKey: ["instructorAttendance-list"],
       });
       showSnackbar("Attendce Submitted Successfully", "success");
     },
@@ -82,13 +128,13 @@ const DataTable = ({}) => {
   } = useQuery({
     queryFn: () => {
       // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getStudentsAttendanceFn(paginationReqBody, token, {
+      return getInstructorsAttendanceFn(paginationReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
     queryKey: [
-      "studentAttendance-pagination",
+      "instructorAttendance-pagination",
       paginationReqBody,
       dataListReqBody,
     ],
@@ -102,14 +148,14 @@ const DataTable = ({}) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "studentAttendance-list",
+      "instructorAttendance-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
       dataListReqBody,
     ],
     queryFn: () => {
-      return getStudentsAttendanceFn(dataListReqBody, token, {
+      return getInstructorsAttendanceFn(dataListReqBody, token, {
         isFormData: true,
         urlParams: `page=${paginationModel.page + 1}`,
       });
@@ -216,85 +262,116 @@ const DataTable = ({}) => {
       field: "SessionDate",
       headerName: "Session Date",
       valueGetter: (value, row) => {
-        return `${row?.Date || "-"}`;
+        return `${row?.Date || ""}`;
       },
       flex: 1,
       minWidth: 100,
     },
 
     {
-      field: "AttendFlag",
-      headerName: "Attended",
+      field: "checkIn",
+      headerName: "Check-In",
 
       renderCell: (params) => {
-        if (params?.row?.AttendFlag == 1) {
-          return (
-            <Chip
-              label={"Attended"}
-              color="success"
-              size="small"
-              sx={{ fontWeight: "bold", fontSize: "14px" }}
-            />
-          );
-        } else if (params?.row?.AttendFlag == 0) {
-          return (
-            <Chip
-              label={"Absent"}
-              color="error"
-              size="small"
-              sx={{ fontWeight: "bold", fontSize: "14px" }}
-            />
-          );
-        } else {
-          return <span>-</span>;
-        }
+        return (
+          <Chip
+            label={convertTo12HourFormat(params?.row.AttendTime)}
+            color="primary"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
       },
 
       flex: 1,
       minWidth: 120,
     },
 
-    //numberOfSessionsAttended
+    {
+      field: "checkOut",
+      headerName: "Check-Out",
+
+      renderCell: (params) => {
+        return (
+          <Chip
+            label={convertTo12HourFormat(params?.row?.LeaveTime)}
+            color="primary"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
+      },
+      flex: 1,
+      minWidth: 120,
+    },
 
     {
-      field: "numberOfSessionsAttended",
-      headerName: "No.of Attended Sessions",
-      valueGetter: (value, row) => {
-        return `${row?.numberOfSessionsAttended || "-"}`;
+      field: "workedHours",
+      headerName: "Hours",
+      renderCell: (params) => {
+        return (
+          <Chip
+            label={params?.row?.workedHours}
+            color="success"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
       },
+
       flex: 1,
       minWidth: 100,
     },
-
-    //percentageOfSessionsAttended
-
-    {
-      field: "percentageOfSessionsAttended",
-      headerName: "Percentage",
-      valueGetter: (value, row) => {
-        return `${row?.percentageOfSessionsAttended || "-"}`;
-      },
-      flex: 1,
-      minWidth: 100,
-    },
-
     {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 140,
+      minWidth: 360,
       renderCell: (params) => {
         return (
-          <Box sx={{ margin: "0" }}>
-            <CustomIconButton
-              icon={"attended"}
-              title={"Attended"}
-            ></CustomIconButton>
+          <Box sx={{ margin: "0", padding: "10px 3px" }}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                error={Boolean(timeErrors?.startTime == params.row.id)}
+                label="Attendance Time"
+                type="time"
+                size="small"
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: 150 }}
+                onChange={(e) =>
+                  setStartTime({
+                    id: params.row.id,
+                    value: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                error={Boolean(timeErrors?.endTime == params.row.id)}
+                label="Leave Time"
+                type="time"
+                size="small"
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: 150 }}
+                onChange={(e) =>
+                  setEndTime({
+                    id: params.row.id,
+                    value: e.target.value,
+                  })
+                }
+              />
 
-            <CustomIconButton
-              icon={"absent"}
-              title={"Absent"}
-            ></CustomIconButton>
+              <Tooltip title="Calculate">
+                <IconButton
+                  size="large"
+                  color="primary"
+                  onClick={() => {
+                    handleCalculateTime(params.row.id);
+                  }}
+                >
+                  <CalculateIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </Box>
         );
       },

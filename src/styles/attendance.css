@@ -13,33 +13,6 @@
   }
 }
 
-.room-form-page {
-  .form-add-btn {
-    width: 200px;
-    align-self: flex-start;
-    justify-self: flex-start;
-    font-size: 16px;
-  }
-
-  .form-actions {
-    /* background: red; */
-    padding: 20px 0px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    p {
-      margin: 0 10px;
-    }
-  }
-}
-.action-btn-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 10px;
-
-  button {
-    width: 150px;
-  }
+.instructor-attendance {
+  /* background: red; */
 }

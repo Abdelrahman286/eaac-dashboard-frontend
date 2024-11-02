@@ -1,19 +1,10 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Tabs,
-  Tab,
-  Button,
-  InputAdornment,
-  MenuItem,
-  IconButton,
-  Select,
-} from "@mui/material";
+import { Box, TextField, Tabs, Tab } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EnrollTab from "./EnrollTab";
+import TransferTab from "./TransferTab";
+import UnenrollTab from "./EnrollTab";
 
 const GroupsModal = () => {
   // State to manage active tab
@@ -25,136 +16,145 @@ const GroupsModal = () => {
   };
 
   return (
-    <Box sx={{ padding: 1, width: "95%", margin: "0 auto" }}>
-      {/* Header */}
-      <Typography variant="h6" align="center" gutterBottom>
-        Manage Enrollment
-      </Typography>
+    <Box>
+      {/* student info */}
+      <Box
+        sx={{
+          padding: 4,
+          border: "1px solid #d1d1d1",
+          //   border: "1px solid #3463d0",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+          borderRadius: "20px",
+        }}
+      >
+        {/* first main row  */}
 
-      <Typography variant="h6" align="center" color="primary" gutterBottom>
-        #521
-      </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: "100%",
+          }}
+        >
+          {/* first sub row */}
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+            <TextField
+              label="Name (Ar)"
+              value="محمد علي أحمد"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
+            <TextField
+              label="Mobile"
+              value="+201114442161"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
+            <TextField
+              label="Company"
+              value="Ferro Oil Service"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          {/* second sub row */}
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+            <TextField
+              label="Name (En)"
+              value="Mohammed Ali Ahmed"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
 
-      {/* Client/Student Info Section */}
-      <Box mb={2} p={1.5} bgcolor="#f5f5f5" borderRadius={1}>
-        <Typography variant="subtitle1" gutterBottom>
-          Client/Student Info
-        </Typography>
+            <TextField
+              label="Email"
+              value="mk@diginovia.com"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
 
-        {/* Row with 3 input fields */}
-        <Box display="flex" justifyContent="space-between" mb={1}>
-          <TextField
-            label="Name (Ar)"
-            value="محمد علي أحمد"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-          <TextField
-            label="Mobile"
-            value="+201114442161"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-          <TextField
-            label="Name (En)"
-            value="Mohammed Ali Ahmed"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
+            <TextField
+              label="Branch"
+              value="Alex branch"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
         </Box>
 
-        {/* Second Row with 3 input fields */}
-        <Box display="flex" justifyContent="space-between" mb={1}>
-          <TextField
-            label="Email"
-            value="mk@diginovia.com"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-          <TextField
-            label="Company"
-            value="Ferro for Oil Services"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-          <TextField
-            label="Branch"
-            value="Alex branch"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-        </Box>
+        {/* Second main row  */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 2,
+            width: "100%",
+            paddingTop: "20px",
+          }}
+        >
+          <Box
+            sx={{ display: "flex", flex: 1, flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              label="Membership Code"
+              value="25458756985"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
 
-        {/* Third Row with 3 input fields */}
-        <Box display="flex" justifyContent="space-between" mb={1}>
-          <TextField
-            label="Membership Code"
-            value="25458756985"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
+            <TextField
+              label="Expiration Date"
+              value="10/11/2024"
+              fullWidth
+              size="small"
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+
           <TextField
             label="Client Balance"
             value="-1200 EGP"
             fullWidth
             size="small"
-            sx={{ flexBasis: "32%" }}
+            sx={{ flex: 1 }}
             InputProps={{ readOnly: true }}
             InputLabelProps={{
               style: { color: "red" },
             }}
           />
           <TextField
-            label="Expiration Date"
-            value="10/11/2024"
-            fullWidth
-            size="small"
-            sx={{ flexBasis: "32%" }}
-            InputProps={{ readOnly: true }}
-          />
-        </Box>
-
-        {/* Fourth Row with 2 input fields */}
-        <Box display="flex" justifyContent="space-between" mb={1}>
-          <TextField
             label="Groups/Rounds"
             value="IT Round23, IT Management Round0025"
             fullWidth
             size="small"
-            sx={{ flexBasis: "49%" }}
             InputProps={{ readOnly: true }}
+            sx={{ flex: 1 }}
           />
           <TextField
+            sx={{ flex: 1 }}
             label="Notes"
             value="Additional notes for the contact that can help in search"
             fullWidth
             size="small"
-            sx={{ flexBasis: "49%" }}
             InputProps={{ readOnly: true }}
           />
         </Box>
       </Box>
 
-      {/* Tabs Section */}
+      {/* Tabs (Enroll , transfer , unEnroll) */}
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
         centered
-        sx={{ marginBottom: 2, minHeight: "32px" }}
+        sx={{ marginBottom: 2, minHeight: "32px", marginTop: "20px" }}
       >
         <Tab label="Enroll to Group" sx={{ minHeight: "32px" }} />
         <Tab label="Transfer to Group" sx={{ minHeight: "32px" }} />
@@ -163,12 +163,8 @@ const GroupsModal = () => {
 
       {/* Conditional rendering based on active tab */}
       {activeTab === 0 && <EnrollTab></EnrollTab>}
-      {activeTab === 1 && (
-        <Typography>Transfer to Group content goes here...</Typography>
-      )}
-      {activeTab === 2 && (
-        <Typography>UnEnroll/Cancel Enrollment content goes here...</Typography>
-      )}
+      {activeTab === 1 && <TransferTab></TransferTab>}
+      {activeTab === 2 && <UnenrollTab></UnenrollTab>}
     </Box>
   );
 };

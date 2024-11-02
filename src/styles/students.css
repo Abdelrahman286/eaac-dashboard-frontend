@@ -55,6 +55,10 @@
   min-width: 60%;
   max-height: 60vh;
 }
+.student-enroll-form {
+  min-width: 60%;
+  max-height: 86vh;
+}
 .student-form-page {
   .form-add-btn {
     width: 200px;

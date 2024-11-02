@@ -67,7 +67,6 @@ const StudentsTable = ({ onDataChange }) => {
 
   const { token } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
@@ -494,8 +493,8 @@ const StudentsTable = ({ onDataChange }) => {
 
       {showGroupsModal && (
         <Modal
-          classNames={"student-mutation-form"}
-          title={""}
+          classNames={"student-enroll-form "}
+          title={"Manage Enrollment"}
           onClose={() => setShowGroupsModal(false)}
         >
           <GroupsModal closeFn={() => setShowGroupsModal(false)}></GroupsModal>

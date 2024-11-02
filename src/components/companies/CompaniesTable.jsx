@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, Suspense, lazy } from "react";
-import Box from "@mui/material/Box";
+import { Box, Avatar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCompaniesFn, restoreCompanyFn } from "../../requests/companies";
@@ -18,7 +18,7 @@ import Tooltip from "@mui/material/Tooltip";
 // request functions
 import { deleteCompanyFn } from "../../requests/companies";
 
-// components 
+// components
 import Modal from "../Modal";
 import LoadingSpinner from "../LoadingSpinner";
 import DeleteConfirmation from "../DeleteConfirmation";
@@ -250,13 +250,24 @@ const CompaniesTable = ({ onDataChange }) => {
       headerName: "Logo",
       flex: 1,
       minWidth: 50,
+
       renderCell: (params) => {
         return (
-          <div className="table-cell-logo">
-            <div className="logo-container">
-              <img src={params?.row.Logo} alt="Logo"></img>
-            </div>
-          </div>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "6px",
+            }}
+          >
+            <Avatar
+              src={params?.row.Logo}
+              alt="Logo"
+              variant="circular"
+              sx={{ width: 40, height: 40 }}
+            />
+          </Box>
         );
       },
     },

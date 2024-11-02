@@ -14,6 +14,9 @@ import roundsClassesIcon from "../assets/icons/rounds-classes-btn.png";
 import viewIcon from "../assets/icons/view-btn.png";
 import enroll from "../assets/icons/enroll.png";
 
+import attended from "../assets/icons/attended.png";
+import absent from "../assets/icons/absent.png";
+
 // Create a mapping of icon names to their respective image paths
 const iconMap = {
   add: addIcon,
@@ -27,6 +30,8 @@ const iconMap = {
   roundsClasses: roundsClassesIcon,
   view: viewIcon,
   enroll: enroll,
+  attended: attended,
+  absent: absent,
 };
 
 const CustomIconButton = ({ icon, title, onClick, ...props }) => {

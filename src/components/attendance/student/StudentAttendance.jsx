@@ -11,9 +11,9 @@ const StudentAttendance = () => {
   console.log(studentId);
   return (
     <div>
-      {/* <HeaderActions></HeaderActions> */}
+      <HeaderActions></HeaderActions>
 
-      {/* <DataTable></DataTable> */}
+      <DataTable></DataTable>
     </div>
   );
 };
