@@ -23,22 +23,29 @@ import {
   getRoundsFn,
   getPaymentMethodsFn,
   getPromoCodes,
+  calculatePriceFn,
+  enrollFn,
 } from "../../requests/students";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
 
+// validation
+import { validateEnroll } from "../../utils/validateStudents";
+
 // components
 import SearchableDropdown from "../SearchableDropdown";
 
-const EnrollTab = () => {
+const EnrollTab = ({ data, closeFn }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
 
+  const [formErrors, setFormErrors] = useState({});
   const [selectedGroup, setSelectedGroup] = useState({});
   const [selectedPromoCode, setSelectedPromoCode] = useState({});
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
+  const [deposit, setDeposit] = useState(0);
 
   const handleRoundSelect = (selectedRound) => {
     console.log(selectedRound);
@@ -51,10 +58,10 @@ const EnrollTab = () => {
       queryFn: () => {
         return getPaymentMethodsFn(
           {
-            numOfElements: "2000",
+            // numOfElements: "2000",
           },
           token,
-          { ifFormData: false }
+          { isFormData: false }
         );
       },
 
@@ -72,7 +79,7 @@ const EnrollTab = () => {
           numOfElements: "2000",
         },
         token,
-        { ifFormData: false }
+        { isFormData: false }
       );
     },
 
@@ -81,6 +88,40 @@ const EnrollTab = () => {
   const promoCodes = getDataForTableRows(
     promoCodesList?.success?.response?.data
   );
+
+  // Calculate Price
+  const { data: finalPrice_, isLoading: priceLoading } = useQuery({
+    enabled: !!selectedGroup?.id,
+
+    queryFn: () => {
+      const payload = {
+        studentId: data?.id,
+        roundId: selectedGroup?.id,
+        ...(selectedPromoCode
+          ? { discountVoucherId: selectedPromoCode.id }
+          : {}),
+      };
+
+      return calculatePriceFn(payload, token, { isFormData: false });
+    },
+
+    queryKey: ["finalPrice", selectedPromoCode],
+  });
+  const finalPrice = finalPrice_?.success?.response?.data;
+
+  // Send Enroll data
+  const { mutate: sendEnrollData, isPending: enrollLoading } = useMutation({
+    mutationFn: enrollFn,
+    onSuccess: () => {
+      console.log("Round deleted successfully");
+      showSnackbar("Student Enrolled Successfully ", "Success");
+    },
+    onError: (error) => {
+      showSnackbar("Student Enrollment Failed", "error");
+    },
+  });
+
+  const handleEnroll = () => {};
 
   return (
     <Box>
@@ -97,7 +138,6 @@ const EnrollTab = () => {
           <SearchableDropdown
             styles={{
               width: "60%",
-
               padding: "0px",
               marginTop: "-12px",
             }}
@@ -290,7 +330,13 @@ const EnrollTab = () => {
               >
                 Price After Discount
               </Typography>
-              <Typography variant="body1">1200</Typography>
+              <Typography variant="body1">
+                {priceLoading
+                  ? "Loading..."
+                  : !finalPrice
+                  ? "no discount"
+                  : finalPrice}
+              </Typography>
             </Box>
           </Box>
           <Box
@@ -302,15 +348,15 @@ const EnrollTab = () => {
             }}
           >
             <TextField
-              id="Deposit"
-              //   onChange={handleFormChange}
-              //   error={Boolean(formErrors?.nameEn)}
-              //   helperText={formErrors?.nameEn}
-              //   value={}
+              id="deposit"
+              onChange={(e) => setDeposit(e.target.value)}
+              error={Boolean(formErrors?.deposit)}
+              helperText={formErrors?.deposit}
+              value={deposit}
               type="number"
               InputLabelProps={{ shrink: true }}
               label="Deposit"
-              name="Deposit"
+              name="deposit"
               size="small"
             />
 
@@ -327,6 +373,9 @@ const EnrollTab = () => {
               size="small"
               renderInput={(params) => (
                 <TextField
+                  id="paymentMethod"
+                  error={Boolean(formErrors?.paymentMethod)}
+                  helperText={formErrors?.paymentMethod}
                   {...params}
                   label="Payment Method"
                   margin="normal"

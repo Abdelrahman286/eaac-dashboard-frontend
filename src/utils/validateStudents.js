@@ -66,3 +66,21 @@ export const validateEditStudent = (formData) => {
 
   return errors;
 };
+
+export const validateEnroll = (group, paymentMethod, deposit) => {
+  const errors = {};
+
+  if (!group) {
+    errors.group = "Please Select Group";
+  }
+
+  if (!paymentMethod) {
+    errors.paymentMethod = "Please Select Payment Method";
+  }
+
+  if (isBlank(deposit)) {
+    errors.deposit = "Please fill in deposit value";
+  }
+
+  return errors;
+};

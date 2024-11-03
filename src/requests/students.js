@@ -51,3 +51,20 @@ export const getPaymentMethodsFn = (reqBody, token, config) => {
 export const getPromoCodes = (reqBody, token, config) => {
   return makeRequest(`${URL}/discount/getDiscount`, reqBody, token, config);
 };
+
+// calculate course after promo code
+
+export const calculatePriceFn = (reqBody, token, config) => {
+  return makeRequest(
+    `${URL}/discount/calculateDiscount`,
+    reqBody,
+    token,
+    config
+  );
+};
+
+// enroll student
+
+export const enrollFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/client/enrollStudent`, reqBody, token, config);
+};
