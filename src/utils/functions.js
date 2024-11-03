@@ -49,6 +49,13 @@ export const convertDateFormat = (dateString) => {
   return dayjs(dateString).format("DD/MM/YYYY"); // Convert to dd/mm/yyyy
 };
 
+// dd/mm/yyyy to yyyy-mm-dd
+export function convertDateFormatStudent(dateString) {
+  if (!dateString) return;
+  const [day, month, year] = dateString.split("/");
+  return `${year}-${month}-${day}`;
+}
+
 export function convertTo12HourFormat(time24) {
   const [hours, minutes, seconds] = time24.split(":");
   const period = hours >= 12 ? "PM" : "AM";

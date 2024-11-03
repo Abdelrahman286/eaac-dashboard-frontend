@@ -8,6 +8,18 @@ export const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
+export const isFutureDate = (dateString) => {
+  if (!dateString) return;
+  const inputDate = new Date(dateString);
+  const today = new Date();
+
+  // Clear time for both dates to compare date only
+  today.setHours(0, 0, 0, 0);
+  inputDate.setHours(0, 0, 0, 0);
+
+  return inputDate > today;
+};
+
 export const validatePhoneNumber = (phoneNumber) => {
   // Remove any spaces, dashes, parentheses, or other non-numeric characters
   if (!phoneNumber) return;

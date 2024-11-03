@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
@@ -24,6 +24,8 @@ const SearchableDropdown = ({
   onSelect,
   requestParams = {}, // Additional request parameters
   isFromData = false,
+  initialValue = null, // New initial value prop
+  styles,
 }) => {
   const { token } = useContext(UserContext);
 
@@ -44,10 +46,19 @@ const SearchableDropdown = ({
 
   const options = getDataForTableRows(list?.success?.response?.data) || [];
 
+  // Set initial value on mount
+  useEffect(() => {
+    if (initialValue) {
+      const initialId = getOptionId(initialValue);
+      setSelectedId(initialId);
+      setSearchTerm(getOptionLabel(initialValue));
+    }
+  }, [initialValue, getOptionId, getOptionLabel]);
+
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box sx={{ ...styles }}>
       <Autocomplete
-        sx={{ flex: 1 }}
+        sx={{ width: "100%" }}
         value={options.find((item) => getOptionId(item) === selectedId) || null}
         getOptionLabel={getOptionLabel}
         size="small"

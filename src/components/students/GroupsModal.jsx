@@ -1,12 +1,32 @@
-import React, { useState } from "react";
-import { Box, TextField, Tabs, Tab } from "@mui/material";
+import React, { useEffect, useState, useContext } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+
+// MUI
+import { Box, TextField, Tabs, Tab, Autocomplete } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
+// Components (Tabs)
 import EnrollTab from "./EnrollTab";
 import TransferTab from "./TransferTab";
-import UnenrollTab from "./EnrollTab";
+import UnenrollTab from "./UnenrollTab";
 
-const GroupsModal = () => {
+// requests
+import { getRoundsFn } from "../../requests/students";
+
+// contexts
+import { AppContext } from "../../contexts/AppContext";
+import { UserContext } from "../../contexts/UserContext";
+
+// utils
+import { getDataForTableRows } from "../../utils/tables";
+
+const GroupsModal = ({ closeFn, data }) => {
+  console.log(data);
+  const { showSnackbar } = useContext(AppContext);
+  const queryClient = useQueryClient();
+  const { token } = useContext(UserContext);
+
   // State to manage active tab
   const [activeTab, setActiveTab] = useState(0);
 
@@ -14,6 +34,28 @@ const GroupsModal = () => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  // retrieve groups in which the student is enrolled
+
+  const { data: groupsList, isLoading: groupsLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getRoundsFn(
+        {
+          numOfElements: "2000",
+          studentId: data?.id,
+          //   studentId: 9,
+        },
+        token,
+        { isFormData: true }
+      );
+    },
+
+    queryKey: ["studentGroups", data?.id],
+  });
+  const groups = getDataForTableRows(groupsList?.success?.response?.data);
+
+  console.log(groups);
 
   return (
     <Box>
@@ -41,21 +83,21 @@ const GroupsModal = () => {
           <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
             <TextField
               label="Name (Ar)"
-              value="محمد علي أحمد"
+              value={data?.Name || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
             />
             <TextField
               label="Mobile"
-              value="+201114442161"
+              value={data?.PhoneNumber || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
             />
             <TextField
               label="Company"
-              value="Ferro Oil Service"
+              value={data?.company || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
@@ -65,7 +107,7 @@ const GroupsModal = () => {
           <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
             <TextField
               label="Name (En)"
-              value="Mohammed Ali Ahmed"
+              value={data?.Name || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
@@ -73,7 +115,7 @@ const GroupsModal = () => {
 
             <TextField
               label="Email"
-              value="mk@diginovia.com"
+              value={data?.Email || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
@@ -81,12 +123,40 @@ const GroupsModal = () => {
 
             <TextField
               label="Branch"
-              value="Alex branch"
+              value={data?.BranchID?.name_en || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
             />
           </Box>
+        </Box>
+
+        {/* current groups for the students  */}
+        <Box>
+          <Autocomplete
+            sx={{ marginTop: "14px" }}
+            multiple
+            id="tags-readOnly"
+            options={groups?.map((option) => option?.Name_en) || []}
+            defaultValue={
+              groups?.length ? groups.map((option) => option?.Name_en) : []
+            } // Set defaultValue to empty array if no groups
+            readOnly
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                InputLabelProps={{ shrink: true }}
+                label="Groups Enrolled In"
+                placeholder={
+                  groupsLoading
+                    ? "Loading..."
+                    : !groups || groups.length == 0
+                    ? "No groups found"
+                    : "Groups"
+                }
+              />
+            )}
+          />
         </Box>
 
         {/* Second main row  */}
@@ -104,7 +174,7 @@ const GroupsModal = () => {
           >
             <TextField
               label="Membership Code"
-              value="25458756985"
+              value={data?.membership?.MembershipCode || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
@@ -112,7 +182,7 @@ const GroupsModal = () => {
 
             <TextField
               label="Expiration Date"
-              value="10/11/2024"
+              value={data?.membership?.endAt || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}
@@ -121,27 +191,24 @@ const GroupsModal = () => {
 
           <TextField
             label="Client Balance"
-            value="-1200 EGP"
+            value={data?.balance || "-"}
             fullWidth
             size="small"
             sx={{ flex: 1 }}
             InputProps={{ readOnly: true }}
             InputLabelProps={{
-              style: { color: "red" },
+              style: {
+                color: `${
+                  String(data?.balance).startsWith("-") ? "red" : "green"
+                }`,
+              },
             }}
           />
-          <TextField
-            label="Groups/Rounds"
-            value="IT Round23, IT Management Round0025"
-            fullWidth
-            size="small"
-            InputProps={{ readOnly: true }}
-            sx={{ flex: 1 }}
-          />
+
           <TextField
             sx={{ flex: 1 }}
             label="Notes"
-            value="Additional notes for the contact that can help in search"
+            value={data.Notes || "-"}
             fullWidth
             size="small"
             InputProps={{ readOnly: true }}
@@ -162,9 +229,13 @@ const GroupsModal = () => {
       </Tabs>
 
       {/* Conditional rendering based on active tab */}
-      {activeTab === 0 && <EnrollTab></EnrollTab>}
-      {activeTab === 1 && <TransferTab></TransferTab>}
-      {activeTab === 2 && <UnenrollTab></UnenrollTab>}
+      {activeTab === 0 && <EnrollTab closeFn={closeFn} data={data}></EnrollTab>}
+      {activeTab === 1 && (
+        <TransferTab closeFn={closeFn} data={data}></TransferTab>
+      )}
+      {activeTab === 2 && (
+        <UnenrollTab closeFn={closeFn} data={data}></UnenrollTab>
+      )}
     </Box>
   );
 };

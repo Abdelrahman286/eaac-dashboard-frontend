@@ -10,6 +10,7 @@ import {
   MenuItem,
   Button,
   Autocomplete,
+  Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -18,56 +19,336 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 // requests
-import { getRoundsFn } from "../../requests/students";
+import {
+  getRoundsFn,
+  getPaymentMethodsFn,
+  getPromoCodes,
+} from "../../requests/students";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
+
+// components
+import SearchableDropdown from "../SearchableDropdown";
 
 const EnrollTab = () => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
 
-  const { data: roundsList, isLoading: roundsLoading } = useQuery({
+  const [selectedGroup, setSelectedGroup] = useState({});
+  const [selectedPromoCode, setSelectedPromoCode] = useState({});
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
+
+  const handleRoundSelect = (selectedRound) => {
+    console.log(selectedRound);
+    setSelectedGroup(selectedRound);
+  };
+
+  // payment methods (Method_en)
+  const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
+    useQuery({
+      queryFn: () => {
+        return getPaymentMethodsFn(
+          {
+            numOfElements: "2000",
+          },
+          token,
+          { ifFormData: false }
+        );
+      },
+
+      queryKey: ["paymentMethods"],
+    });
+  const paymentMethods = getDataForTableRows(
+    paymentMethodsList?.success?.response?.data
+  );
+
+  // promo codes (VoucherCode)
+  const { data: promoCodesList, isLoading: promoCodesLoading } = useQuery({
     queryFn: () => {
-      return getRoundsFn(
+      return getPromoCodes(
         {
-          numOfElements: "9000",
+          numOfElements: "2000",
         },
-        token
+        token,
+        { ifFormData: false }
       );
     },
 
-    queryKey: ["rounds"],
+    queryKey: ["promoCodes"],
   });
-  const rounds = getDataForTableRows(roomsList?.success?.response?.data);
-  
+  const promoCodes = getDataForTableRows(
+    promoCodesList?.success?.response?.data
+  );
 
   return (
-    <Box sx={{ padding: 2 }}>
-      {/* <Autocomplete
-        sx={{ flex: 1 }}
-        value={rooms.find((item) => item.id == formData?.roomId) || null}
-        getOptionLabel={(option) => {
-          return `${option?.Name_en} ( ${option?.RoomCode})`;
+    <Box>
+      <Box
+        sx={{
+          paddingBottom: "40px",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          justifyContent: "space-between",
         }}
-        size="small"
-        options={rounds}
-        renderInput={(params) => (
-          <TextField
-            // error={Boolean(formErrors?.roomId)}
-            // helperText={formErrors?.roomId}
-            {...params}
-            label="Round *"
-            margin="normal"
-            fullWidth
-          />
-        )}
-        onChange={(e, value) => {
-          //   handleDropdownChange("roomId", value?.id);
-          console.log(value);
-        }}
-      /> */}
+      >
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
+          <SearchableDropdown
+            styles={{
+              width: "60%",
+
+              padding: "0px",
+              marginTop: "-12px",
+            }}
+            isFromData={false}
+            requestParams={{ studentId: 1 }}
+            label="Round"
+            fetchData={getRoundsFn}
+            queryKey="rounds"
+            getOptionLabel={(option) => `${option.Name_en}`}
+            getOptionId={(option) => option.id} // Custom ID field
+            onSelect={handleRoundSelect}
+          ></SearchableDropdown>
+
+          {/* round data card  */}
+
+          {selectedGroup?.id ? (
+            <Box
+              sx={{
+                // flex: 1,
+                padding: 2,
+                margin: "0px 4px",
+                // maxWidth: 400,
+                width: "90%",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Round Data
+              </Typography>
+
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Group Capacity:
+                </Typography>
+                <Typography variant="body1">
+                  ??/{`${selectedGroup?.RoomID?.Capacity || ""}`}
+                </Typography>
+              </Box>
+
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Group Name
+                </Typography>
+                <Typography variant="body1">{`${
+                  selectedGroup?.Name_en || ""
+                }`}</Typography>
+              </Box>
+
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Course Name
+                </Typography>
+                <Typography variant="body1">
+                  {`${selectedGroup?.CourseID?.Name_en || ""} `}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Course Code
+                </Typography>
+                <Typography variant="body1">
+                  {" "}
+                  {`${selectedGroup?.CourseID?.CourseCode || ""} `}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Room
+                </Typography>
+                <Typography variant="body1">
+                  {`${selectedGroup?.RoomID?.RoomCode || ""} `}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Start Date
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.StartDate?.split(" ")[0] || ""}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  End Date
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.EndDate?.split(" ")[0] || ""}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Non Members Price
+                </Typography>
+                <Typography variant="body1">?</Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Members Price
+                </Typography>
+                <Typography variant="body1">?</Typography>
+              </Box>
+            </Box>
+          ) : (
+            ""
+          )}
+        </Box>
+        {/* enroll actions  */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Autocomplete
+              loading={promoCodesLoading}
+              value={
+                promoCodes.find((item) => item.id == selectedPromoCode?.id) ||
+                null
+              }
+              onChange={(e, value) => setSelectedPromoCode(value)}
+              options={promoCodes}
+              getOptionLabel={(option) => option.VoucherCode || ""}
+              //------
+              size="small"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Discount/Promo Code"
+                  margin="normal"
+                  fullWidth
+                />
+              )}
+            />
+
+            <Box
+              sx={{
+                paddingLeft: "10px",
+                marginBottom: 1,
+                display: "flex",
+                gap: 2,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight="bold"
+              >
+                Price After Discount
+              </Typography>
+              <Typography variant="body1">1200</Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              padding: "16px 10px",
+            }}
+          >
+            <TextField
+              id="Deposit"
+              //   onChange={handleFormChange}
+              //   error={Boolean(formErrors?.nameEn)}
+              //   helperText={formErrors?.nameEn}
+              //   value={}
+              type="number"
+              InputLabelProps={{ shrink: true }}
+              label="Deposit"
+              name="Deposit"
+              size="small"
+            />
+
+            <Autocomplete
+              loading={paymentMethodLoading}
+              value={
+                paymentMethods.find(
+                  (item) => item.id == selectedPaymentMethod?.id
+                ) || null
+              }
+              onChange={(e, value) => setSelectedPaymentMethod(value)}
+              options={paymentMethods}
+              getOptionLabel={(option) => option.Method_en || ""}
+              size="small"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Payment Method"
+                  margin="normal"
+                  fullWidth
+                />
+              )}
+            />
+          </Box>
+          <Box
+            sx={{
+              flex: 1,
+              justifyContent: "flex-end",
+
+              alignItems: "flex-end",
+            }}
+          >
+            <Button sx={{ margin: 2 }} variant="contained" color="success">
+              Enroll
+            </Button>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };

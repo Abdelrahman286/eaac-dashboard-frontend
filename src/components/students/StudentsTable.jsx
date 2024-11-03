@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // MUI
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, Avatar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -21,6 +21,7 @@ import {
   deleteStudentFn,
   getStudentFn,
   restoreStudentFn,
+  searchStudentFn,
 } from "../../requests/students";
 
 // components
@@ -31,37 +32,6 @@ import Modal from "../Modal";
 import CustomIconButton from "../CustomIconButton";
 import GroupsModal from "./GroupsModal";
 
-//---------- Dummy Data
-const students = [
-  {
-    rowIndex: 1,
-    StudentID: 1,
-    Name: "test 1",
-    companyName: "company name (test)",
-    branch: "All",
-    Email: "test@gmail.com",
-    PhoneNumber: "010321343",
-    WhatsappNumber: "010423423423",
-    GovIssuedID: "8675054",
-    MemebershipCode: "12345",
-    blocked: true,
-    notes: ".....",
-  },
-  {
-    rowIndex: 2,
-    StudentID: 2,
-    Name: "test 2",
-    companyName: "company name (test)",
-    branch: "All",
-    Email: "test2@gmail.com",
-    PhoneNumber: "010321343",
-    WhatsappNumber: "010423423423",
-    GovIssuedID: "12114324",
-    MemebershipCode: "12314",
-    blocked: false,
-    notes: ".....",
-  },
-];
 const StudentsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
@@ -73,6 +43,8 @@ const StudentsTable = ({ onDataChange }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [showGroupsModal, setShowGroupsModal] = useState(false);
+
+  const [studentDataToShow, setStudentDataToShow] = useState({});
 
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -111,7 +83,7 @@ const StudentsTable = ({ onDataChange }) => {
     queryFn: () => {
       // Remove hardcoded `page=1` and use the current page from paginationModel
       return getStudentFn(paginationReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
@@ -140,7 +112,7 @@ const StudentsTable = ({ onDataChange }) => {
     ],
     queryFn: () => {
       return getStudentFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`, // Use the dynamic page number
       });
     },
@@ -182,7 +154,7 @@ const StudentsTable = ({ onDataChange }) => {
       queryClient.invalidateQueries({
         queryKey: ["student-list"],
       });
-      showSnackbar("Student Deleted Successfully ", "info");
+      showSnackbar("Student Deleted Successfully ", "success");
       setShowDeleteModal(false);
     },
     onError: (error) => {
@@ -194,7 +166,7 @@ const StudentsTable = ({ onDataChange }) => {
   // handle delete
   const handleDelete = (rowData) => {
     setShowDeleteModal(true);
-    setIdToDelete(rowData?.StudentID); // it can be id OR studentID
+    setIdToDelete(rowData?.id); // it can be id OR studentID
   };
   const confirmDelete = () => {
     deleteStudent({
@@ -211,7 +183,7 @@ const StudentsTable = ({ onDataChange }) => {
   // restore
   const handleRestore = (rowData) => {
     setShowRestoreModal(true);
-    setIdToRestore(`${rowData?.StudentID}`);
+    setIdToRestore(`${rowData?.id}`);
   };
   const confirmRestore = () => {
     restoreStudent({
@@ -256,6 +228,7 @@ const StudentsTable = ({ onDataChange }) => {
 
   const handleGroupsPopup = (row) => {
     setShowGroupsModal(true);
+    setStudentDataToShow(row);
   };
 
   const columns = [
@@ -263,6 +236,32 @@ const StudentsTable = ({ onDataChange }) => {
       field: "rowIndex",
       headerName: "#",
       flex: 0.5, // Makes the column responsive, taking up half a unit of space
+    },
+
+    {
+      field: "Image",
+      headerName: "Logo",
+      flex: 0.6,
+      minWidth: 50,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "6px",
+            }}
+          >
+            <Avatar
+              src={params?.row.Image}
+              alt="Logo"
+              variant="circular"
+              sx={{ width: 40, height: 40 }}
+            />
+          </Box>
+        );
+      },
     },
 
     {
@@ -337,22 +336,31 @@ const StudentsTable = ({ onDataChange }) => {
       valueGetter: (value, row) => {
         return `${row?.BranchID?.Name_en || ""}`;
       },
-      flex: 1, // This column will take up more space compared to others
+      flex: 1,
       minWidth: 100,
     },
 
     {
-      field: "notes",
-      headerName: "notes",
+      field: "Notes",
+      headerName: "Notes",
 
-      flex: 1, // This column will take up more space compared to others
+      flex: 1,
       minWidth: 100,
     },
     {
       field: "Blocked",
       headerName: "Blocked",
       renderCell: (params) => {
-        if (params.row.blocked) {
+        if (params.row.StatusID.id == 1) {
+          return (
+            <Chip
+              label={"Active"}
+              color="success"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "12px" }}
+            />
+          );
+        } else if (params.row.StatusID.id == 2) {
           return (
             <Chip
               label={"Blocked"}
@@ -362,15 +370,6 @@ const StudentsTable = ({ onDataChange }) => {
             />
           );
         }
-
-        return (
-          <Chip
-            label={"Active"}
-            color="success"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "12px" }}
-          />
-        );
       },
       flex: 1, // This column will take up more space compared to others
       minWidth: 100,
@@ -497,7 +496,10 @@ const StudentsTable = ({ onDataChange }) => {
           title={"Manage Enrollment"}
           onClose={() => setShowGroupsModal(false)}
         >
-          <GroupsModal closeFn={() => setShowGroupsModal(false)}></GroupsModal>
+          <GroupsModal
+            data={studentDataToShow}
+            closeFn={() => setShowGroupsModal(false)}
+          ></GroupsModal>
         </Modal>
       )}
 
@@ -510,10 +512,10 @@ const StudentsTable = ({ onDataChange }) => {
               showLastButton: true,
             },
           }}
-          getRowId={(row) => row.StudentID} // Custom ID logic
+          getRowId={(row) => row?.id} // Custom ID logic
           autoHeight
           //   rows={updatedDataList || []} // Use the modified dataList
-          rows={students}
+          rows={updatedDataList}
           columns={columns}
           paginationMode="server" // Enable server-side pagination
           rowCount={totalElements} // Total rows from server response
