@@ -18,6 +18,10 @@ export const createStudentFn = ({ reqBody, token, config }) => {
 export const editStudentFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/user/updateUser`, reqBody, token, config);
 };
+// block student
+export const blockStudentFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/user/updateUser`, reqBody, token, config);
+};
 
 // JSON
 export const searchStudentFn = ({ reqBody, token, config }) => {
@@ -64,7 +68,16 @@ export const calculatePriceFn = (reqBody, token, config) => {
 };
 
 // enroll student
-
-export const enrollFn = (reqBody, token, config) => {
+export const enrollFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/client/enrollStudent`, reqBody, token, config);
+};
+
+// transfer student to another group
+export const transferStudentFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/client/transferStudent`, reqBody, token, config);
+};
+
+// unEnroll student
+export const unEnrollStudentFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/client/unrollStudent`, reqBody, token, config);
 };

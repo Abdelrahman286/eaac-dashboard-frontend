@@ -26,6 +26,8 @@ const SearchableDropdown = ({
   isFromData = false,
   initialValue = null, // New initial value prop
   styles,
+  isError = false,
+  helperText = "",
 }) => {
   const { token } = useContext(UserContext);
 
@@ -66,6 +68,8 @@ const SearchableDropdown = ({
         loading={isLoading}
         renderInput={(params) => (
           <TextField
+            error={isError}
+            helperText={helperText}
             {...params}
             label={label}
             margin="normal"

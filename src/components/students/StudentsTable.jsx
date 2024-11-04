@@ -21,6 +21,7 @@ import {
   deleteStudentFn,
   getStudentFn,
   restoreStudentFn,
+  blockStudentFn,
   searchStudentFn,
 } from "../../requests/students";
 
@@ -31,6 +32,7 @@ import MutationForm from "./MutationForm";
 import Modal from "../Modal";
 import CustomIconButton from "../CustomIconButton";
 import GroupsModal from "./GroupsModal";
+import ViewStudentData from "./ViewStudentData";
 
 const StudentsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
@@ -49,6 +51,11 @@ const StudentsTable = ({ onDataChange }) => {
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [idToRestore, setIdToRestore] = useState("");
+
+  // view student data
+
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [dataToShow, setDataToShow] = useState({});
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
@@ -231,6 +238,46 @@ const StudentsTable = ({ onDataChange }) => {
     setStudentDataToShow(row);
   };
 
+  // handleBlock
+
+  const { mutate: blockStudent, isPending: blockLoading } = useMutation({
+    mutationFn: blockStudentFn,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["student-pagination"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["student-list"],
+      });
+      showSnackbar("Student Blocked Successfully ", "success");
+    },
+    onError: (error) => {
+      //   console.log("error at blocking Student data", error);
+      showSnackbar("Failed to block Student Data", "error");
+    },
+  });
+
+  const handleBlock = (row) => {
+    blockStudent({
+      reqBody: {
+        id: [row?.id],
+        statusId: "2",
+      },
+      token,
+      config: {
+        isFormData: true,
+      },
+    });
+  };
+
+  // view student data
+
+  const handleViewStudentData = (row) => {
+    setShowStudentModal(true);
+    setDataToShow(row);
+  };
+
   const columns = [
     {
       field: "rowIndex",
@@ -403,7 +450,7 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"view"}
               title="view"
-              onClick={() => console.log("show session")}
+              onClick={() => handleViewStudentData(params.row)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"attendance"}
@@ -423,7 +470,7 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"blockUser"}
               title="Block"
-              onClick={() => handleEdit(params.row)}
+              onClick={() => handleBlock(params.row)}
             ></CustomIconButton>
 
             <CustomIconButton
@@ -500,6 +547,19 @@ const StudentsTable = ({ onDataChange }) => {
             data={studentDataToShow}
             closeFn={() => setShowGroupsModal(false)}
           ></GroupsModal>
+        </Modal>
+      )}
+
+      {showStudentModal && (
+        <Modal
+          classNames={"student-view-modal "}
+          title={"Client Data"}
+          onClose={() => setShowStudentModal(false)}
+        >
+          <ViewStudentData
+            data={dataToShow}
+            closeFn={() => setShowStudentModal(false)}
+          ></ViewStudentData>
         </Modal>
       )}
 

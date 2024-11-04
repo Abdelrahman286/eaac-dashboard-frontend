@@ -22,7 +22,6 @@ import { UserContext } from "../../contexts/UserContext";
 import { getDataForTableRows } from "../../utils/tables";
 
 const GroupsModal = ({ closeFn, data }) => {
-  console.log(data);
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -54,8 +53,6 @@ const GroupsModal = ({ closeFn, data }) => {
     queryKey: ["studentGroups", data?.id],
   });
   const groups = getDataForTableRows(groupsList?.success?.response?.data);
-
-  console.log(groups);
 
   return (
     <Box>
@@ -138,9 +135,12 @@ const GroupsModal = ({ closeFn, data }) => {
             multiple
             id="tags-readOnly"
             options={groups?.map((option) => option?.Name_en) || []}
-            defaultValue={
+            // defaultValue={
+            //   groups?.length ? groups.map((option) => option?.Name_en) : []
+            // }
+            value={
               groups?.length ? groups.map((option) => option?.Name_en) : []
-            } // Set defaultValue to empty array if no groups
+            }
             readOnly
             renderInput={(params) => (
               <TextField
@@ -231,10 +231,18 @@ const GroupsModal = ({ closeFn, data }) => {
       {/* Conditional rendering based on active tab */}
       {activeTab === 0 && <EnrollTab closeFn={closeFn} data={data}></EnrollTab>}
       {activeTab === 1 && (
-        <TransferTab closeFn={closeFn} data={data}></TransferTab>
+        <TransferTab
+          groups={groups}
+          closeFn={closeFn}
+          data={data}
+        ></TransferTab>
       )}
       {activeTab === 2 && (
-        <UnenrollTab closeFn={closeFn} data={data}></UnenrollTab>
+        <UnenrollTab
+          groups={groups}
+          closeFn={closeFn}
+          data={data}
+        ></UnenrollTab>
       )}
     </Box>
   );

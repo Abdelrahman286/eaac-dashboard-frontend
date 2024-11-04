@@ -108,3 +108,7 @@
     width: 100%;
   }
 }
+
+.student-view-modal {
+  width: 700px;
+}

@@ -70,16 +70,61 @@ export const validateEditStudent = (formData) => {
 export const validateEnroll = (group, paymentMethod, deposit) => {
   const errors = {};
 
-  if (!group) {
+  if (!group?.id) {
     errors.group = "Please Select Group";
   }
 
-  if (!paymentMethod) {
+  if (!paymentMethod?.id) {
     errors.paymentMethod = "Please Select Payment Method";
   }
 
   if (isBlank(deposit)) {
     errors.deposit = "Please fill in deposit value";
+  }
+
+  return errors;
+};
+
+export const validateTransfer = (
+  currentGroup,
+  targetGroup,
+  paymentMethod,
+  paidNow
+) => {
+  const errors = {};
+
+  if (!currentGroup?.id) {
+    errors.currentGroup = "Please Select Current Group";
+  }
+
+  if (!targetGroup?.id) {
+    errors.targetGroup = "Please Select Target Group";
+  }
+
+  if (!paymentMethod?.id) {
+    errors.paymentMethod = "Please Select Payment Method";
+  }
+
+  if (isBlank(paidNow)) {
+    errors.paidNow = "Please fill in deposit value";
+  }
+
+  return errors;
+};
+
+export const validateUnEnroll = (currentGroup, paymentMethod, paidNow) => {
+  const errors = {};
+
+  if (!currentGroup?.id) {
+    errors.currentGroup = "Please Select Current Group";
+  }
+
+  if (!paymentMethod?.id) {
+    errors.paymentMethod = "Please Select Payment Method";
+  }
+
+  if (isBlank(paidNow)) {
+    errors.paidNow = "Please fill in refund value";
   }
 
   return errors;

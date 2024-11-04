@@ -11,6 +11,7 @@ import {
   Button,
   Autocomplete,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -19,26 +20,84 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 // requests
-import { getRoundsFn } from "../../requests/students";
+import { getRoundsFn, unEnrollStudentFn } from "../../requests/students";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
 
 // components
 import SearchableDropdown from "../SearchableDropdown";
-const groups = [
-  { id: 1, name: "Group 1" },
-  { id: 2, name: "Group 2" },
-];
-const UnenrollTab = () => {
+
+// validation
+import { validateUnEnroll } from "../../utils/validateStudents";
+
+const UnenrollTab = ({ data, groups, closeFn }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
 
-  const handleRoundSelect = (selectedRound) => {
-    console.log("Selected round:", selectedRound);
+  const [formErrors, setFormErrors] = useState({});
+  const [selectedGroup, setSelectedGroup] = useState({});
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
+  const [refundAmount, setRefundAmount] = useState("");
 
-    console.log(selectedRound);
+  // payment methods (Method_en)
+  const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
+    useQuery({
+      queryFn: () => {
+        return getPaymentMethodsFn(
+          {
+            // numOfElements: "2000",
+          },
+          token,
+          { isFormData: false }
+        );
+      },
+
+      queryKey: ["paymentMethods"],
+    });
+  const paymentMethods = getDataForTableRows(
+    paymentMethodsList?.success?.response?.data
+  );
+
+  //------------ Send unEnroll data
+  const { mutate: sendUnenrollData, isPending: unEnrollLoading } = useMutation({
+    mutationFn: unEnrollStudentFn,
+    onSuccess: () => {
+      showSnackbar("Student Unenrolled Successfully ", "success");
+      closeFn();
+    },
+    onError: (error) => {
+      showSnackbar("Student Unenrollment Failed", "error");
+    },
+  });
+
+  const handleUnenroll = () => {
+    const errors = validateUnEnroll(
+      selectedGroup,
+      selectedPaymentMethod,
+      refundAmount
+    );
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+    } else {
+      setFormErrors({});
+      // send transfer request
+
+      sendUnenrollData({
+        reqBody: {
+          studentId: data?.id,
+          roundId: selectedGroup?.id,
+          paymentMethodId: selectedPaymentMethod?.id,
+          refund: refundAmount,
+        },
+        token,
+        config: {
+          isFormData: false,
+        },
+      });
+    }
   };
 
   return (
@@ -52,129 +111,179 @@ const UnenrollTab = () => {
           justifyContent: "space-between",
         }}
       >
-        <SearchableDropdown
-          styles={{ width: "60%" }}
-          isFromData={false}
-          requestParams={{ studentId: 1 }}
-          label="Round"
-          fetchData={getRoundsFn}
-          queryKey="rounds"
-          getOptionLabel={(option) => `${option.Name_en}`}
-          getOptionId={(option) => option.id} // Custom ID field
-          onSelect={handleRoundSelect}
-        ></SearchableDropdown>
-
-        {/* round data card  */}
         <Box
           sx={{
-            // flex: 1,
-            padding: 2,
-            // maxWidth: 400,
-            width: "90%",
-            border: "1px solid #ddd",
-            borderRadius: 2,
-            backgroundColor: "#fafafa",
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            justifyContent: "space-between",
           }}
         >
-          <Typography variant="h6" gutterBottom>
-            Round Data
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "center", paddingTop: "10px" }}
+            color="primary"
+          >
+            Current Group
           </Typography>
 
-          <Box sx={{ marginBottom: 1 }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Group Capacity:
-            </Typography>
-            <Typography variant="body1">2/25</Typography>
-          </Box>
+          <Autocomplete
+            //   loading={promoCodesLoading}
+            value={groups.find((item) => item.id == selectedGroup?.id) || null}
+            onChange={(e, value) => setSelectedGroup(value)}
+            options={groups}
+            getOptionLabel={(option) => option.Name_en || ""}
+            //------
+            size="small"
+            renderInput={(params) => (
+              <TextField
+                error={Boolean(formErrors?.currentGroup)}
+                helperText={formErrors?.currentGroup}
+                {...params}
+                label="Current Groups"
+                margin="normal"
+                fullWidth
+              />
+            )}
+          />
 
-          <Box sx={{ marginBottom: 1 }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Group Name
-            </Typography>
-            <Typography variant="body1">Round #121</Typography>
-          </Box>
+          {/* round data card  */}
 
-          <Box sx={{ marginBottom: 1 }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
+          {selectedGroup?.id ? (
+            <Box
+              sx={{
+                // flex: 1,
+                padding: 2,
+                // maxWidth: 400,
+                // width: "48%",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+              }}
             >
-              Course Name
-            </Typography>
-            <Typography variant="body1">Accounting</Typography>
-          </Box>
+              <Typography variant="h6" gutterBottom>
+                Round Data
+              </Typography>
 
-          <Divider sx={{ my: 2 }} />
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Group Capacity
+                </Typography>
+                <Typography variant="body1">
+                  {" "}
+                  ??/{`${selectedGroup?.RoomID?.Capacity || ""}`}
+                </Typography>
+              </Box>
 
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Course Code
-            </Typography>
-            <Typography variant="body1">A321</Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Room
-            </Typography>
-            <Typography variant="body1">4234</Typography>
-          </Box>
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Group Name
+                </Typography>
+                <Typography variant="body1">
+                  {`${selectedGroup?.Name_en || ""}`}
+                </Typography>
+              </Box>
 
-          <Divider sx={{ my: 2 }} />
+              <Box sx={{ marginBottom: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Course Name
+                </Typography>
+                <Typography variant="body1">
+                  {" "}
+                  {`${selectedGroup?.CourseID?.Name_en || ""} `}
+                </Typography>
+              </Box>
 
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Start Date
-            </Typography>
-            <Typography variant="body1">22/3/2020</Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              End Date
-            </Typography>
-            <Typography variant="body1">22/3/2020</Typography>
-          </Box>
+              <Divider sx={{ my: 2 }} />
 
-          <Divider sx={{ my: 2 }} />
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Course Code
+                </Typography>
+                <Typography variant="body1">
+                  {`${selectedGroup?.CourseID?.CourseCode || ""} `}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Room
+                </Typography>
+                <Typography variant="body1">
+                  {`${selectedGroup?.RoomID?.RoomCode || ""} `}
+                </Typography>
+              </Box>
 
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Non Members Price
-            </Typography>
-            <Typography variant="body1">1200</Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
-            >
-              Members Price
-            </Typography>
-            <Typography variant="body1">1500</Typography>
-          </Box>
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Start Date
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.StartDate?.split(" ")[0] || ""}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  End Date
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.EndDate?.split(" ")[0] || ""}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Non Members Price
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.CourseID?.NonMemberPrice || ""}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Members Price
+                </Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.CourseID?.MemberPrice || ""}
+                </Typography>
+              </Box>
+            </Box>
+          ) : (
+            ""
+          )}
         </Box>
 
         {/* unenroll actions  */}
@@ -206,7 +315,7 @@ const UnenrollTab = () => {
               >
                 Paid Amount For the Course
               </Typography>
-              <Typography variant="body1">1200</Typography>
+              <Typography variant="body1">????</Typography>
             </Box>
           </Box>
           <Box
@@ -219,22 +328,31 @@ const UnenrollTab = () => {
           >
             <TextField
               id="Refund(EGP)"
-              //   onChange={handleFormChange}
-              //   error={Boolean(formErrors?.nameEn)}
-              //   helperText={formErrors?.nameEn}
-              //   value={}
+              onChange={(e) => setRefundAmount(e.target.value)}
+              error={Boolean(formErrors?.paidNow)}
+              helperText={formErrors?.paidNow}
+              value={refundAmount}
               InputLabelProps={{ shrink: true }}
               label="Refund(EGP)"
               name="Refund(EGP)"
               size="small"
             />
-
             <Autocomplete
-              options={groups}
-              getOptionLabel={(option) => option.name || ""}
+              loading={paymentMethodLoading}
+              value={
+                paymentMethods.find(
+                  (item) => item.id == selectedPaymentMethod?.id
+                ) || null
+              }
+              onChange={(e, value) => setSelectedPaymentMethod(value)}
+              options={paymentMethods}
+              getOptionLabel={(option) => option.Method_en || ""}
               size="small"
               renderInput={(params) => (
                 <TextField
+                  id="paymentMethod"
+                  error={Boolean(formErrors?.paymentMethod)}
+                  helperText={formErrors?.paymentMethod}
                   {...params}
                   label="Payment Method"
                   margin="normal"
@@ -244,8 +362,17 @@ const UnenrollTab = () => {
             />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Button sx={{ margin: 2 }} variant="contained" color="error">
-              Unenroll Student & Refund
+            <Button
+              sx={{ margin: 2 }}
+              variant="contained"
+              color="error"
+              onClick={handleUnenroll}
+            >
+              {unEnrollLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Unenroll Student & Refund"
+              )}
             </Button>
           </Box>
         </Box>

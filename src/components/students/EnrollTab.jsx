@@ -11,6 +11,7 @@ import {
   Button,
   Autocomplete,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -45,10 +46,9 @@ const EnrollTab = ({ data, closeFn }) => {
   const [selectedGroup, setSelectedGroup] = useState({});
   const [selectedPromoCode, setSelectedPromoCode] = useState({});
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
-  const [deposit, setDeposit] = useState(0);
+  const [deposit, setDeposit] = useState();
 
   const handleRoundSelect = (selectedRound) => {
-    console.log(selectedRound);
     setSelectedGroup(selectedRound);
   };
 
@@ -113,15 +113,42 @@ const EnrollTab = ({ data, closeFn }) => {
   const { mutate: sendEnrollData, isPending: enrollLoading } = useMutation({
     mutationFn: enrollFn,
     onSuccess: () => {
-      console.log("Round deleted successfully");
-      showSnackbar("Student Enrolled Successfully ", "Success");
+      showSnackbar("Student Enrolled Successfully ", "success");
+      closeFn();
     },
     onError: (error) => {
       showSnackbar("Student Enrollment Failed", "error");
     },
   });
 
-  const handleEnroll = () => {};
+  const handleEnroll = () => {
+    const errors = validateEnroll(
+      selectedGroup,
+      selectedPaymentMethod,
+      deposit
+    );
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+    } else {
+      setFormErrors({});
+      // send enroll request
+
+      sendEnrollData({
+        reqBody: {
+          studentId: data?.id,
+          roundId: selectedGroup?.id,
+          paymentMethodId: selectedPaymentMethod?.id,
+          discountVoucherId: selectedPromoCode?.id || "",
+          deposit: deposit,
+        },
+        token,
+        config: {
+          isFormData: false,
+        },
+      });
+    }
+  };
 
   return (
     <Box>
@@ -141,14 +168,17 @@ const EnrollTab = ({ data, closeFn }) => {
               padding: "0px",
               marginTop: "-12px",
             }}
+            isError={Boolean(formErrors?.group)}
+            helperText={formErrors?.group}
             isFromData={false}
-            requestParams={{ studentId: 1 }}
+            // requestParams={{ studentId: 1 }}
             label="Round"
             fetchData={getRoundsFn}
             queryKey="rounds"
             getOptionLabel={(option) => `${option.Name_en}`}
             getOptionId={(option) => option.id} // Custom ID field
             onSelect={handleRoundSelect}
+            error={true}
           ></SearchableDropdown>
 
           {/* round data card  */}
@@ -270,7 +300,9 @@ const EnrollTab = ({ data, closeFn }) => {
                 >
                   Non Members Price
                 </Typography>
-                <Typography variant="body1">?</Typography>
+                <Typography variant="body1">
+                  {selectedGroup?.CourseID?.NonMemberPrice || ""}
+                </Typography>
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -278,7 +310,10 @@ const EnrollTab = ({ data, closeFn }) => {
                 >
                   Members Price
                 </Typography>
-                <Typography variant="body1">?</Typography>
+                <Typography variant="body1">
+                  {" "}
+                  {selectedGroup?.CourseID?.MemberPrice || ""}
+                </Typography>
               </Box>
             </Box>
           ) : (
@@ -392,8 +427,18 @@ const EnrollTab = ({ data, closeFn }) => {
               alignItems: "flex-end",
             }}
           >
-            <Button sx={{ margin: 2 }} variant="contained" color="success">
-              Enroll
+            <Button
+              sx={{ margin: 2 }}
+              variant="contained"
+              color="success"
+              onClick={handleEnroll}
+              disabled={enrollLoading}
+            >
+              {enrollLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Enroll"
+              )}
             </Button>
           </Box>
         </Box>
