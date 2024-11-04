@@ -461,5 +461,13 @@ export const validateEditRound = (formData) => {
     errors.instructorId = "Please Select The Instructor";
   }
 
+  if (isBlank(formData?.startDate)) {
+    errors.startDate = "Please Fill in start date";
+  }
+
+  if (isBlank(formData?.endDate)) {
+    errors.endDate = "Please Fill in end date";
+  }
+
   return errors;
 };

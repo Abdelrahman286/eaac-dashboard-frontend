@@ -23,6 +23,7 @@ import MutationForm from "./MutationForm";
 // utils
 import ExportToExcel from "../ExportToExcel";
 const HeaderActions = ({ data }) => {
+  console.log(data);
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -35,12 +36,13 @@ const HeaderActions = ({ data }) => {
   // headers for excel export -----------------
   const headers = [
     { key: "Name", label: "Name" },
-    { key: "JobTitle", label: "Job Title" },
+    { key: "CompanyID.Name_en", label: "Company" },
     { key: "Email", label: "Email" },
     { key: "PhoneNumber", label: "Phone Number" },
     { key: "WhatsappNumber", label: "WhatsApp Number" },
     { key: "GovIssuedID", label: "Government ID" },
-    { key: "BranchID.Name_en", label: "Branch Name (En)" },
+    { key: "BranchID.name_en", label: "Branch Name (En)" },
+    { key: "Notes", label: "Notes" },
   ];
 
   const handleSearchChange = (e) => {

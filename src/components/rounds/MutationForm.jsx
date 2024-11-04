@@ -288,6 +288,17 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                       />
                     )}
                   />
+                  {/* Attendance Percentage  */}
+                  <TextField
+                    id="attendancePercentage"
+                    onChange={handleFormChange}
+                    // error={Boolean(formErrors?.nameEn)}
+                    // helperText={formErrors?.nameEn}
+                    value={formData?.attendancePercentage || ""}
+                    name="attendancePercentage"
+                    label="Attendace Percentage Limit"
+                    type="number"
+                  />
                 </Box>
               </>
             ) : (

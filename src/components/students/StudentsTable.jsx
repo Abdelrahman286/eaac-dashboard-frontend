@@ -381,7 +381,7 @@ const StudentsTable = ({ onDataChange }) => {
       field: "BranchID.Name_en",
       headerName: "BranchID",
       valueGetter: (value, row) => {
-        return `${row?.BranchID?.Name_en || ""}`;
+        return `${row?.BranchID?.name_en || ""}`;
       },
       flex: 1,
       minWidth: 100,

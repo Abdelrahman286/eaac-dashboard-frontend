@@ -123,12 +123,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       id: [data.id],
       branchId: data?.BranchID?.id || "",
       name: data?.Name || "",
-
       phone: data?.PhoneNumber || "",
       govIssuedId: data?.GovIssuedID || "",
       email: data?.Email || "",
       whatsappNum: data?.WhatsappNumber || "",
       birthDate: convertDateFormatStudent(data?.BirthDate),
+
+      //   notes: data?.Notes,
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -298,6 +299,17 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 value={formData?.email || ""}
                 label="Email *"
                 name="Email"
+              />
+              <TextField
+                // error={Boolean(formErrors?.notes)}
+                // helperText={formErrors?.notes}
+                value={formData?.notes || ""}
+                id="notes"
+                multiline
+                rows={2}
+                label="Notes"
+                sx={{ width: "100%" }}
+                onChange={handleFormChange}
               />
             </Box>
           </Box>

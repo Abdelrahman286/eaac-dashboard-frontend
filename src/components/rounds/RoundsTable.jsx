@@ -239,6 +239,7 @@ const RoundsTable = ({ onDataChange }) => {
     setShowRoundModal(true);
     setRoundData(row);
   };
+
   const columns = [
     {
       field: "rowIndex",
@@ -334,6 +335,16 @@ const RoundsTable = ({ onDataChange }) => {
       },
       flex: 1,
       minWidth: 100,
+    },
+    {
+      field: "AttendancePercentage",
+      headerName: "Attendance Limit %",
+
+      valueGetter: (value, row) => {
+        return `${row?.AttendancePercentage || ""}`;
+      },
+      flex: 1,
+      minWidth: 130,
     },
     {
       field: "Sessions",

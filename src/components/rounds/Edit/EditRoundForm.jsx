@@ -23,14 +23,11 @@ import {
 } from "../../../requests/rounds";
 
 // validations
-import {
-  validateAddRound,
-  validateEditRound,
-} from "../../../utils/requestValidations";
+import { validateEditRound } from "../../../utils/requestValidations";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
-
+import { convertDateFormat } from "../../../utils/functions";
 // dates
 import dayjs from "dayjs"; // To help with formatting
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -112,7 +109,15 @@ const EditRoundForm = ({ data, onClose }) => {
 
   // initial data filling
   useEffect(() => {
-    const { BranchID, CourseID, InstructorID, RoomID, Name_en } = data;
+    const {
+      BranchID,
+      CourseID,
+      InstructorID,
+      RoomID,
+      Name_en,
+      StartDate,
+      EndDate,
+    } = data;
     const newObj = {
       id: [data?.id],
       nameEn: Name_en,
@@ -120,7 +125,10 @@ const EditRoundForm = ({ data, onClose }) => {
       roomId: RoomID?.id || "",
       courseId: CourseID?.id || "",
       instructorId: InstructorID?.id || "",
+      startDate: StartDate.split(" ")[0],
+      endDate: EndDate.split(" ")[0],
     };
+
     setFormData(newObj);
   }, []);
 
@@ -153,8 +161,15 @@ const EditRoundForm = ({ data, onClose }) => {
       setFormErrors(errors);
     } else {
       setFormErrors({});
+
+      const newObj = {
+        ...formData,
+        startDate: convertDateFormat(formData?.startDate),
+        endDate: convertDateFormat(formData?.endDate),
+      };
+
       editRound({
-        reqBody: formData,
+        reqBody: newObj,
         token,
       });
     }
@@ -182,12 +197,12 @@ const EditRoundForm = ({ data, onClose }) => {
               >
                 <TextField
                   id="nameEn"
+                  name="nameEn"
                   onChange={handleFormChange}
                   error={Boolean(formErrors?.nameEn)}
                   helperText={formErrors?.nameEn}
                   value={formData?.nameEn || ""}
                   label="Round Name *"
-                  name="nameEn"
                 />
 
                 <Autocomplete
@@ -246,6 +261,23 @@ const EditRoundForm = ({ data, onClose }) => {
                       autoCorrect="off"
                     />
                   )}
+                />
+                {/* edit start date */}
+                <TextField
+                  value={formData?.startDate || ""}
+                  id="startDate"
+                  name="startDate"
+                  onChange={handleFormChange}
+                  size="small"
+                  error={Boolean(formErrors?.startDate)}
+                  helperText={formErrors?.startDate}
+                  label="Start Date *"
+                  type="date"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Box>
 
@@ -314,6 +346,35 @@ const EditRoundForm = ({ data, onClose }) => {
                       autoCorrect="off"
                     />
                   )}
+                />
+                {/* attendancePercentage */}
+                <TextField
+                  id="attendancePercentage"
+                  onChange={handleFormChange}
+                  // error={Boolean(formErrors?.nameEn)}
+                  // helperText={formErrors?.nameEn}
+                  value={formData?.attendancePercentage || ""}
+                  name="attendancePercentage"
+                  label="Attendace Percentage Limit"
+                  type="number"
+                />
+
+                {/* end date */}
+                <TextField
+                  value={formData?.endDate || ""}
+                  id="endDate"
+                  name="endDate"
+                  onChange={handleFormChange}
+                  size="small"
+                  error={Boolean(formErrors?.endDate)}
+                  helperText={formErrors?.endDate}
+                  label="End Date *"
+                  type="date"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Box>
             </>
