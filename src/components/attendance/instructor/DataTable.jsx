@@ -34,7 +34,7 @@ import {
 // components
 import Modal from "../../Modal";
 
-const DataTable = ({}) => {
+const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -52,6 +52,30 @@ const DataTable = ({}) => {
 
   const [timeErrors, setTimeErrors] = useState({});
 
+  // Mutate Attendance
+
+  const {
+    mutate: sendAttendanceData,
+    isPending: attendanceLoading,
+    isError: isAttendanceError,
+    error: attendanceError,
+  } = useMutation({
+    onError: (error) => {
+      showSnackbar("Error At sending Attendance", "error");
+    },
+    mutationFn: postInstructorAttendanceFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["instructorAttendance-pagination"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["instructorAttendance-list"],
+      });
+      showSnackbar("Attendce Submitted Successfully", "success");
+    },
+  });
+  // send post attendance repquest
   const handleCalculateTime = (id) => {
     // reset everything
     setTimeErrors({});
@@ -87,28 +111,6 @@ const DataTable = ({}) => {
       //   });
     }
   };
-
-  // Mutate Attendance
-
-  const {
-    mutate: sendAttendanceData,
-    isPending: attendanceLoading,
-    isError: isAttendanceError,
-    error: attendanceError,
-  } = useMutation({
-    onError: (error) => {},
-    mutationFn: postInstructorAttendanceFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["instructorAttendance-pagination"],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["instructorAttendance-list"],
-      });
-      showSnackbar("Attendce Submitted Successfully", "success");
-    },
-  });
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
     page: 0, // MUI uses 0-based index
@@ -118,6 +120,10 @@ const DataTable = ({}) => {
   const paginationReqBody = {};
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
+
+    ...(instructorId && { instructorId }),
+    ...(sessionId && { sessionId }),
+    ...(roundId && { roundId }),
   };
 
   // Query to fetch pagination data (e.g., total elements, number of pages)
@@ -127,8 +133,7 @@ const DataTable = ({}) => {
     isError: paginationErr,
   } = useQuery({
     queryFn: () => {
-      // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getInstructorsAttendanceFn(paginationReqBody, token, {
+      return getInstructorsAttendanceFn(dataListReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
@@ -137,6 +142,10 @@ const DataTable = ({}) => {
       "instructorAttendance-pagination",
       paginationReqBody,
       dataListReqBody,
+
+      instructorId,
+      sessionId,
+      roundId,
     ],
     retry: 1,
   });
@@ -153,6 +162,10 @@ const DataTable = ({}) => {
       paginationModel.pageSize,
       paginationReqBody,
       dataListReqBody,
+
+      instructorId,
+      sessionId,
+      roundId,
     ],
     queryFn: () => {
       return getInstructorsAttendanceFn(dataListReqBody, token, {
@@ -183,7 +196,7 @@ const DataTable = ({}) => {
     {
       field: "rowIndex",
       headerName: "#",
-      flex: 0.5, // Makes the column responsive, taking up half a unit of space
+      flex: 0.5,
     },
     {
       field: "Image",

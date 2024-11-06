@@ -125,8 +125,8 @@ const EditRoundForm = ({ data, onClose }) => {
       roomId: RoomID?.id || "",
       courseId: CourseID?.id || "",
       instructorId: InstructorID?.id || "",
-      startDate: StartDate.split(" ")[0],
-      endDate: EndDate.split(" ")[0],
+      //   startDate: StartDate.split(" ")[0],
+      //   endDate: EndDate.split(" ")[0],
     };
 
     setFormData(newObj);
@@ -155,17 +155,19 @@ const EditRoundForm = ({ data, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const errors = validateEditRound(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
+      console.log(errors);
     } else {
       setFormErrors({});
 
       const newObj = {
         ...formData,
-        startDate: convertDateFormat(formData?.startDate),
-        endDate: convertDateFormat(formData?.endDate),
+        // startDate: convertDateFormat(formData?.startDate),
+        // endDate: convertDateFormat(formData?.endDate),
       };
 
       editRound({
@@ -263,7 +265,7 @@ const EditRoundForm = ({ data, onClose }) => {
                   )}
                 />
                 {/* edit start date */}
-                <TextField
+                {/* <TextField
                   value={formData?.startDate || ""}
                   id="startDate"
                   name="startDate"
@@ -278,7 +280,7 @@ const EditRoundForm = ({ data, onClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                />
+                /> */}
               </Box>
 
               {/* Right Side */}
@@ -360,7 +362,7 @@ const EditRoundForm = ({ data, onClose }) => {
                 />
 
                 {/* end date */}
-                <TextField
+                {/* <TextField
                   value={formData?.endDate || ""}
                   id="endDate"
                   name="endDate"
@@ -375,7 +377,7 @@ const EditRoundForm = ({ data, onClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                />
+                /> */}
               </Box>
             </>
           </Box>

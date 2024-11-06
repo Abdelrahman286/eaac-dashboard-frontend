@@ -112,3 +112,7 @@
 .student-view-modal {
   width: 700px;
 }
+
+.page-break {
+  page-break-before: always;
+}

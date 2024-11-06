@@ -60,11 +60,12 @@ const ViewStudentData = ({ data }) => {
 
     if (element) {
       const opt = {
-        margin: 1,
+        // margin: 0.2,
+        margin: [0, 1, 0.2, 1], // [top, left, bottom, right] in inches
         filename: "document.pdf",
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
-          scale: 2, // Use a scale that better fits your div size
+          scale: 1.5, // Use a scale that better fits your div size
           logging: true,
           width: 740, // Set width explicitly to match your div size
           windowWidth: 740, // Ensures the capture size is correct
@@ -76,6 +77,10 @@ const ViewStudentData = ({ data }) => {
           unit: "in",
           format: [7.4, 11], // Match the width (740px ~ 7.4 inches), height is a standard letter size
           orientation: "portrait",
+          putTotalPages: true,
+        },
+        pagebreak: {
+          mode: ["avoid-all", "css", "legacy"],
         },
       };
 
@@ -99,9 +104,7 @@ const ViewStudentData = ({ data }) => {
           <Typography variant="h5" align="center" gutterBottom>
             User Information Document
           </Typography>
-
           <Divider sx={{ marginY: 2 }} />
-
           {/* General Information */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -140,9 +143,7 @@ const ViewStudentData = ({ data }) => {
               </Typography>
             </Grid>
           </Grid>
-
           <Divider sx={{ marginY: 2 }} />
-
           {/* Notes */}
           <Typography variant="h6" gutterBottom>
             Notes
@@ -150,9 +151,7 @@ const ViewStudentData = ({ data }) => {
           <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
             {data?.Notes || "No additional notes provided."}
           </Typography>
-
           <Divider sx={{ marginY: 2 }} />
-
           {/* Group Enrollments */}
           <Typography variant="h6" gutterBottom>
             Enrolled Groups

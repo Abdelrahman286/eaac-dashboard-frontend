@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
+import { useLocation, useNavigate } from "react-router-dom";
 // MUI
 import { Box, Chip, Avatar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
@@ -35,6 +35,7 @@ import GroupsModal from "./GroupsModal";
 import ViewStudentData from "./ViewStudentData";
 
 const StudentsTable = ({ onDataChange }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -278,6 +279,13 @@ const StudentsTable = ({ onDataChange }) => {
     setDataToShow(row);
   };
 
+  // redirect to student attedance
+
+  const handleRedirectToAttendance = (row) => {
+    navigate(`/attendance/students/${row?.id}`);
+  };
+
+
   const columns = [
     {
       field: "rowIndex",
@@ -455,7 +463,7 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"attendance"}
               title="Attendance"
-              onClick={() => console.log("show attendance")}
+              onClick={() => handleRedirectToAttendance(params.row)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"memberships"}

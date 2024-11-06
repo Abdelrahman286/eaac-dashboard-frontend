@@ -130,8 +130,11 @@ const InstructorsTable = ({ onDataChange }) => {
 
   // hoist the data for excel export
   useEffect(() => {
-    if (listData) {
+    if (dataObject) {
       onDataChange(dataList);
+    } else {
+      // to export empty excel if there's no data found
+      onDataChange([]);
     }
   }, [listData]);
 
@@ -298,7 +301,7 @@ const InstructorsTable = ({ onDataChange }) => {
       field: "BranchID.Name_en",
       headerName: "BranchID",
       valueGetter: (value, row) => {
-        return `${row?.BranchID?.Name_en || ""}`;
+        return `${row?.BranchID?.name_en || ""}`;
       },
       flex: 1, // This column will take up more space compared to others
       minWidth: 100,

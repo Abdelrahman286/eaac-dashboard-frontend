@@ -34,13 +34,11 @@ import {
 // components
 import Modal from "../../Modal";
 
-const DataTable = ({}) => {
+const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
-
-  const handleAttendance = (id) => {};
 
   // Mutate Attendance
 
@@ -50,7 +48,9 @@ const DataTable = ({}) => {
     isError: isAttendanceError,
     error: attendanceError,
   } = useMutation({
-    onError: (error) => {},
+    onError: (error) => {
+      showSnackbar("Error at sending at Attendance", "error");
+    },
     mutationFn: postStudentAttendanceFn,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -63,6 +63,22 @@ const DataTable = ({}) => {
       showSnackbar("Attendce Submitted Successfully", "success");
     },
   });
+
+  const handleAttendance = (row, value) => {
+    sendAttendanceData({
+      reqBody: {
+        clientId: row?.UserID,
+        roundId: row?.RoundID?.id,
+        sessionId: row?.SessionID?.id,
+        attendFlag: value || 0,
+      },
+      token,
+      config: {
+        isFormData: false,
+      },
+    });
+  };
+
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
     page: 0, // MUI uses 0-based index
@@ -70,8 +86,13 @@ const DataTable = ({}) => {
   });
 
   const paginationReqBody = {};
+
+  // request body
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
+    ...(clientId && { clientId }),
+    ...(sessionId && { sessionId }),
+    ...(roundId && { roundId }),
   };
 
   // Query to fetch pagination data (e.g., total elements, number of pages)
@@ -81,8 +102,8 @@ const DataTable = ({}) => {
     isError: paginationErr,
   } = useQuery({
     queryFn: () => {
-      // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getStudentsAttendanceFn(paginationReqBody, token, {
+      // pagination request body is the same as data list body
+      return getStudentsAttendanceFn(dataListReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
@@ -91,6 +112,9 @@ const DataTable = ({}) => {
       "studentAttendance-pagination",
       paginationReqBody,
       dataListReqBody,
+      clientId,
+      sessionId,
+      roundId,
     ],
     retry: 1,
   });
@@ -107,6 +131,10 @@ const DataTable = ({}) => {
       paginationModel.pageSize,
       paginationReqBody,
       dataListReqBody,
+
+      clientId,
+      sessionId,
+      roundId,
     ],
     queryFn: () => {
       return getStudentsAttendanceFn(dataListReqBody, token, {
@@ -287,11 +315,13 @@ const DataTable = ({}) => {
         return (
           <Box sx={{ margin: "0" }}>
             <CustomIconButton
+              onClick={() => handleAttendance(params.row, 1)}
               icon={"attended"}
               title={"Attended"}
             ></CustomIconButton>
 
             <CustomIconButton
+              onClick={() => handleAttendance(params.row, 0)}
               icon={"absent"}
               title={"Absent"}
             ></CustomIconButton>
@@ -306,7 +336,13 @@ const DataTable = ({}) => {
     updatedDataList = [];
   }
 
-  console.log(updatedDataList);
+  // hoist data for excel export
+  useEffect(() => {
+    if (dataList?.length !== 0) {
+      onDataChange(dataList);
+    }
+  }, [listData]);
+
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (

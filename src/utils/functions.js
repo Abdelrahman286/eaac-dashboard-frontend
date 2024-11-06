@@ -134,3 +134,31 @@ export const getConflictString = (conflictsArray) => {
 
   return combinedConflictString;
 };
+
+export function isSecondTimeLessThanFirst(firstTime, secondTime) {
+  // Helper function to convert time string to total minutes
+  const timeToMinutes = (time) => {
+    // Split by colon and parse the components
+    const timeParts = time.split(":").map(Number);
+    const hours = timeParts[0];
+    const minutes = timeParts[1] || 0; // Default to 0 if minutes are not provided
+
+    return hours * 60 + minutes;
+  };
+
+  // Convert both times to minutes
+  const firstTimeMinutes = timeToMinutes(firstTime);
+  const secondTimeMinutes = timeToMinutes(secondTime);
+
+  // Return true if the second time is less than the first time
+  return secondTimeMinutes < firstTimeMinutes;
+}
+
+export function isSecondDateGreater(firstDate, secondDate) {
+  // Parse the dates to Date objects
+  const date1 = new Date(firstDate);
+  const date2 = new Date(secondDate);
+
+  // Return true if second date is strictly greater, otherwise false
+  return date2 > date1;
+}

@@ -8,28 +8,119 @@ import { Box, TextField, Autocomplete, Button } from "@mui/material";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-const HeaderActions = () => {
-  const handleDropdownChange = (name, value) => {
-    setSessionForm({
-      ...sessionForm,
-      [name]: value,
-    });
+// components
+import SearchableDropdown from "../../SearchableDropdown";
+
+// requests
+import {
+  getInstructorsFn,
+  getRoundsFn,
+  getSessionsFn,
+} from "../../../requests/attendance";
+
+// excel
+import ExportToExcel from "../../ExportToExcel";
+
+// utils
+import { getDataForTableRows } from "../../../utils/tables";
+
+const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
+  const { showSnackbar } = useContext(AppContext);
+  const queryClient = useQueryClient();
+  const { token } = useContext(UserContext);
+
+  const [instructorId, setInstructorId] = useState("");
+  const [roundId, setRoundId] = useState("");
+  const [sessionId, setSessionId] = useState("");
+
+  // handle redirect
+  useEffect(() => {
+    if (paramsInstructorId) {
+      setInstructorId(paramsInstructorId);
+    }
+  }, []);
+
+  // get groups
+  const { data: groupsList, isLoading: groupsLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getRoundsFn(
+        {
+          numOfElements: "2000",
+          ...(instructorId && { instructorId: instructorId }),
+        },
+        token,
+        { isFormData: true }
+      );
+    },
+
+    queryKey: ["instructorGroups", instructorId],
+  });
+  const groups = getDataForTableRows(groupsList?.success?.response?.data);
+
+  // get sessions
+  const { data: sessionsList, isLoading: sessionsLoading } = useQuery({
+    queryFn: () => {
+      return getSessionsFn(
+        {
+          //   numOfElements: "3000",
+          ...(roundId && { roundId: roundId }),
+        },
+        token
+      );
+    },
+    enabled: !!roundId,
+    queryKey: ["roundSessions", roundId],
+  });
+  const sessions = getDataForTableRows(sessionsList?.success?.response?.data);
+
+  // get students
+  const { data: instructorsList, isLoading: instructorLoading } = useQuery({
+    queryFn: () => {
+      return getInstructorsFn(
+        {
+          numOfElements: "6000",
+        },
+        token
+      );
+    },
+
+    queryKey: ["instructors"],
+  });
+  const instructors = getDataForTableRows(
+    instructorsList?.success?.response?.data
+  );
+
+  const handleInstructorSelect = (_instructor) => {
+    setInstructorId(_instructor?.id);
+    setRoundId("");
+    setSessionId("");
   };
 
-  const groups = [
-    { id: 1, name: "Group 1" },
-    { id: 2, name: "Group 2" },
+  const handleFilters = () => {
+    const params = {
+      instructorId,
+      roundId,
+      sessionId,
+    };
+
+    onChange(params);
+  };
+
+  // Excel export
+  const headers = [
+    { key: "Name", label: "Name" },
+    { key: "PhoneNumber", label: "Phone" },
+    { key: "RoundID.Name_en", label: "Group" },
+    { key: "RoomID.Name_en", label: "Room" },
+    { key: "Date", label: "Session Name" },
+    { key: "Name_en", label: "Session Date" },
+    { key: "AttendTime", label: "checkIn" },
+    { key: "LeaveTime", label: "checkOut" },
+    { key: "workedHours", label: "worked Hours" },
+
   ];
 
-  const sessions = [
-    { id: 1, name: "session 1" },
-    { id: 2, name: "session 2" },
-  ];
-
-  const students = [
-    { id: 1, name: "student  1" },
-    { id: 2, name: "student 2" },
-  ];
   return (
     <Box sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       {/* Row 1 - Group/Round, Session, and Instructor */}
@@ -40,11 +131,52 @@ const HeaderActions = () => {
           gap: 1,
         }}
       >
+        <Box sx={{ flex: 1, minWidth: "200px" }}>
+          {/* <SearchableDropdown
+            isFromData={false}
+            label="Students"
+            fetchData={getStudentFn}
+            queryKey="Students"
+            getOptionLabel={(option) => `${option?.Name}`}
+            getOptionId={(option) => option?.id} // Custom ID field
+            onSelect={handleStudentSelect}
+            // initialValue={} // New initial value prop
+          ></SearchableDropdown> */}
+
+          <Autocomplete
+            value={
+              instructors.find((item) => item.InstructorID == instructorId) ||
+              null
+            }
+            onChange={(e, value) => {
+              handleInstructorSelect(value);
+            }}
+            loading={instructorLoading}
+            options={instructors || []}
+            getOptionLabel={(option) =>
+              `[${option?.InstructorID}]-${option?.Name}` || ""
+            }
+            size="small"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Instructors"
+                margin="normal"
+                fullWidth
+              />
+            )}
+          />
+        </Box>
         {/* Autocomplete for Group/Round */}
         <Box sx={{ flex: 1, minWidth: "200px" }}>
           <Autocomplete
-            options={groups}
-            getOptionLabel={(option) => option.name || ""}
+            value={groups.find((item) => item.id == roundId) || null}
+            onChange={(e, value) => {
+              setRoundId(value?.id);
+            }}
+            loading={groupsLoading}
+            options={groups || []}
+            getOptionLabel={(option) => option?.Name_en || ""}
             size="small"
             renderInput={(params) => (
               <TextField
@@ -60,8 +192,14 @@ const HeaderActions = () => {
         {/* Autocomplete for Session */}
         <Box sx={{ flex: 1, minWidth: "200px" }}>
           <Autocomplete
+            value={sessions.find((item) => item.id == sessionId) || null}
+            onChange={(e, value) => {
+              setSessionId(value?.id);
+            }}
             options={sessions}
-            getOptionLabel={(option) => option.name || ""}
+            getOptionLabel={(option) =>
+              `${option?.Name_en} (${option?.StartTime})` || ""
+            }
             size="small"
             renderInput={(params) => (
               <TextField
@@ -74,57 +212,21 @@ const HeaderActions = () => {
           />
         </Box>
 
-        {/* Autocomplete for Instructor */}
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <Autocomplete
-            options={students}
-            getOptionLabel={(option) => option.name || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Instructor"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
-      </Box>
+        <Button
+          onClick={handleFilters}
+          variant="contained"
+          color="primary"
+          sx={{
+            height: "40px",
+            padding: 0,
+            margin: 0,
+            marginTop: "16px",
+          }}
+        >
+          Filter
+        </Button>
 
-      {/* Row 2 - From Date and To Date */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-        }}
-      >
-        {/* From Date */}
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <TextField
-            label="From Date"
-            name="startDate"
-            type="date"
-            size="small"
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-          />
-        </Box>
-
-        {/* To Date */}
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <TextField
-            label="To Date"
-            name="endDate"
-            type="date"
-            size="small"
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-          />
-        </Box>
+        {/* Autocomplete for student */}
       </Box>
 
       {/* Row 3 - Buttons */}
@@ -159,7 +261,9 @@ const HeaderActions = () => {
             sx={{
               width: "280px", // Constant width
               paddingY: 0.1,
-              height: "32px",
+              height: "40px",
+              padding: "16px 4px",
+              borderRadius: "20px",
             }}
           >
             Show Attendance Report
@@ -167,26 +271,12 @@ const HeaderActions = () => {
         </Box>
 
         {/* Export XLS Button */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "center", sm: "flex-start" },
-          }}
-        >
-          <Button
-            size="small"
-            variant="contained"
-            color="secondary"
-            startIcon={<DownloadIcon />}
-            sx={{
-              width: "140px", // Constant width
-              paddingY: 0.1,
-              height: "32px",
-            }}
-          >
-            Export XLS
-          </Button>
-        </Box>
+
+        <ExportToExcel
+          data={excelData}
+          fileName={"stundet attenance"}
+          headers={headers}
+        ></ExportToExcel>
       </Box>
     </Box>
   );

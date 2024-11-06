@@ -42,6 +42,8 @@ const HeaderActions = ({ data }) => {
       label: "Commercial Registration No",
     },
     { key: "TaxCardNumber", label: "Tax Card Number" },
+
+    { key: "ClientCode", label: "Company Code" },
     { key: "Notes", label: "Notes" },
   ];
 

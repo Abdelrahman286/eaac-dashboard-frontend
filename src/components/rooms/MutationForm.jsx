@@ -99,6 +99,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
+
     // Handle edit data initialization
     const rawFormData = {
       id: [data.id],
@@ -118,6 +119,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     const newFormData = Object.fromEntries(
       Object.entries(rawFormData).filter(([_, value]) => value)
     );
+
+    console.log(newFormData);
 
     setFormData(newFormData);
   }, [isEditData, data]);
@@ -181,7 +184,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <Autocomplete
                 loading={branchesLoading}
                 value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
+                  branches.find((branch) => branch.id == formData.branchId) ||
                   null
                 }
                 options={branches}
@@ -276,7 +279,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                           screenFlag: e.target.checked ? "1" : "0",
                         })
                       }
-                      checked={formData?.screenFlag === "1"} // Ensure this is properly handled
+                      checked={formData?.screenFlag == "1"} // Ensure this is properly handled
                       name="hasProjector"
                     />
                   }
@@ -296,7 +299,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                           pcFlag: e.target.checked ? "1" : "0",
                         })
                       }
-                      checked={formData?.pcFlag === "1"} // Ensure this is properly handled
+                      checked={formData?.pcFlag == "1"} // Ensure this is properly handled
                       name="hasComputers"
                     />
                   }
@@ -316,7 +319,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                           whiteBoardFlag: e.target.checked ? "1" : "0",
                         })
                       }
-                      checked={formData?.whiteBoardFlag === "1"} // Ensure this is properly handled
+                      checked={formData?.whiteBoardFlag == "1"} // Ensure this is properly handled
                       name="hasWhiteBoard"
                     />
                   }
@@ -335,7 +338,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                           specialNeedsFlag: e.target.checked ? "1" : "0",
                         })
                       }
-                      checked={formData?.specialNeedsFlag === "1"} // Ensure this is properly handled
+                      checked={formData?.specialNeedsFlag == "1"} // Ensure this is properly handled
                       name="isAccessible"
                     />
                   }

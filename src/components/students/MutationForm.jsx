@@ -128,8 +128,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       email: data?.Email || "",
       whatsappNum: data?.WhatsappNumber || "",
       birthDate: convertDateFormatStudent(data?.BirthDate),
-
-      //   notes: data?.Notes,
+      notes: data?.Notes,
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -305,6 +304,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 // helperText={formErrors?.notes}
                 value={formData?.notes || ""}
                 id="notes"
+                name="notes"
                 multiline
                 rows={2}
                 label="Notes"

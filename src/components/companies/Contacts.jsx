@@ -68,7 +68,7 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
     {
       field: "controls",
       headerName: "Controls",
-      width: 40,
+      width: 100,
       renderCell: (params) => (
         <IconButton
           edge="end"
@@ -99,7 +99,7 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
           sx={{
             flexGrow: 1,
             fontWeight: "400",
-            fontSize: "15px",
+            // fontSize: "15px",
           }}
         >
           Contacts

@@ -4,7 +4,16 @@ import "../../styles/companies.css";
 import PrintIcon from "@mui/icons-material/Print";
 import FormButton from "../FormButton";
 import { UserContext } from "../../contexts/UserContext";
-
+import {
+  Box,
+  Typography,
+  Divider,
+  Paper,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 // requests
 import {
   getCompanyContactsFn,
@@ -99,40 +108,59 @@ const ViewCompany = ({ rowData }) => {
           </div>
         </div>
 
-        <div className="data-row">
-          <label>Company Name</label>
-          <span> {rowData?.Name_ar || ""}</span>
+        {/* // start company data */}
 
-          <span> {rowData?.Name_en || ""}</span>
-
-          <label>Code</label>
-
-          <span>{rowData?.ClientCode}</span>
-        </div>
-
-        <div className="data-row">
-          <label>Phone</label>
-          <span>{rowData?.MainPhone}</span>
-
-          <label>Commercial Registeration No. </label>
-          <span>{rowData?.CommercialRegistrationNumber || ""}</span>
-
-          <label>Tax Registeration No.</label>
-
-          <span>{rowData?.TaxCardNumber || ""}</span>
-        </div>
-
-        <div className="data-row">
-          <label>Business Lines (Fields of Work)</label>
-
-          <span>{rowData?.Business || ""}</span>
-        </div>
-
-        <div className="data-row">
-          <label>Notes</label>
-
-          <span>{rowData?.Notes || ""}</span>
-        </div>
+        <Divider sx={{ marginY: 2 }} />
+        {/* General Information */}
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Name (AR):</strong> {rowData?.Name_ar || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Name (EN):</strong> {rowData?.Name_en || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Code:</strong> {rowData?.ClientCode || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Phone Number:</strong> {rowData?.MainPhone || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Commercial Registeration No</strong>{" "}
+              {rowData?.CommercialRegistrationNumber || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Tax Registeration No.</strong>{" "}
+              {rowData?.TaxCardNumber || ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1">
+              <strong>Business Lines (Fields of Work)</strong>{" "}
+              {rowData?.Business || ""}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider sx={{ marginY: 2 }} />
+        {/* Notes */}
+        <Typography variant="h6" gutterBottom>
+          Notes
+        </Typography>
+        <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
+          {rowData?.Notes || "No additional notes provided."}
+        </Typography>
+        {/* // end company data */}
 
         <h2>Branches</h2>
 
@@ -167,9 +195,16 @@ const ViewCompany = ({ rowData }) => {
         <h2>Contacts</h2>
 
         {contacts?.length > 0 && (
-          <div className="group">
+          <div
+            className="group"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             <table
               style={{
+                // background: "red",
                 maxWidth: "600px",
                 borderCollapse: "collapse",
                 tableLayout: "fixed",

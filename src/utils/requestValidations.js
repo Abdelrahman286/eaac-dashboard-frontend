@@ -4,6 +4,7 @@ import {
   validatePhoneNumber,
   hasEmptyKeys,
   isValidPositiveNumber,
+  isFutureDate,
 } from "./validation";
 
 export const validateLoginData = (loginData) => {
@@ -97,6 +98,14 @@ export const validateAddCompany = (formData) => {
   //     errors.notes = "Notes can not be empty";
   //   }
 
+  // tax number should not be negative
+  if (
+    !isBlank(formData?.taxCardNumber) &&
+    !isValidPositiveNumber(formData?.taxCardNumber)
+  ) {
+    errors.taxCardNumber = "Tax Number can not be negative number";
+  }
+
   // validate contacts
   if (formData?.contacts.length > 0) {
     if (hasEmptyKeys(formData.contacts, ["fullName", "phone"])) {
@@ -123,6 +132,14 @@ export const validateEditCompany = (formData) => {
 
   if (isBlank(formData.mainPhone)) {
     errors.mainPhone = "Main phone can not be empty";
+  }
+
+  // tax number should not be negative
+  if (
+    !isBlank(formData?.taxCardNumber) &&
+    !isValidPositiveNumber(formData?.taxCardNumber)
+  ) {
+    errors.taxCardNumber = "Tax Number can not be negative number";
   }
 
   if (!validatePhoneNumber(formData.mainPhone)) {
@@ -363,6 +380,11 @@ export const validateAddInstructor = (formData) => {
     errors.birthDate = "Please Fill in Birth Date";
   }
 
+  // validate if birthday is in the future
+  if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
+    errors.birthDate = "Birth Date Can not be in the future";
+  }
+
   if (isBlank(formData?.branchId))
     errors.branchId = "Please Provide the Branch";
 
@@ -395,6 +417,10 @@ export const validateEditInstuctor = (formData) => {
 
   if (isBlank(formData?.birthDate)) {
     errors.birthDate = "Please Fill in Birth Date";
+  }
+  // validate if birthday is in the future
+  if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
+    errors.birthDate = "Birth Date Can not be in the future";
   }
 
   if (isBlank(formData?.branchId))
@@ -461,13 +487,13 @@ export const validateEditRound = (formData) => {
     errors.instructorId = "Please Select The Instructor";
   }
 
-  if (isBlank(formData?.startDate)) {
-    errors.startDate = "Please Fill in start date";
-  }
+  //   if (isBlank(formData?.startDate)) {
+  //     errors.startDate = "Please Fill in start date";
+  //   }
 
-  if (isBlank(formData?.endDate)) {
-    errors.endDate = "Please Fill in end date";
-  }
+  //   if (isBlank(formData?.endDate)) {
+  //     errors.endDate = "Please Fill in end date";
+  //   }
 
   return errors;
 };

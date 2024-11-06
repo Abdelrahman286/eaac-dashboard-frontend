@@ -11,6 +11,12 @@
     /* background: red; */
     margin-top: 20px;
   }
+
+  .xls-btn {
+    background: #5a5a5a;
+    margin-left: 10px;
+    min-width: 160px;
+  }
 }
 
 .instructor-attendance {

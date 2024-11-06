@@ -352,17 +352,31 @@ const RoundsTable = ({ onDataChange }) => {
 
       //   editable: true,
       renderCell: (params) => {
-        return (
-          <div>
-            <FormButton
-              className="show-sessions main-btn"
-              buttonText={"Show"}
-              onClick={() => {
-                handleShowSessions(params?.row?.id);
-              }}
-            ></FormButton>
-          </div>
-        );
+        if (disabledList?.key !== "round") {
+          return (
+            <div>
+              <FormButton
+                className="show-sessions main-btn"
+                buttonText={"Show"}
+                onClick={() => {
+                  handleShowSessions(params?.row?.id);
+                }}
+              ></FormButton>
+            </div>
+          );
+        } else {
+          return (
+            <div>
+              <FormButton
+                className="show-sessions main-btn"
+                buttonText={"Show"}
+                style={{
+                  cursor: "not-allowed",
+                }}
+              ></FormButton>
+            </div>
+          );
+        }
       },
       flex: 0.7,
       minWidth: 80,
@@ -381,8 +395,8 @@ const RoundsTable = ({ onDataChange }) => {
     {
       field: "controls",
       headerName: "Controls",
-      flex: 1.5,
-      minWidth: 250,
+      flex: parseFloat(`${disabledList?.key == "round" ? 0.6 : 1.5}`),
+      minWidth: parseInt(`${disabledList?.key == "round" ? 100 : 250}`),
       renderCell: (params) => {
         if (disabledList?.key == "round") {
           return (

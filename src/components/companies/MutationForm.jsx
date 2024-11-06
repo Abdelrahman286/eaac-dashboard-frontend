@@ -409,11 +409,12 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               />
 
               <TextField
+                error={Boolean(formErrors?.taxCardNumber)}
+                helperText={formErrors?.taxCardNumber || ""}
                 id="taxCardNumber"
                 value={formData.taxCardNumber || ""}
                 label="Tax Registration No."
                 sx={{ width: "48%", marginY: "4px" }}
-                helperText=""
                 fullWidth
                 type="number"
                 onChange={handleFormChange}
@@ -441,11 +442,14 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
               {/* TextField and Select side by side */}
               <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
+                sx={
+                  {
+                    //   display: "flex",
+                    //   alignItems: "center",
+                    //   justifyContent: "center",
+                    //   gap: "8px",
+                  }
+                }
               >
                 {/* TextField Component */}
                 <TextField
@@ -461,7 +465,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 {/* Select Dropdown Component */}
                 <Autocomplete
                   sx={{
-                    marginRight: 1,
+                    padding: "4px 0px",
+                    marginTop: "10px",
                   }}
                   fullWidth
                   options={companyTypes} // Array of options
@@ -496,7 +501,9 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 // backgroundColor: "#f4f4f494",
                 padding: "10px",
                 borderRadius: "8px",
-                margin: "20px 0",
+                // margin: "20px 0",
+                marginTop: "-20px",
+                // background: "red",
               }}
             >
               {/* Title */}
@@ -514,7 +521,11 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               {/* File Input */}
               <TextField
                 id="outlined-multiline-flexible"
-                sx={{ width: "100%", marginY: "4px", marginRight: "8px" }}
+                sx={{
+                  width: "100%",
+                  marginY: "4px",
+                  marginRight: "8px",
+                }}
                 helperText=""
                 fullWidth
                 required
@@ -668,7 +679,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     autoComplete="off"
                     autoCorrect="off"
                     {...params}
-                    label="Country"
+                    label="Country *"
                     sx={{ marginBottom: "8px" }}
                   />
                 )}
@@ -697,7 +708,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     autoComplete="off"
                     autoCorrect="off"
                     {...params}
-                    label="Province"
+                    label="Province *"
                     sx={{ marginBottom: "8px" }}
                   />
                 )}
@@ -778,15 +789,22 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               />
             </Box>
 
-            {!isEditData && (
+            {/* {!isEditData && (
               <ContactsTable
                 error={formErrors?.contacts}
                 isError={Boolean(formErrors?.contacts)}
                 onContactsChange={handleContactsChange}
               ></ContactsTable>
-            )}
+            )} */}
           </div>
         </div>
+        {!isEditData && (
+          <ContactsTable
+            error={formErrors?.contacts}
+            isError={Boolean(formErrors?.contacts)}
+            onContactsChange={handleContactsChange}
+          ></ContactsTable>
+        )}
 
         <div className="form-actions">
           {isAddCompanyError && (

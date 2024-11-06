@@ -6,6 +6,8 @@ import {
   isValidPositiveNumber,
 } from "./validation";
 
+import { isSecondTimeLessThanFirst, isSecondDateGreater } from "./functions";
+
 export const validateRoundRow = (dataRow) => {
   const errors = {};
 
@@ -28,6 +30,18 @@ export const validateRoundRow = (dataRow) => {
     errors.sessionEndTime = "Please Fill in Session End Time";
   }
 
+  // valdidate time difference
+  if (
+    !isBlank(dataRow?.sessionStartTime) &&
+    !isBlank(dataRow?.sessionEndTime) &&
+    isSecondTimeLessThanFirst(
+      dataRow?.sessionStartTime,
+      dataRow?.sessionEndTime
+    )
+  ) {
+    errors.sessionEndTime = "The End Time Must Be After the Start Time";
+  }
+
   if (isBlank(dataRow?.instructorId)) {
     errors.instructorId = "Please Select Session Instructor";
   }
@@ -47,11 +61,33 @@ export const validateBulkSuggestion = (formData) => {
   if (isBlank(formData?.sessionEndTime))
     errors.sessionEndTime = "Please Fill in Session End Time";
 
+  // valdidate time difference
+  if (
+    !isBlank(formData?.sessionStartTime) &&
+    !isBlank(formData?.sessionEndTime) &&
+    isSecondTimeLessThanFirst(
+      formData?.sessionStartTime,
+      formData?.sessionEndTime
+    )
+  ) {
+    errors.sessionEndTime = "The End Time Must Be After the Start Time";
+  }
+
   if (isBlank(formData?.startDate))
     errors.startDate = "Please Fill in Start Date";
 
   if (isBlank(formData?.endDate))
     errors.endDate = "Please Fill in Session End Date";
+
+  // validate date difference
+
+  if (
+    !isBlank(formData?.startDate) &&
+    !isBlank(formData?.endDate) &&
+    !isSecondDateGreater(formData?.startDate, formData?.endDate)
+  ) {
+    errors.endDate = "Session End Date Must be after the Start Date";
+  }
 
   //   if (formData?.weekDays) errors.weekDays = "Please Select Session Days";
   if (!formData?.weekDays) {
@@ -83,6 +119,15 @@ export const validateEditSession = (dataRow) => {
     errors.endTime = "Please Fill in Session End Time";
   }
 
+  // valdidate time difference
+  if (
+    !isBlank(dataRow?.startTime) &&
+    !isBlank(dataRow?.endTime) &&
+    isSecondTimeLessThanFirst(dataRow?.startTime, dataRow?.endTime)
+  ) {
+    errors.endTime = "The End Time Must Be After the Start Time";
+  }
+
   if (isBlank(dataRow?.instructorId)) {
     errors.instructorId = "Please Select Session Instructor";
   }
@@ -108,12 +153,33 @@ export const validateAddBulkInEdit = (dataRow) => {
     errors.endDate = "Please Fill in End Session Date";
   }
 
+  // validate date difference
+  if (
+    !isBlank(dataRow?.startDate) &&
+    !isBlank(dataRow?.endDate) &&
+    !isSecondDateGreater(dataRow?.startDate, dataRow?.endDate)
+  ) {
+    errors.endDate = "Session End Date Must be after the Start Date";
+  }
+
   if (isBlank(dataRow?.sessionStartTime)) {
     errors.sessionStartTime = "Please Fill in Session Start Time";
   }
 
   if (isBlank(dataRow?.sessionEndTime)) {
     errors.sessionEndTime = "Please Fill in Session End Time";
+  }
+
+  // validate time difference
+  if (
+    !isBlank(dataRow?.sessionStartTime) &&
+    !isBlank(dataRow?.sessionEndTime) &&
+    isSecondTimeLessThanFirst(
+      dataRow?.sessionStartTime,
+      dataRow?.sessionEndTime
+    )
+  ) {
+    errors.sessionEndTime = "The End Time Must Be After the Start Time";
   }
 
   if (isBlank(dataRow?.instructorId)) {

@@ -41,7 +41,7 @@ const HeaderActions = ({ data }) => {
     { key: "PhoneNumber", label: "Phone Number" },
     { key: "WhatsappNumber", label: "WhatsApp Number" },
     { key: "GovIssuedID", label: "Government ID" },
-    { key: "BranchID.Name_en", label: "Branch Name (En)" },
+    { key: "BranchID.name_en", label: "Branch Name (En)" },
   ];
 
   const handleSearchChange = (e) => {

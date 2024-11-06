@@ -36,7 +36,7 @@ const HeaderActions = ({ data }) => {
   // headers for excel export -----------------
   const headers = [
     { key: "Name", label: "Name" },
-    { key: "CompanyID.Name_en", label: "Company" },
+    { key: "companyName", label: "Company" },
     { key: "Email", label: "Email" },
     { key: "PhoneNumber", label: "Phone Number" },
     { key: "WhatsappNumber", label: "WhatsApp Number" },

@@ -65,8 +65,8 @@ export default function AppContextProvider({ children }) {
     showSnackbar,
     searchResults,
     setSearchResults,
-    disabledList, 
-    setDisabledList
+    disabledList,
+    setDisabledList,
   };
 
   return (
