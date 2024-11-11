@@ -86,6 +86,14 @@ export const validateAddCompany = (formData) => {
     errors.mainPhone = "Enter Valid Phone Number";
   }
 
+  //  countryId , provinceId
+  if (isBlank(formData.countryId)) {
+    errors.countryId = "Country can not be empty";
+  }
+  if (isBlank(formData.provinceId)) {
+    errors.provinceId = "Province can not be empty";
+  }
+
   if (isBlank(formData.cityId)) {
     errors.cityId = "City can not be empty";
   }
@@ -108,6 +116,15 @@ export const validateAddCompany = (formData) => {
 
   // validate contacts
   if (formData?.contacts.length > 0) {
+    // validate phone number
+    if (
+      formData?.contacts?.some(
+        (contact) => !validatePhoneNumber(contact?.phone)
+      )
+    ) {
+      errors.contacts = "Please fill in a valid phone number";
+    }
+
     if (hasEmptyKeys(formData.contacts, ["fullName", "phone"])) {
       errors.contacts =
         "Please complete the empty fields or remove any empty rows";
@@ -461,6 +478,14 @@ export const validateAddRound = (formData) => {
     errors.instructorId = "Please Select The Instructor";
   }
 
+  // attendancePercentage
+  if (
+    !isBlank(formData?.attendancePercentage) &&
+    (!isValidPositiveNumber(formData.attendancePercentage) ||
+      parseFloat(formData.attendancePercentage) > 100)
+  ) {
+    errors.attendancePercentage = "Please enter a valid percentage (0-100)";
+  }
   return errors;
 };
 
@@ -485,6 +510,14 @@ export const validateEditRound = (formData) => {
 
   if (isBlank(formData?.instructorId)) {
     errors.instructorId = "Please Select The Instructor";
+  }
+
+  if (
+    !isBlank(formData?.attendancePercentage) &&
+    (!isValidPositiveNumber(formData.attendancePercentage) ||
+      parseFloat(formData.attendancePercentage) > 100)
+  ) {
+    errors.attendancePercentage = "Please enter a valid percentage (0-100)";
   }
 
   //   if (isBlank(formData?.startDate)) {

@@ -23,7 +23,10 @@ import { AppContext } from "../../../contexts/AppContext";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
-import { convertTo12HourFormat } from "../../../utils/functions";
+import {
+  convertTo12HourFormat,
+  isSecondTimeLessThanFirst,
+} from "../../../utils/functions";
 // requests
 
 import {
@@ -34,7 +37,14 @@ import {
 // components
 import Modal from "../../Modal";
 
-const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
+const DataTable = ({
+  instructorId,
+  sessionId,
+  roundId,
+  startDate,
+  endDate,
+  onDataChange,
+}) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -44,7 +54,6 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
     id: "",
     value: "",
   });
-
   const [endTime, setEndTime] = useState({
     id: "",
     value: "",
@@ -76,39 +85,53 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
     },
   });
   // send post attendance repquest
-  const handleCalculateTime = (id) => {
+  const handleCalculateTime = (row) => {
     // reset everything
     setTimeErrors({});
-    // set errors
+    // set errors (validation)
     const errors = {};
-    if (startTime?.id !== id) {
-      errors.startTime = id;
+    if (startTime?.id !== row.id) {
+      errors.startTime = row.id;
     }
-    if (endTime?.id !== id) {
-      errors.endTime = id;
+    if (endTime?.id !== row.id) {
+      errors.endTime = row.id;
     }
-    setTimeErrors(errors);
 
-    // make the request if data is valid
+    if (
+      startTime?.value &&
+      endTime?.value &&
+      isSecondTimeLessThanFirst(startTime?.value, endTime?.value)
+    ) {
+      showSnackbar("Leave Time Must be after Attendance Time", "error");
+      errors.startTime = row.id;
+      errors.endTime = row.id;
+      console.log(startTime?.value);
+    }
 
-    if ((startTime.id == endTime.id) == id) {
-      console.log("mutate attendance data");
-      //   sendAttendanceData({
-      //     reqBody: {
-      //       instructorId: 10,
-      //       roundId: 40,
-      //       sessionId: 1657,
-      //       date: "2024/2/20",
-      //       attendTime: "7:30:00",
-      //       leaveTime: "08:00:00",
-      //       attendFlag: 1,
-      //       notes: "NOTES DAF",
-      //     },
-      //     token,
-      //     config: {
-      //       isFormData: false,
-      //     },
-      //   });
+    if (Object.keys(errors).length > 0) {
+      setTimeErrors(errors);
+    } else {
+      setTimeErrors({});
+
+      // make the request if data is valid
+      if ((startTime.id == endTime.id) == row.id) {
+        sendAttendanceData({
+          reqBody: {
+            instructorId: row.UserID,
+            roundId: row.RoundID?.id,
+            sessionId: row.SessionID?.id,
+            date: row.Date,
+            attendTime: `${startTime?.value}:00`,
+            leaveTime: `${endTime?.value}:00`,
+            attendFlag: 1,
+            notes: "-",
+          },
+          token,
+          config: {
+            isFormData: false,
+          },
+        });
+      }
     }
   };
   // State for pagination
@@ -124,6 +147,9 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
     ...(instructorId && { instructorId }),
     ...(sessionId && { sessionId }),
     ...(roundId && { roundId }),
+
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
 
   // Query to fetch pagination data (e.g., total elements, number of pages)
@@ -134,7 +160,7 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
   } = useQuery({
     queryFn: () => {
       return getInstructorsAttendanceFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
@@ -146,6 +172,8 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
       instructorId,
       sessionId,
       roundId,
+      startDate,
+      endDate,
     ],
     retry: 1,
   });
@@ -166,10 +194,12 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
       instructorId,
       sessionId,
       roundId,
+      startDate,
+      endDate,
     ],
     queryFn: () => {
       return getInstructorsAttendanceFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
     },
@@ -322,14 +352,18 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
       field: "workedHours",
       headerName: "Hours",
       renderCell: (params) => {
-        return (
-          <Chip
-            label={params?.row?.workedHours}
-            color="success"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+        if (params?.row?.workedHours) {
+          return (
+            <Chip
+              label={params?.row?.workedHours}
+              color="success"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else {
+          return <span></span>;
+        }
       },
 
       flex: 1,
@@ -378,7 +412,7 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
                   size="large"
                   color="primary"
                   onClick={() => {
-                    handleCalculateTime(params.row.id);
+                    handleCalculateTime(params.row);
                   }}
                 >
                   <CalculateIcon />
@@ -396,7 +430,13 @@ const DataTable = ({ instructorId, sessionId, roundId, onDataChange }) => {
     updatedDataList = [];
   }
 
-  console.log(updatedDataList);
+  // hoist data for excel export
+  useEffect(() => {
+    if (dataList?.length !== 0) {
+      onDataChange(dataList);
+    }
+  }, [listData]);
+
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (

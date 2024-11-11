@@ -23,7 +23,6 @@ import MutationForm from "./MutationForm";
 // utils
 import ExportToExcel from "../ExportToExcel";
 const HeaderActions = ({ data }) => {
-  console.log(data);
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -46,7 +45,6 @@ const HeaderActions = ({ data }) => {
   ];
 
   const handleSearchChange = (e) => {
-    console.log(e.target.value);
     setSearchTerm(e.target.value);
   };
 

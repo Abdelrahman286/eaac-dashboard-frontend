@@ -239,6 +239,7 @@ const CompaniesTable = ({ onDataChange }) => {
     });
   };
 
+  console.log(updatedDataList);
   const columns = [
     {
       field: "rowIndex",
@@ -311,7 +312,10 @@ const CompaniesTable = ({ onDataChange }) => {
       headerName: "HQ Address",
       flex: 1,
       minWidth: 120,
-      valueGetter: (params) => `${params?.row?.HqAdressID?.Address || ""}`,
+      valueGetter: (value, row) => {
+        // console.log(params?.Address);
+        return `${row?.HqAdressID?.Address || ""}`;
+      },
     },
     {
       field: "CommercialRegistrationNumber",

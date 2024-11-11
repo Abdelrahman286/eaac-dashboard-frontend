@@ -8,9 +8,6 @@ import { Box, TextField, Autocomplete, Button } from "@mui/material";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-// components
-import SearchableDropdown from "../../SearchableDropdown";
-
 // requests
 import {
   getInstructorsFn,
@@ -32,6 +29,9 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   const [instructorId, setInstructorId] = useState("");
   const [roundId, setRoundId] = useState("");
   const [sessionId, setSessionId] = useState("");
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // handle redirect
   useEffect(() => {
@@ -63,7 +63,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
     queryFn: () => {
       return getSessionsFn(
         {
-          //   numOfElements: "3000",
+          numOfElements: "3000",
           ...(roundId && { roundId: roundId }),
         },
         token
@@ -92,7 +92,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   );
 
   const handleInstructorSelect = (_instructor) => {
-    setInstructorId(_instructor?.id);
+    setInstructorId(_instructor?.InstructorID);
     setRoundId("");
     setSessionId("");
   };
@@ -102,6 +102,8 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
       instructorId,
       roundId,
       sessionId,
+      startDate,
+      endDate,
     };
 
     onChange(params);
@@ -118,8 +120,11 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
     { key: "AttendTime", label: "checkIn" },
     { key: "LeaveTime", label: "checkOut" },
     { key: "workedHours", label: "worked Hours" },
-
   ];
+
+  useEffect(() => {
+    console.log(instructorId);
+  }, [instructorId]);
 
   return (
     <Box sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}>
@@ -132,20 +137,9 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
         }}
       >
         <Box sx={{ flex: 1, minWidth: "200px" }}>
-          {/* <SearchableDropdown
-            isFromData={false}
-            label="Students"
-            fetchData={getStudentFn}
-            queryKey="Students"
-            getOptionLabel={(option) => `${option?.Name}`}
-            getOptionId={(option) => option?.id} // Custom ID field
-            onSelect={handleStudentSelect}
-            // initialValue={} // New initial value prop
-          ></SearchableDropdown> */}
-
           <Autocomplete
             value={
-              instructors.find((item) => item.InstructorID == instructorId) ||
+              instructors.find((item) => item?.InstructorID === instructorId) ||
               null
             }
             onChange={(e, value) => {
@@ -212,6 +206,46 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
           />
         </Box>
 
+        {/* Autocomplete for student */}
+      </Box>
+      {/* start & end time row */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+        }}
+      >
+        <TextField
+          //   error={Boolean(formErrors?.startDate)}
+          //   helperText={formErrors?.startDate}
+          value={startDate || ""}
+          onChange={(e) => setStartDate(e.target.value)}
+          size="small"
+          label="Start Date"
+          name="startDate"
+          type="date"
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          //   error={Boolean(formErrors?.endDate)}
+          //   helperText={formErrors?.endDate}
+          value={endDate || ""}
+          onChange={(e) => setEndDate(e.target.value)}
+          size="small"
+          label="End Date"
+          name="endDate"
+          type="date"
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
         <Button
           onClick={handleFilters}
           variant="contained"
@@ -225,8 +259,6 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
         >
           Filter
         </Button>
-
-        {/* Autocomplete for student */}
       </Box>
 
       {/* Row 3 - Buttons */}

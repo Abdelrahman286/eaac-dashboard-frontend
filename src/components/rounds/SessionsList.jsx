@@ -84,7 +84,9 @@ const SessionsList = ({ onClose, roundId }) => {
         </div>
       )}
 
-      {!sessionsLoading && sessions?.length === 0 && <div className=""></div>}
+      {!sessionsLoading && sessions?.length == 0 && (
+        <div className="">No Sessions Found !</div>
+      )}
     </div>
   );
 };

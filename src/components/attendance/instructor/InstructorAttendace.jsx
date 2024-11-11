@@ -15,6 +15,9 @@ const InstructorAttendace = () => {
   const [roundId, setRoundId] = useState("");
   const [sessionId, setSessionId] = useState("");
 
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   // for excel export
   const [data, setData] = useState([]);
   const handleExcelData = (attendanceData) => {
@@ -22,10 +25,14 @@ const InstructorAttendace = () => {
   };
 
   const handleChange = (params) => {
-    const { instructorId, roundId, sessionId } = params;
+    const { instructorId, roundId, sessionId, startDate, endDate } = params;
     setInstructorId(instructorId);
     setRoundId(roundId);
     setSessionId(sessionId);
+
+    // we may need conversion here
+    setStartDate(startDate);
+    setEndDate(endDate);
     queryClient.invalidateQueries({
       queryKey: ["instructorAttendance-pagination"],
     });
@@ -47,6 +54,8 @@ const InstructorAttendace = () => {
           instructorId={instructorId}
           sessionId={sessionId}
           roundId={roundId}
+          startDate={startDate}
+          endDate={endDate}
         ></DataTable>
       </div>
     </div>

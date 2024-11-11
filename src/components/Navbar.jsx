@@ -16,6 +16,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import Groups2Icon from "@mui/icons-material/Groups2";
+import AddCardIcon from "@mui/icons-material/AddCard";
 
 // styles
 import "../styles/side-nav.css";
@@ -100,6 +101,11 @@ const Navbar = () => {
       label: "Attendance",
     },
 
+    {
+      paths: ["/membership"],
+      icon: <AddCardIcon></AddCardIcon>,
+      label: "Membership",
+    },
     {
       paths: ["/settings"],
       icon: <SettingsIcon></SettingsIcon>,

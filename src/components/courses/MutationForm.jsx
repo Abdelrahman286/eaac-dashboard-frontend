@@ -426,12 +426,16 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
         <div className="form-actions">
           {isEditError && (
-            <p className="invalid-message">{String(editCourseError)}</p>
+            <p className="invalid-message">
+              {editCourseError?.responseError?.failed?.response?.msg ||
+                "An Error Occured, please try again"}
+            </p>
           )}
 
           {isAddCourseError && (
             <p className="invalid-message">
-              <p className="invalid-message">{String(addCourseError)}</p>
+              {addCourseError?.responseError?.failed?.response?.msg ||
+                "An Error Occured, please try again"}
             </p>
           )}
 

@@ -292,8 +292,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   <TextField
                     id="attendancePercentage"
                     onChange={handleFormChange}
-                    // error={Boolean(formErrors?.nameEn)}
-                    // helperText={formErrors?.nameEn}
+                    error={Boolean(formErrors?.attendancePercentage)}
+                    helperText={formErrors?.attendancePercentage}
                     value={formData?.attendancePercentage || ""}
                     name="attendancePercentage"
                     label="Attendace Percentage Limit"

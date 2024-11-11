@@ -16,6 +16,7 @@ import Components from "./pages/Components";
 import InstructorsPage from "./pages/InstructorsPage";
 import RoundsPage from "./pages/RoundsPage";
 import StudentsPage from "./pages/StudentsPage";
+import Memebership from "./pages/Memebership";
 
 // lazy loaded pages
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
@@ -114,6 +115,15 @@ function App() {
               }
             ></Route>
           </Route>
+
+          <Route
+            path="/membership"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <Memebership></Memebership>
+              </Suspense>
+            }
+          ></Route>
 
           <Route path="/settings" element={<Settings></Settings>}></Route>
         </Route>

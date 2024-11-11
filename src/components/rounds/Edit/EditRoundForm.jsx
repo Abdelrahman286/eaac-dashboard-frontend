@@ -109,12 +109,14 @@ const EditRoundForm = ({ data, onClose }) => {
 
   // initial data filling
   useEffect(() => {
+    console.log(data);
     const {
       BranchID,
       CourseID,
       InstructorID,
       RoomID,
       Name_en,
+      AttendancePercentage,
       StartDate,
       EndDate,
     } = data;
@@ -125,6 +127,7 @@ const EditRoundForm = ({ data, onClose }) => {
       roomId: RoomID?.id || "",
       courseId: CourseID?.id || "",
       instructorId: InstructorID?.id || "",
+      attendancePercentage: AttendancePercentage,
       //   startDate: StartDate.split(" ")[0],
       //   endDate: EndDate.split(" ")[0],
     };
@@ -353,8 +356,8 @@ const EditRoundForm = ({ data, onClose }) => {
                 <TextField
                   id="attendancePercentage"
                   onChange={handleFormChange}
-                  // error={Boolean(formErrors?.nameEn)}
-                  // helperText={formErrors?.nameEn}
+                  error={Boolean(formErrors?.attendancePercentage)}
+                  helperText={formErrors?.attendancePercentage}
                   value={formData?.attendancePercentage || ""}
                   name="attendancePercentage"
                   label="Attendace Percentage Limit"

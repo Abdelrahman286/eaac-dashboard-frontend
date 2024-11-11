@@ -16,11 +16,6 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-// requests
-import {
-  getCompanyContactsFn,
-  getCompanyBranchesFn,
-} from "../../requests/companies";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -30,8 +25,7 @@ import { getDataForTableRows } from "../../utils/tables";
 // requests
 import { getRoundsFn } from "../../requests/students";
 
-const ViewStudentData = ({ data }) => {
-  console.log(data);
+const ViewInstructorData = ({ data }) => {
   const { token } = useContext(UserContext);
 
   // retrieve groups in which the student is enrolled
@@ -42,7 +36,7 @@ const ViewStudentData = ({ data }) => {
       return getRoundsFn(
         {
           numOfElements: "2000",
-          studentId: data?.id,
+          instructorId: data?.InstructorID,
           //   studentId: 9,
         },
         token,
@@ -50,7 +44,7 @@ const ViewStudentData = ({ data }) => {
       );
     },
 
-    queryKey: ["studentGroups", data?.id],
+    queryKey: ["instructorGroups", data?.InstructorID],
   });
   const groups = getDataForTableRows(groupsList?.success?.response?.data);
 
@@ -80,7 +74,7 @@ const ViewStudentData = ({ data }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"],
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 
@@ -91,7 +85,6 @@ const ViewStudentData = ({ data }) => {
     }
   };
 
-  console.log(groups);
   return (
     <div style={{ width: "100%" }}>
       <div className="separator"></div>
@@ -114,7 +107,7 @@ const ViewStudentData = ({ data }) => {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">
-                <strong>Company Name:</strong> {data?.companyName || ""}
+                <strong>Job Title:</strong> {data?.JobTitle || ""}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -187,4 +180,4 @@ const ViewStudentData = ({ data }) => {
   );
 };
 
-export default ViewStudentData;
+export default ViewInstructorData;

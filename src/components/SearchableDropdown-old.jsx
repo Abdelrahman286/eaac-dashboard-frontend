@@ -20,31 +20,30 @@ const SearchableDropdown = ({
   fetchData,
   queryKey,
   getOptionLabel,
-  getOptionId,
+  getOptionId, // New prop to extract the ID
   onSelect,
-  requestParams = {},
+  requestParams = {}, // Additional request parameters
   isFromData = false,
-  initialValue = null,
+  initialValue = null, // New initial value prop
   styles,
   isError = false,
   helperText = "",
 }) => {
   const { token } = useContext(UserContext);
 
-  const [inputValue, setInputValue] = useState(""); // State for input text
-  const [searchTerm, setSearchTerm] = useState(""); // State for triggering query
-  const [selectedId, setSelectedId] = useState(""); // State for selected option ID
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedId, setSelectedId] = useState("");
 
   const { data: list, isLoading } = useQuery({
     retry: 1,
     queryFn: () => {
-      if (!searchTerm) return { success: { response: { data: [] } } };
+      if (!searchTerm) return { success: { response: { data: [] } } }; // Return empty data if search is empty
       return fetchData({ search: searchTerm, ...requestParams }, token, {
         isFromData: isFromData,
       });
     },
     queryKey: [queryKey, searchTerm],
-    enabled: !!searchTerm, // Only enable query if searchTerm has a value
+    enabled: !!searchTerm, // Enable query only if searchTerm is not empty
   });
 
   const options = getDataForTableRows(list?.success?.response?.data) || [];
@@ -54,25 +53,9 @@ const SearchableDropdown = ({
     if (initialValue) {
       const initialId = getOptionId(initialValue);
       setSelectedId(initialId);
-      setInputValue(getOptionLabel(initialValue));
+      setSearchTerm(getOptionLabel(initialValue));
     }
   }, [initialValue, getOptionId, getOptionLabel]);
-
-  // Update searchTerm only when inputValue changes, with a delay for debouncing
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (
-        inputValue &&
-        inputValue !==
-          getOptionLabel(
-            options.find((item) => getOptionId(item) === selectedId)
-          )
-      ) {
-        setSearchTerm(inputValue);
-      }
-    }, 300); // Adjust debounce time as needed
-    return () => clearTimeout(delayDebounceFn);
-  }, [inputValue, options, selectedId, getOptionLabel, getOptionId]);
 
   return (
     <Box sx={{ ...styles }}>
@@ -108,15 +91,13 @@ const SearchableDropdown = ({
             }}
           />
         )}
-        inputValue={inputValue}
         onInputChange={(e, value) => {
-          setInputValue(value); // Update only inputValue, not searchTerm
+          setSearchTerm(value); // Update search term
         }}
         onChange={(e, value) => {
           const selectedOptionId = value ? getOptionId(value) : "";
-          setSelectedId(selectedOptionId);
-          onSelect(value);
-          setInputValue(getOptionLabel(value) || ""); // Display selected label without triggering a new search
+          setSelectedId(selectedOptionId); // Set selectedId based on custom ID
+          onSelect(value); // Pass selected value back to parent component
         }}
       />
     </Box>

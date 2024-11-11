@@ -8,8 +8,6 @@ import { Box, TextField, Autocomplete, Button } from "@mui/material";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-// components
-import SearchableDropdown from "../../SearchableDropdown";
 
 // requests
 import {
@@ -63,7 +61,7 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
     queryFn: () => {
       return getSessionsFn(
         {
-          //   numOfElements: "3000",
+          numOfElements: "3000",
           ...(roundId && { roundId: roundId }),
         },
         token
@@ -81,7 +79,8 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
         {
           numOfElements: "6000",
         },
-        token
+        token,
+        { isFormData: false }
       );
     },
 
@@ -129,17 +128,6 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
         }}
       >
         <Box sx={{ flex: 1, minWidth: "200px" }}>
-          {/* <SearchableDropdown
-            isFromData={false}
-            label="Students"
-            fetchData={getStudentFn}
-            queryKey="Students"
-            getOptionLabel={(option) => `${option?.Name}`}
-            getOptionId={(option) => option?.id} // Custom ID field
-            onSelect={handleStudentSelect}
-            // initialValue={} // New initial value prop
-          ></SearchableDropdown> */}
-
           <Autocomplete
             value={students.find((item) => item.id == clientId) || null}
             onChange={(e, value) => {

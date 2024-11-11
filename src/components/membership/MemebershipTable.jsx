@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // MUI
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, Avatar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
-
-import CustomIconButton from "../CustomIconButton";
 import Tooltip from "@mui/material/Tooltip";
 // contexts
 import { UserContext } from "../../contexts/UserContext";
@@ -19,19 +17,15 @@ import { AppContext } from "../../contexts/AppContext";
 import { getDataForTableRows } from "../../utils/tables";
 
 // requests
-import {
-  deleteInstructorsFn,
-  getInstructorsFn,
-  restoreInstructorFn,
-} from "../../requests/instructors";
+import { deleteRoomFn, getRoomsFn, restoreRoomFn } from "../../requests/rooms";
 // components
-import ViewInstructorData from "./ViewInstructorData";
 import DeleteConfirmation from "../DeleteConfirmation";
 import RestoreConfirmation from "../RestoreConfirmation";
-import MutationForm from "./MutationForm";
+import CustomIconButton from "../CustomIconButton";
+// import MutationForm from "./MutationForm";
 import Modal from "../Modal";
 
-const InstructorsTable = ({ onDataChange }) => {
+const MemebershipTable = ({ onDataChange = () => {} }) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -41,10 +35,6 @@ const InstructorsTable = ({ onDataChange }) => {
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // instructor data view
-  const [showInstuctorModal, setShowInstructorModal] = useState(false);
-  const [dataToShow, setDataToShow] = useState({});
 
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -62,14 +52,14 @@ const InstructorsTable = ({ onDataChange }) => {
   };
 
   // check if there's search term
-  if (searchResults?.key == "instructor" && searchResults?.searchTerm) {
+  if (searchResults?.key == "room" && searchResults?.searchTerm) {
     paginationReqBody.search = searchResults?.searchTerm;
     dataListReqBody.search = searchResults?.searchTerm;
   }
 
   // check disabled key in request body
 
-  if (disabledList?.key == "instructor") {
+  if (disabledList?.key == "room") {
     paginationReqBody.disabled = "1"; // get pagination data
     dataListReqBody.disabled = "1"; // get the list
   }
@@ -82,13 +72,13 @@ const InstructorsTable = ({ onDataChange }) => {
   } = useQuery({
     queryFn: () => {
       // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getInstructorsFn(paginationReqBody, token, {
+      return getRoomsFn(paginationReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
     queryKey: [
-      "instructor-pagination",
+      "room-pagination",
       paginationReqBody,
       dataListReqBody,
       disabledList?.key,
@@ -103,7 +93,7 @@ const InstructorsTable = ({ onDataChange }) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "instructor-list",
+      "room-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
@@ -111,7 +101,7 @@ const InstructorsTable = ({ onDataChange }) => {
       disabledList?.key,
     ],
     queryFn: () => {
-      return getInstructorsFn(dataListReqBody, token, {
+      return getRoomsFn(dataListReqBody, token, {
         isFormData: true,
         urlParams: `page=${paginationModel.page + 1}`, // Use the dynamic page number
       });
@@ -137,42 +127,39 @@ const InstructorsTable = ({ onDataChange }) => {
 
   // hoist the data for excel export
   useEffect(() => {
-    if (dataObject) {
+    if (listData) {
       onDataChange(dataList);
-    } else {
-      // to export empty excel if there's no data found
-      onDataChange([]);
     }
   }, [listData]);
 
-  //------------- delete Instructor-------------------------
-  const { mutate: deleteInstructor, isPending: deleteLoading } = useMutation({
-    mutationFn: deleteInstructorsFn,
+  //------------- delete course-------------------------
+  const { mutate: deleteRoom, isPending: deleteLoading } = useMutation({
+    mutationFn: deleteRoomFn,
     onSuccess: () => {
-      console.log("Instructor deleted successfully");
+      console.log("Room deleted successfully");
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
-        queryKey: ["instructor-pagination"],
+        queryKey: ["room-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["instructor-list"],
+        queryKey: ["room-list"],
       });
-      showSnackbar("Instructor Deleted Successfully ", "info");
+      showSnackbar("Room Deleted Successfully ", "info");
       setShowDeleteModal(false);
     },
     onError: (error) => {
-      console.log("Error at Deleting Instructor ", error);
-      showSnackbar("Failed to Delete Instructor Data", "error");
+      console.log("Error at Deleting Room ", error);
+      showSnackbar("Failed to Delete Room Data", "error");
     },
   });
 
   // handle delete
   const handleDelete = (rowData) => {
     setShowDeleteModal(true);
-    setIdToDelete(rowData?.InstructorID);
+    setIdToDelete(rowData?.id);
   };
   const confirmDelete = () => {
-    deleteInstructor({
+    deleteRoom({
       reqBody: {
         id: idToDelete,
       },
@@ -186,10 +173,10 @@ const InstructorsTable = ({ onDataChange }) => {
   // restore
   const handleRestore = (rowData) => {
     setShowRestoreModal(true);
-    setIdToRestore(`${rowData?.InstructorID}`);
+    setIdToRestore(`${rowData?.id}`);
   };
   const confirmRestore = () => {
-    restoreInstructor({
+    restoreRoom({
       reqBody: {
         id: [idToRestore],
         statusId: "1",
@@ -209,31 +196,25 @@ const InstructorsTable = ({ onDataChange }) => {
   };
 
   // restore deleted company
-  const { mutate: restoreInstructor, isPending: restoreLoading } = useMutation({
-    mutationFn: restoreInstructorFn,
+  const { mutate: restoreRoom, isPending: restoreLoading } = useMutation({
+    mutationFn: restoreRoomFn,
 
     onSuccess: () => {
-      console.log("instructor restored");
+      console.log("room restored");
       queryClient.invalidateQueries({
-        queryKey: ["instructor-pagination"],
+        queryKey: ["room-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["instructor-list"],
+        queryKey: ["room-list"],
       });
       setShowRestoreModal(false);
-      showSnackbar("Instructor Data Restored Successfully ", "success");
+      showSnackbar("Room Data Restored Successfully ", "success");
     },
     onError: (error) => {
-      console.log("error at restoring Instructor data", error);
-      showSnackbar("Failed to Restore Instructor Data", "error");
+      console.log("error at restoring Room data", error);
+      showSnackbar("Failed to Restore Room Data", "error");
     },
   });
-
-  // handle view instructor data
-  const handleViewInstructorData = (row) => {
-    setShowInstructorModal(true);
-    setDataToShow(row);
-  };
 
   const columns = [
     {
@@ -243,89 +224,195 @@ const InstructorsTable = ({ onDataChange }) => {
     },
 
     {
-      field: "Name",
-      headerName: "Name",
+      field: "Image",
+      headerName: "Logo",
+      flex: 0.6,
+      minWidth: 50,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "6px",
+            }}
+          >
+            <Avatar
+              src={params?.row.Image}
+              alt="Logo"
+              variant="circular"
+              sx={{ width: 40, height: 40 }}
+            />
+          </Box>
+        );
+      },
+    },
+
+    {
+      field: "Name_en",
+      headerName: "Student Name",
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name || ""}`;
+        return `${row?.Name_en || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "Company",
+      headerName: "Comapany Name",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.Name_en || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "Phone",
+      headerName: "Phone",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.Name_en || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "memebershipCode",
+      headerName: "Membership Code",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.Name_en || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "issueDate",
+      headerName: "Issue Date",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        // return `${row?.Name_en || ""}`;
+        return "1-1-2020";
       },
       flex: 1.2,
       minWidth: 100,
     },
     {
-      field: "JobTitle",
-      headerName: "Job Title",
+      field: "expireDate",
+      headerName: "Expire Date",
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.JobTitle || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 100,
-    },
-
-    {
-      field: "Email",
-      headerName: "Email",
-
-      //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.Email || ""}`;
+        // return `${row?.Name_en || ""}`;
+        return "1-1-2020";
       },
       flex: 1.2,
       minWidth: 100,
     },
     {
-      field: "PhoneNumber",
-      headerName: "Phone Number",
+      field: "cardStatus",
+      headerName: "Card Status",
 
       //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.PhoneNumber || ""}`;
+      renderCell: () => {
+        return (
+          <Chip
+            label={"Ready"}
+            color="warning"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
       },
       flex: 1.2,
-      minWidth: 100,
-    },
-
-    {
-      field: "WhatsappNumber",
-      headerName: "WhatsApp Number",
-
-      //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.WhatsappNumber || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 100,
+      minWidth: 110,
     },
     {
-      field: "GovIssuedID",
-      headerName: "Government ID",
+      field: "membershipType",
+      headerName: "Membership Type",
 
       //   editable: true,
-      valueGetter: (value, row) => {
-        return `${row?.GovIssuedID || ""}`;
+      renderCell: () => {
+        return (
+          <Chip
+            label={"lifetime"}
+            color="primary"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
       },
       flex: 1.2,
-      minWidth: 100,
+      minWidth: 140,
     },
     {
-      field: "BranchID.Name_en",
-      headerName: "BranchID",
-      valueGetter: (value, row) => {
-        return `${row?.BranchID?.name_en || ""}`;
+      field: "membershipStatus",
+      headerName: "Membership status ",
+
+      renderCell: () => {
+        return (
+          <Chip
+            label={"Active"}
+            color="success"
+            size="small"
+            sx={{ fontWeight: "bold", fontSize: "14px" }}
+          />
+        );
       },
-      flex: 1, // This column will take up more space compared to others
-      minWidth: 100,
+      flex: 1.2,
+      minWidth: 150,
     },
+    {
+      field: "ClientPhotos",
+      headerName: "Client Photos",
+
+      renderCell: () => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <a
+              href="https://google.com"
+              style={{
+                fontSize: "12px",
+              }}
+            >
+              link aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            </a>
+          </div>
+        );
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "notes",
+      headerName: "Notes",
+      minWidth: 100,
+      flex: 0.5, // Makes the column responsive, taking up half a unit of space
+    },
+
     {
       field: "controls",
       headerName: "Controls",
-      flex: 1.5,
-      minWidth: 100,
+      flex: 2,
+      minWidth: 260,
       renderCell: (params) => {
-        if (disabledList?.key == "instructor") {
+        if (disabledList?.key == "room") {
           return (
             <Tooltip title="Restore">
               <IconButton
@@ -341,23 +428,29 @@ const InstructorsTable = ({ onDataChange }) => {
         return (
           <div>
             <CustomIconButton
-              icon={"view"}
-              title="view"
-              onClick={() => handleViewInstructorData(params.row)}
+              icon={"receipt"}
+              title="Receipt"
+              //   onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
-
             <CustomIconButton
-              disabled={deleteLoading}
+              icon={"view"}
+              title="View"
+              //   onClick={() => handleEdit(params.row)}
+            ></CustomIconButton>
+            <CustomIconButton
+              icon={"renew"}
+              title="Renew"
+              //   onClick={() => handleEdit(params.row)}
+            ></CustomIconButton>
+            <CustomIconButton
               icon={"edit"}
               title="Edit"
-              onClick={() => handleEdit(params.row)}
+              //   onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
-
             <CustomIconButton
               icon={"delete"}
               title="Delete"
-              disabled={deleteLoading}
-              onClick={() => handleDelete(params.row)}
+              //   onClick={() => handleDelete(params.row)}
             ></CustomIconButton>
           </div>
         );
@@ -369,20 +462,18 @@ const InstructorsTable = ({ onDataChange }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
-
   return (
-    <div className="instuctors-table-wrapper">
+    <div className="membership-table-wrapper">
       {paginationErr && (
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
       )}
 
-      {showEditModal && (
+      {/* {showEditModal && (
         <Modal
-          //   classNames={"h-70per"}
-          title={"Edit Instructor"}
-          classNames={"instructor-mutation-form"}
+          classNames={"h-70per"}
+          title={"Edit Room"}
           onClose={() => setShowEditModal(false)}
         >
           <MutationForm
@@ -391,7 +482,7 @@ const InstructorsTable = ({ onDataChange }) => {
             data={dataToEdit}
           ></MutationForm>
         </Modal>
-      )}
+      )} */}
 
       {showDeleteModal && (
         <Modal title={""} onClose={() => setShowDeleteModal(false)}>
@@ -413,19 +504,6 @@ const InstructorsTable = ({ onDataChange }) => {
         </Modal>
       )}
 
-      {showInstuctorModal && (
-        <Modal
-          classNames={"student-view-modal "}
-          title={"Instructor Data"}
-          onClose={() => setShowInstructorModal(false)}
-        >
-          <ViewInstructorData
-            data={dataToShow}
-            closeFn={() => setShowInstructorModal(false)}
-          ></ViewInstructorData>
-        </Modal>
-      )}
-
       <Box sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           // pagination buttons
@@ -435,7 +513,6 @@ const InstructorsTable = ({ onDataChange }) => {
               showLastButton: true,
             },
           }}
-          getRowId={(row) => row.InstructorID} // Custom ID logic
           autoHeight
           rows={updatedDataList || []} // Use the modified dataList
           columns={columns}
@@ -480,4 +557,4 @@ const InstructorsTable = ({ onDataChange }) => {
   );
 };
 
-export default InstructorsTable;
+export default MemebershipTable;

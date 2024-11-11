@@ -251,19 +251,21 @@ const StudentsTable = ({ onDataChange }) => {
       queryClient.invalidateQueries({
         queryKey: ["student-list"],
       });
-      showSnackbar("Student Blocked Successfully ", "success");
+      showSnackbar("Student Block status changed Successfully ", "success");
     },
     onError: (error) => {
       //   console.log("error at blocking Student data", error);
-      showSnackbar("Failed to block Student Data", "error");
+      showSnackbar("Failed to to change Student Data", "error");
     },
   });
 
   const handleBlock = (row) => {
+    let statusValue = row?.StatusID?.id == 1 ? 2 : 1;
+
     blockStudent({
       reqBody: {
         id: [row?.id],
-        statusId: "2",
+        statusId: statusValue,
       },
       token,
       config: {
@@ -284,7 +286,6 @@ const StudentsTable = ({ onDataChange }) => {
   const handleRedirectToAttendance = (row) => {
     navigate(`/attendance/students/${row?.id}`);
   };
-
 
   const columns = [
     {
@@ -477,7 +478,7 @@ const StudentsTable = ({ onDataChange }) => {
             ></CustomIconButton>
             <CustomIconButton
               icon={"blockUser"}
-              title="Block"
+              title={params?.row?.StatusID?.id == 1 ? "Block" : "unblock"}
               onClick={() => handleBlock(params.row)}
             ></CustomIconButton>
 

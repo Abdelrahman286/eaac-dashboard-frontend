@@ -16,6 +16,8 @@ import enroll from "../assets/icons/enroll.png";
 
 import attended from "../assets/icons/attended.png";
 import absent from "../assets/icons/absent.png";
+import renew from "../assets/icons/renew.png";
+import receipt from "../assets/icons/receipt.png";
 
 // Create a mapping of icon names to their respective image paths
 const iconMap = {
@@ -32,6 +34,8 @@ const iconMap = {
   enroll: enroll,
   attended: attended,
   absent: absent,
+  renew,
+  receipt,
 };
 
 const CustomIconButton = ({ icon, title, onClick, ...props }) => {

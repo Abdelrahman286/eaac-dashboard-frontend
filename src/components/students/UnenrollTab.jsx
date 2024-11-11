@@ -25,8 +25,7 @@ import { getRoundsFn, unEnrollStudentFn } from "../../requests/students";
 // utils
 import { getDataForTableRows } from "../../utils/tables";
 
-// components
-import SearchableDropdown from "../SearchableDropdown";
+
 
 // validation
 import { validateUnEnroll } from "../../utils/validateStudents";

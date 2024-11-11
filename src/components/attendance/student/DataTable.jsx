@@ -104,7 +104,7 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
     queryFn: () => {
       // pagination request body is the same as data list body
       return getStudentsAttendanceFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
@@ -138,7 +138,7 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
     ],
     queryFn: () => {
       return getStudentsAttendanceFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
     },

@@ -229,7 +229,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   useEffect(() => {
     if (!isEditData || !data) return;
-    console.log(data);
     const rawFormData = {
       id: [data.id],
       nameAr: data?.Name_ar || "",
@@ -676,6 +675,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 //disabled
                 renderInput={(params) => (
                   <TextField
+                    error={Boolean(formErrors?.countryId)}
+                    helperText={formErrors?.countryId}
                     autoComplete="off"
                     autoCorrect="off"
                     {...params}
@@ -705,6 +706,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
                 renderInput={(params) => (
                   <TextField
+                    error={Boolean(formErrors?.provinceId)}
+                    helperText={formErrors?.provinceId}
                     autoComplete="off"
                     autoCorrect="off"
                     {...params}
@@ -808,11 +811,17 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
         <div className="form-actions">
           {isAddCompanyError && (
-            <p className="invalid-message">{String(addError)}</p>
+            <p className="invalid-message">
+              {addError?.responseError?.failed?.response?.msg ||
+                "An Error Occurred, please try Again"}
+            </p>
           )}
 
           {isEditError && (
-            <p className="invalid-message">{String(editError)}</p>
+            <p className="invalid-message">
+              {editError?.responseError?.failed?.response?.msg ||
+                "An Error Occurred, please try Again"}
+            </p>
           )}
 
           {isEditData && (

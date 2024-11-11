@@ -342,8 +342,8 @@ const TransferTab = ({ data, groups, closeFn }) => {
           label="Traget Round"
           fetchData={getRoundsFn}
           queryKey="rounds"
-          getOptionLabel={(option) => `${option.Name_en}`}
-          getOptionId={(option) => option.id} // Custom ID field
+          getOptionLabel={(option) => `${option?.Name_en}`}
+          getOptionId={(option) => option?.id} // Custom ID field
           onSelect={handleSelectTarget}
         ></SearchableDropdown>
 
