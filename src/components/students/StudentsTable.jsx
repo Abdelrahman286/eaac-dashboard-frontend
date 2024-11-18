@@ -33,13 +33,21 @@ import Modal from "../Modal";
 import CustomIconButton from "../CustomIconButton";
 import GroupsModal from "./GroupsModal";
 import ViewStudentData from "./ViewStudentData";
+import StudentReceiptModal from "./StudentReceiptModal";
 
 const StudentsTable = ({ onDataChange }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
-  const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
+  const {
+    showSnackbar,
+    searchResults,
+    disabledList,
+    studentReceipt,
+    setStudentReceipt,
+  } = useContext(AppContext);
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
@@ -509,6 +517,22 @@ const StudentsTable = ({ onDataChange }) => {
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
+      )}
+
+      {/* receipt modal */}
+      {true && (
+        <Modal
+          classNames={"h-70per"}
+          title={"Payment Receipt"}
+          //   classNames={"student-mutation-form"}
+          onClose={() => setShowEditModal(false)}
+        >
+          <StudentReceiptModal
+          // onClose={() => setShowEditModal(false)}
+          // isEditData={true}
+          // data={dataToEdit}
+          ></StudentReceiptModal>
+        </Modal>
       )}
 
       {showEditModal && (

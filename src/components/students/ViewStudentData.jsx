@@ -16,11 +16,6 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-// requests
-import {
-  getCompanyContactsFn,
-  getCompanyBranchesFn,
-} from "../../requests/companies";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -31,11 +26,8 @@ import { getDataForTableRows } from "../../utils/tables";
 import { getRoundsFn } from "../../requests/students";
 
 const ViewStudentData = ({ data }) => {
-  console.log(data);
   const { token } = useContext(UserContext);
-
   // retrieve groups in which the student is enrolled
-
   const { data: groupsList, isLoading: groupsLoading } = useQuery({
     retry: 2,
     queryFn: () => {

@@ -32,6 +32,9 @@ export default function AppContextProvider({ children }) {
     key: "",
   });
 
+  // receipt modal
+  const [studentReceipt, setStudentReceipt] = useState("");
+
   const showSnackbar = (msg, sev = "success") => {
     // Update snackbar key to force re-render
     setSnackbarKey((prevKey) => prevKey + 1);
@@ -67,6 +70,9 @@ export default function AppContextProvider({ children }) {
     setSearchResults,
     disabledList,
     setDisabledList,
+
+    studentReceipt,
+    setStudentReceipt,
   };
 
   return (

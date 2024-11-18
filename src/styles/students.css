@@ -1,5 +1,11 @@
 @import url(variables.css);
 
+@font-face {
+  font-family: "Amiri";
+  src: url("/assets/fonts/Amiri-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 .students-page {
   background: white;
   padding: 20px;
@@ -115,4 +121,13 @@
 
 .page-break {
   page-break-before: always;
+}
+
+.student-receipt-modal {
+  width: 700px;
+  padding: 5px;
+
+  .receipt-section * {
+    font-family: "Amiri", serif;
+  }
 }
