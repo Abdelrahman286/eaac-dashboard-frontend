@@ -127,7 +127,7 @@ const EditRoundForm = ({ data, onClose }) => {
       roomId: RoomID?.id || "",
       courseId: CourseID?.id || "",
       instructorId: InstructorID?.id || "",
-      attendancePercentage: AttendancePercentage,
+      attendancePercentage: AttendancePercentage || "",
       //   startDate: StartDate.split(" ")[0],
       //   endDate: EndDate.split(" ")[0],
     };
@@ -144,7 +144,7 @@ const EditRoundForm = ({ data, onClose }) => {
   } = useMutation({
     onError: (error) => {
       //   console.log(error.responseError?.failed?.response?.msg);
-      console.log("Error at editing Round data", error);
+      //   console.log("Error at editing Round data", error);
       showSnackbar("Faild to edit Round Data", "error");
     },
     mutationFn: EditRoundFn,

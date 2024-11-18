@@ -164,9 +164,9 @@ const EnrollTab = ({ data, closeFn }) => {
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <SearchableDropdown
             styles={{
-              width: "60%",
-              padding: "0px",
-              marginTop: "-12px",
+              width: "100%",
+              //   padding: "0px",
+              //   marginTop: "-12px",
             }}
             isError={Boolean(formErrors?.group)}
             helperText={formErrors?.group}

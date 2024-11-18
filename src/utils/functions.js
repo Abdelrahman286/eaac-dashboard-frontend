@@ -162,3 +162,12 @@ export function isSecondDateGreater(firstDate, secondDate) {
   // Return true if second date is strictly greater, otherwise false
   return date2 > date1;
 }
+
+export function generateRandomNumber() {
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    const randomDigit = Math.floor(Math.random() * 10); // Generate a random digit from 0 to 9
+    result += randomDigit;
+  }
+  return result;
+}

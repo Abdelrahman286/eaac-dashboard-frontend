@@ -89,7 +89,7 @@ const SearchableDropdown = ({
             helperText={helperText}
             {...params}
             label={label}
-            margin="normal"
+            // margin="normal"
             fullWidth
             InputProps={{
               ...params.InputProps,

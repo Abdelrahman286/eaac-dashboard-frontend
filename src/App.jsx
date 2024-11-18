@@ -16,7 +16,7 @@ import Components from "./pages/Components";
 import InstructorsPage from "./pages/InstructorsPage";
 import RoundsPage from "./pages/RoundsPage";
 import StudentsPage from "./pages/StudentsPage";
-import Memebership from "./pages/Memebership";
+// import Memebership from "./pages/Memebership";
 
 // lazy loaded pages
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
@@ -26,6 +26,8 @@ const StudentAttendance = lazy(() =>
 const InstructorAttendace = lazy(() =>
   import("./components/attendance/instructor/InstructorAttendace")
 );
+
+const Memebership = lazy(() => import("./pages/Memebership"));
 
 // context
 import { AppContext } from "./contexts/AppContext";

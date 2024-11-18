@@ -334,6 +334,9 @@ const TransferTab = ({ data, groups, closeFn }) => {
           Transfer To
         </Typography>
         <SearchableDropdown
+          styles={{
+            marginTop: 1,
+          }}
           //   styles={{ width: "48%" }}
           isError={Boolean(formErrors?.targetGroup)}
           helperText={formErrors?.targetGroup}

@@ -50,7 +50,7 @@ const membershipCardStatus = [
 
 const membershipTypes = [
   { id: 1, value: "student" },
-  { id: 2, value: "livetime" },
+  { id: 2, value: "lifetime" },
 ];
 
 const Header = ({ onChange, paramsInstructorId, excelData }) => {
