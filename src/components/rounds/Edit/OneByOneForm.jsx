@@ -225,6 +225,7 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
     };
 
     const formattedSessionList = sessionsList.map((session) => {
+      console.log(mainFormData);
       const {
         sessionName,
         sessionDescription,
@@ -236,8 +237,9 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
 
         ...rest
       } = session;
+
       return {
-        ...session,
+        nameEn: sessionName,
         startTime: `${sessionStartTime}:00`,
         endTime: `${sessionEndTime}:00`,
         sessionDate: convertDateFormat(sessionDate),
@@ -245,6 +247,8 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
         descriptionEn: sessionDescription || "-",
         roomId: sessionRoomId,
         instructorId: instructorId,
+        roundId: mainFormData?.id,
+        branchId: mainFormData?.BranchID?.id,
       };
     });
 

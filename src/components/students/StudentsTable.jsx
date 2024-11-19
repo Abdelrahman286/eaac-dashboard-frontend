@@ -482,7 +482,7 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"payments"}
               title="Payments"
-              onClick={() => console.log("show attendance")}
+              onClick={() => setStudentReceipt({ name: "test" })}
             ></CustomIconButton>
             <CustomIconButton
               icon={"blockUser"}
@@ -520,12 +520,12 @@ const StudentsTable = ({ onDataChange }) => {
       )}
 
       {/* receipt modal */}
-      {true && (
+      {studentReceipt?.name && (
         <Modal
           classNames={"h-70per"}
           title={"Payment Receipt"}
           //   classNames={"student-mutation-form"}
-          onClose={() => setShowEditModal(false)}
+          onClose={() => setStudentReceipt({})}
         >
           <StudentReceiptModal
           // onClose={() => setShowEditModal(false)}

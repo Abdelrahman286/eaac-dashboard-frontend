@@ -57,7 +57,8 @@ export function convertDateFormatStudent(dateString) {
 }
 
 export function convertTo12HourFormat(time24) {
-  const [hours, minutes, seconds] = time24.split(":");
+  if (!time24) return;
+  const [hours, minutes, seconds] = time24?.split(":");
   const period = hours >= 12 ? "PM" : "AM";
   const hours12 = hours % 12 || 12; // Convert 0 to 12 for midnight and 12+ hour to PM
 

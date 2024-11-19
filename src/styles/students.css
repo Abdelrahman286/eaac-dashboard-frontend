@@ -1,11 +1,5 @@
 @import url(variables.css);
 
-@font-face {
-  font-family: "Amiri";
-  src: url("/assets/fonts/Amiri-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
 .students-page {
   background: white;
   padding: 20px;
@@ -127,7 +121,73 @@
   width: 700px;
   padding: 5px;
 
-  .receipt-section * {
-    font-family: "Amiri", serif;
+  /* Container for receipt */
+  .receipt-section {
+    width: 650px;
+    margin: auto;
+  }
+
+  .receipt-box {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    direction: rtl;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .header-left p {
+    margin: 0;
+  }
+
+  .header-right {
+    width: 25%;
+  }
+
+  .receipt-logo {
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  /* Divider */
+  .divider {
+    margin: 16px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+
+  /* Content */
+  .content {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .content p {
+    margin-bottom: 8px;
+  }
+
+  .content-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  /* Summary */
+  .summary {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
   }
 }

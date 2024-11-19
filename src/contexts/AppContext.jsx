@@ -33,7 +33,7 @@ export default function AppContextProvider({ children }) {
   });
 
   // receipt modal
-  const [studentReceipt, setStudentReceipt] = useState("");
+  const [studentReceipt, setStudentReceipt] = useState({});
 
   const showSnackbar = (msg, sev = "success") => {
     // Update snackbar key to force re-render

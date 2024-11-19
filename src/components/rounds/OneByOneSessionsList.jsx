@@ -15,7 +15,8 @@ const OneByOneSessionsList = ({ data, handleDeleteRow, conflictArray }) => {
 
   const getConflictMessage = (date, startTime, endTime) => {
     // 2024-10-10 13:46 22:46
-    const conflictRecord = conflictArray.find((ele) => {
+    if (conflictArray?.length == 0 && !Array.isArray(conflictArray)) return;
+    const conflictRecord = conflictArray?.find((ele) => {
       return (
         ele.start.split(" ")[0] == date &&
         ele.start.split(" ")[1].slice(0, -3) == startTime &&

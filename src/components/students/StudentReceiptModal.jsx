@@ -27,12 +27,11 @@ import { getDataForTableRows } from "../../utils/tables";
 
 // images
 import receiptLogo from "../../assets/receipt-logo.png";
-import { amiriFontBase64 } from "../../assets/fonts/Amiri-Regular-normal";
+
 const StudentReceiptModal = () => {
   const handleDownloadPdf = () => {
     // not working in arabic characters
   };
-
   const printSpecificElement = () => {
     const elementToPrint = document.querySelector(".receipt-section");
     if (!elementToPrint) return;
@@ -40,20 +39,104 @@ const StudentReceiptModal = () => {
     // Open a new window to print the content
     const printWindow = window.open("", "", "height=600,width=800");
 
-    // Copy all the stylesheets from the current document to the print window
-    const styles = document.querySelectorAll("link[rel='stylesheet'], style");
-
+    // Write the basic HTML structure to the new window
     printWindow.document.write("<html><head><title>Print</title>");
+
+    // Copy styles from the main document to the print window
+    const styles = document.querySelectorAll("link[rel='stylesheet'], style");
 
     // Add the stylesheets to the print window
     styles.forEach((style) => {
       printWindow.document.write(style.outerHTML);
     });
 
+    // Add a small CSS to ensure the printed content fits well
+    printWindow.document.write(`
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        .receipt-section {
+          padding: 20px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background-color: #f9f9f9;
+          direction: rtl;
+          width: 650px;
+          margin: auto;
+        }
+           .receipt-box {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    direction: rtl;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .header-left p {
+    margin: 0;
+  }
+
+  .header-right {
+    width: 25%;
+  }
+
+  .receipt-logo {
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  /* Divider */
+  .divider {
+    margin: 16px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+
+  /* Content */
+  .content {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .content p {
+    margin-bottom: 8px;
+  }
+
+  .content-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  /* Summary */
+  .summary {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+      </style>
+    `);
+
     printWindow.document.write("</head><body>");
 
-    // Write the content of the specific element to the new window
-    printWindow.document.write(elementToPrint.outerHTML); // Include the entire content
+    // Write the content of the receipt-section element to the new window
+    printWindow.document.write(elementToPrint.outerHTML);
 
     printWindow.document.write("</body></html>");
     printWindow.document.close();
@@ -61,8 +144,6 @@ const StudentReceiptModal = () => {
     // Wait for the window to load, then trigger the print dialog
     printWindow.onload = () => {
       printWindow.print(); // Open the print dialog
-      // Uncomment the following line if you want to close the print window after printing
-      // printWindow.close();
     };
   };
 
@@ -71,107 +152,86 @@ const StudentReceiptModal = () => {
       <div className="separator"></div>
       <br></br>
       <div className="receipt-section">
-        <Box
-          sx={{
-            padding: 2,
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            backgroundColor: "#f9f9f9",
-            direction: "rtl",
-            width: 650,
-            margin: "auto",
-          }}
-        >
-          {/* Header */}
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
-            <Box>
-              <Typography variant="h6">
+        <div className="receipt-box">
+          <div className="header">
+            <div className="header-left">
+              <p>
                 <strong>رقم#</strong> 324325
-              </Typography>
-              <Typography variant="body1">
+              </p>
+              <p>
                 <strong>التاريخ</strong> 2024-10-10
-              </Typography>
-            </Box>
-            <Box sx={{ width: "25%" }}>
-              <img
-                src={receiptLogo}
-                alt="Logo"
-                style={{ width: "100%", borderRadius: "4px" }}
-              />
-            </Box>
-          </Box>
+              </p>
+            </div>
+            <div className="header-right">
+              <img src={receiptLogo} alt="Logo" className="receipt-logo" />
+            </div>
+          </div>
 
-          <Divider />
+          <hr className="divider" />
 
-          {/* Content */}
-          <Box mt={2} mb={2}>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+          <div className="content">
+            <p>
               <strong> العميل:</strong> احمد محمد محمود حسن
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+            </p>
+            <p>
               <strong> المبلغ:</strong> 1200 (EGP)
-            </Typography>
-            <Box display="flex" justifyContent="space-between" sx={{ mb: 1 }}>
-              <Typography variant="body1">
+            </p>
+            <div className="content-row">
+              <p>
                 <strong> طريقه الدفع:</strong> visa
-              </Typography>
-              <Typography variant="body1">
+              </p>
+              <p>
                 <strong>كوبون الخصم:</strong> ABCD132
-              </Typography>
-            </Box>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+              </p>
+            </div>
+            <p>
               <strong> رقم الموبايل:</strong> 1032131432324
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+            </p>
+            <p>
               <strong> البيان:</strong> ايصال اشتراك في مجموعه
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+            </p>
+            <p>
               <strong> ملاحظات:</strong> ...
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+            </p>
+            <p>
               <strong> المجموعه | الدوره:</strong> محاسبه
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
+            </p>
+            <p>
               <strong> اجمالي سعر الدوره:</strong> 2000 (EGP)
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
-          <Divider />
+          <hr className="divider" />
 
-          {/* Summary */}
-          <Box mt={2} mb={2}>
-            <Box display="flex" justifyContent="space-between" sx={{ mb: 1 }}>
-              <Typography variant="body1">
+          <div className="summary">
+            <div className="summary-row">
+              <p>
                 <strong> المدفوع:</strong> 1200
-              </Typography>
-              <Typography variant="body1">
+              </p>
+              <p>
                 <strong> المتبقي:</strong> 200
-              </Typography>
-            </Box>
-            <Box display="flex" justifyContent="space-between" sx={{ mb: 1 }}>
-              <Typography variant="body1">
+              </p>
+            </div>
+            <div className="summary-row">
+              <p>
                 <strong> المسلم:</strong> احمد محمد
-              </Typography>
-              <Typography variant="body1">
+              </p>
+              <p>
                 <strong> كود الموظف:</strong> 214
-              </Typography>
-            </Box>
-            <Box display="flex" justifyContent="space-between">
-              <Typography variant="body1">
+              </p>
+            </div>
+            <div className="summary-row">
+              <p>
                 <strong> التوقيع:</strong>
-              </Typography>
-              <Typography variant="body1">
+              </p>
+              <p>
                 <strong> فرع:</strong> الاسكندريه
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
       <br></br>
       <div className="separator"></div>
       {/* action buttons */}

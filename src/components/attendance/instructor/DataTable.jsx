@@ -14,8 +14,9 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
+// icons
 import CalculateIcon from "@mui/icons-material/Calculate";
-
+import EditNoteIcon from "@mui/icons-material/EditNote";
 import ClearIcon from "@mui/icons-material/Clear";
 // contexts
 import { UserContext } from "../../../contexts/UserContext";
@@ -36,6 +37,7 @@ import {
 
 // components
 import Modal from "../../Modal";
+import NotesModal from "./NotesModal";
 
 const DataTable = ({
   instructorId,
@@ -49,6 +51,9 @@ const DataTable = ({
 
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
+
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [notesData, setNotesData] = useState("");
 
   const [startTime, setStartTime] = useState({
     id: "",
@@ -114,7 +119,7 @@ const DataTable = ({
       setTimeErrors({});
 
       // make the request if data is valid
-      if ((startTime.id == endTime.id) == row.id) {
+      if (startTime.id == endTime.id && startTime.id == row.id) {
         sendAttendanceData({
           reqBody: {
             instructorId: row.UserID,
@@ -316,14 +321,24 @@ const DataTable = ({
       headerName: "Check-In",
 
       renderCell: (params) => {
-        return (
-          <Chip
-            label={convertTo12HourFormat(params?.row.AttendTime)}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+        if (params?.row.AttendTime) {
+          return (
+            <Chip
+              label={convertTo12HourFormat(params?.row.AttendTime)}
+              color="primary"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else {
+          return (
+            <Chip
+              label={"Not set"}
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "12px" }}
+            />
+          );
+        }
       },
 
       flex: 1,
@@ -335,14 +350,24 @@ const DataTable = ({
       headerName: "Check-Out",
 
       renderCell: (params) => {
-        return (
-          <Chip
-            label={convertTo12HourFormat(params?.row?.LeaveTime)}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+        if (params?.row?.LeaveTime) {
+          return (
+            <Chip
+              label={convertTo12HourFormat(params?.row?.LeaveTime)}
+              color="primary"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else {
+          return (
+            <Chip
+              label={"Not set"}
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "12px" }}
+            />
+          );
+        }
       },
       flex: 1,
       minWidth: 120,
@@ -369,11 +394,19 @@ const DataTable = ({
       flex: 1,
       minWidth: 100,
     },
+
+    // Notes
+    {
+      field: "Notes",
+      headerName: "Notes",
+      flex: 1,
+      minWidth: 100,
+    },
     {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 360,
+      minWidth: 400,
       renderCell: (params) => {
         return (
           <Box sx={{ margin: "0", padding: "10px 3px" }}>
@@ -418,6 +451,19 @@ const DataTable = ({
                   <CalculateIcon />
                 </IconButton>
               </Tooltip>
+
+              <Tooltip title="Add Notes">
+                <IconButton
+                  size="large"
+                  color="secondary"
+                  onClick={() => {
+                    setNotesData(params?.row);
+                    setShowNotesModal(true);
+                  }}
+                >
+                  <EditNoteIcon />
+                </IconButton>
+              </Tooltip>
             </Stack>
           </Box>
         );
@@ -443,6 +489,19 @@ const DataTable = ({
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
+      )}
+
+      {showNotesModal && (
+        <Modal
+          classNames=""
+          title={"Attendance Notes"}
+          onClose={() => setShowNotesModal(false)}
+        >
+          <NotesModal
+            onClose={() => setShowNotesModal(false)}
+            data={notesData || ""}
+          ></NotesModal>
+        </Modal>
       )}
 
       <Box sx={{ height: "100%", width: "100%" }}>

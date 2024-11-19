@@ -8,6 +8,7 @@ import {
   getConflictString,
 } from "../../utils/functions";
 const ViewRoundsWithConflict = ({ data, mainFormData }) => {
+  console.log(data);
   // Add index for array objects
   const arrayWithIndex = data.map((item, index) => ({
     ...item,
@@ -47,8 +48,8 @@ const ViewRoundsWithConflict = ({ data, mainFormData }) => {
                 <span>{startTime}</span>
                 <span>{endTime}</span>
                 <span>{"-"}</span>
-                <span>{"-"}</span>
-                <span>{"-"}</span>
+                <span>{ele?.room?.Name_en}</span>
+                <span>{ele?.instructor?.Name}</span>
               </div>
               <div className="conflict-msg">
                 {Array.isArray(ele?.conflicts) && ele.conflicts.length > 0 ? (
