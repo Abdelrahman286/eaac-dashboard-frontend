@@ -14,7 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import Tooltip from "@mui/material/Tooltip";
-
+import PhoneIcon from "@mui/icons-material/Phone";
+import FmdGoodIcon from "@mui/icons-material/FmdGood";
 // request functions
 import { deleteCompanyFn } from "../../requests/companies";
 
@@ -23,6 +24,8 @@ import Modal from "../Modal";
 import LoadingSpinner from "../LoadingSpinner";
 import DeleteConfirmation from "../DeleteConfirmation";
 import RestoreConfirmation from "../RestoreConfirmation";
+import ViewContacts from "./ViewContacts/ViewContacts";
+import ViewBranches from "./ViewBranches/ViewBranches";
 
 // lazy loaded components
 const MutationForm = lazy(() => import("./MutationForm"));
@@ -39,16 +42,23 @@ const CompaniesTable = ({ onDataChange }) => {
   const [idToDelete, setIdToDelete] = useState("");
   const [dataToEdit, setDataToEdit] = useState({});
 
-  // restore
+  // restore states
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [idToRestore, setIdToRestore] = useState("");
-
+  // delete states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // view company state
+  const [companyToShow, setCompanyToShow] = useState({});
+
+  // contacts
+  const [showContacts, setShowContacts] = useState(false);
+  const [showBranches, setShowBranches] = useState(false);
+  const [companyIdToshow, setCompanyIdToShow] = useState("");
+
   const handleClose = () => {
     setShowModal(false);
   };
-  const [companyToShow, setCompanyToShow] = useState({});
-
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
     page: 0, // MUI uses 0-based index
@@ -239,12 +249,11 @@ const CompaniesTable = ({ onDataChange }) => {
     });
   };
 
-  console.log(updatedDataList);
   const columns = [
     {
       field: "rowIndex",
       headerName: "#",
-      flex: 0.5, // Makes the column responsive, taking up half a unit of space
+      flex: 0.5,
     },
     {
       field: "Logo",
@@ -275,7 +284,7 @@ const CompaniesTable = ({ onDataChange }) => {
     {
       field: "ClientCode",
       headerName: "Company Code",
-      flex: 1.5, // This column will take up more space compared to others
+      flex: 1.5,
       minWidth: 120,
     },
     {
@@ -358,7 +367,7 @@ const CompaniesTable = ({ onDataChange }) => {
       field: "controls",
       headerName: "Controls",
       flex: 2,
-      minWidth: 150,
+      minWidth: 220,
       renderCell: (params) => {
         if (disabledList?.key === "company") {
           return (
@@ -379,6 +388,30 @@ const CompaniesTable = ({ onDataChange }) => {
         } else {
           return (
             <div>
+              <Tooltip title="Branches">
+                <IconButton
+                  color="success"
+                  aria-label="view"
+                  onClick={() => {
+                    setCompanyIdToShow(params.row?.id);
+                    setShowBranches(true);
+                  }}
+                >
+                  <FmdGoodIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Contacts">
+                <IconButton
+                  color="primary"
+                  aria-label="view"
+                  onClick={() => {
+                    setCompanyIdToShow(params.row?.id);
+                    setShowContacts(true);
+                  }}
+                >
+                  <PhoneIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Edit">
                 <IconButton
                   aria-label="edit"
@@ -426,6 +459,30 @@ const CompaniesTable = ({ onDataChange }) => {
         </h2>
       )}
 
+      {showContacts && (
+        <Modal
+          classNames={"h-70per"}
+          title={"Company Contacts"}
+          onClose={() => setShowContacts(false)}
+        >
+          <ViewContacts
+            onClose={() => setShowContacts(false)}
+            id={companyIdToshow}
+          ></ViewContacts>
+        </Modal>
+      )}
+      {showBranches && (
+        <Modal
+          classNames={"h-70per"}
+          title={"Company Branches"}
+          onClose={() => setShowBranches(false)}
+        >
+          <ViewContacts
+            onClose={() => setShowBranches(false)}
+            id={companyIdToshow}
+          ></ViewContacts>
+        </Modal>
+      )}
       {showEditModal && (
         <Modal
           classNames={"h-70per"}

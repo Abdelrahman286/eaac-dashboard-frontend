@@ -28,6 +28,8 @@ const InstructorAttendace = lazy(() =>
 );
 
 const Memebership = lazy(() => import("./pages/Memebership"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const AdminsPage = lazy(() => import("./pages/AdminsPage"));
 
 // context
 import { AppContext } from "./contexts/AppContext";
@@ -53,6 +55,24 @@ function App() {
           }
         >
           <Route path="/" element={<HomePage></HomePage>}></Route>
+
+          <Route
+            path="/profile"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <ProfilePage></ProfilePage>
+              </Suspense>
+            }
+          ></Route>
+
+          <Route
+            path="/admins"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <AdminsPage></AdminsPage>
+              </Suspense>
+            }
+          ></Route>
 
           <Route path="/courses" element={<CoursesPage></CoursesPage>}></Route>
 

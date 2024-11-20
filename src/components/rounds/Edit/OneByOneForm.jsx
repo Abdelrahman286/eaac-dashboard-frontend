@@ -243,7 +243,6 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
         startTime: `${sessionStartTime}:00`,
         endTime: `${sessionEndTime}:00`,
         sessionDate: convertDateFormat(sessionDate),
-        nameEn: sessionName,
         descriptionEn: sessionDescription || "-",
         roomId: sessionRoomId,
         instructorId: instructorId,

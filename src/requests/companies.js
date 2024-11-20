@@ -19,9 +19,23 @@ export const deleteCompanyFn = ({ reqBody, token, config }) => {
 };
 
 // get company contacts list
-
 export const getCompanyContactsFn = (reqBody, token, config) => {
   return makeRequest(`${URL}/contact/getContact`, reqBody, token, config);
+};
+
+// Add contact
+export const addContactFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/contact/createContact`, reqBody, token, config);
+};
+
+// Delete Contact ????????????????
+export const deleteContactFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/company/deleteContact`, reqBody, token, config);
+};
+
+// update Contact contact/updateContact
+export const editContactFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/contact/updateContact`, reqBody, token, config);
 };
 
 // get company branches

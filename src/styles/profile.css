@@ -1,0 +1,16 @@
+.background-img {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+  }
+}
+
+.header-section {
+  background: white;
+  margin: 40px 0px;
+  border-radius: 20px;
+  padding: 20px;
+}

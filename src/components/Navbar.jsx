@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+
+// contexts
 import { AppContext } from "../contexts/AppContext";
 import { UserContext } from "../contexts/UserContext";
 
@@ -17,6 +20,11 @@ import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import AddCardIcon from "@mui/icons-material/AddCard";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+
+//requests
+import { getProfileData } from "../requests/profile";
 
 // styles
 import "../styles/side-nav.css";
@@ -28,25 +36,26 @@ import Tooltip from "@mui/material/Tooltip";
 import barndLogo from "../assets/eaac-logo-240.png";
 import fallbackImageUrl from "../assets/profileImg.webp";
 const Navbar = () => {
+  const navigate = useNavigate();
+  const { token, user, logout } = useContext(UserContext);
   const [closed, setClosed] = useState("");
   const { pathname } = useLocation();
-  const { logout, user } = useContext(UserContext);
 
-  const [currentImageUrl, setCurrentImageUrl] = useState(user.Image);
-  const [isImageValid, setIsImageValid] = useState(null);
+  // fetch user profile data
+  const { data: userDataObj, isLoading: getUserLoading } = useQuery({
+    queryFn: () => {
+      return getProfileData(
+        {
+          id: user?.id,
+        },
+        token
+      );
+    },
+    enabled: !!user?.id,
 
-  const handleImageError = () => {
-    if (currentImageUrl !== fallbackImageUrl) {
-      setCurrentImageUrl(fallbackImageUrl); // Switch to fallback image
-      setIsImageValid(null); // Reset validation state to "checking" for fallback
-    } else {
-      setIsImageValid(false); // If fallback fails, mark as invalid
-    }
-  };
-
-  const handleImageLoad = () => {
-    setIsImageValid(true); // Image successfully loaded
-  };
+    queryKey: ["userProfileData"],
+  });
+  const userData = userDataObj?.success?.response?.data || {};
 
   const handleLogout = () => {
     logout();
@@ -63,6 +72,16 @@ const Navbar = () => {
   // each navlink can have multiple nested paths
   const routes = [
     { paths: ["/"], icon: <HomeIcon></HomeIcon>, label: "Home" },
+    {
+      paths: ["/profile"],
+      icon: <AccountCircleIcon></AccountCircleIcon>,
+      label: "Profile",
+    },
+    {
+      paths: ["/admins"],
+      icon: <AssignmentIndIcon></AssignmentIndIcon>,
+      label: "Admins",
+    },
     {
       paths: ["/rounds"],
       icon: <EventRepeatIcon></EventRepeatIcon>,
@@ -129,6 +148,7 @@ const Navbar = () => {
     };
   }, []);
 
+  console.log(userData);
   return (
     <div className={`nav-page ${closed}`}>
       <div className={`side-menu`}>
@@ -196,16 +216,11 @@ const Navbar = () => {
                 <LogoutIcon onClick={handleLogout}></LogoutIcon>
               </Tooltip>
             </div>
-            <div className="profile-data">
+            <div className="profile-data" onClick={() => navigate("/profile")}>
               <div className="profile-img-container">
-                <img
-                  alt="img"
-                  src={currentImageUrl}
-                  onError={handleImageError}
-                  onLoad={handleImageLoad}
-                ></img>
+                <img alt="img" src={userData?.Image || ""}></img>
               </div>
-              <span className="profile-name">{user.Name}</span>
+              <span className="profile-name">{userData?.Name || ""}</span>
             </div>
           </div>
         </div>
