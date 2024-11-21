@@ -477,10 +477,10 @@ const CompaniesTable = ({ onDataChange }) => {
           title={"Company Branches"}
           onClose={() => setShowBranches(false)}
         >
-          <ViewContacts
+          <ViewBranches
             onClose={() => setShowBranches(false)}
             id={companyIdToshow}
-          ></ViewContacts>
+          ></ViewBranches>
         </Modal>
       )}
       {showEditModal && (

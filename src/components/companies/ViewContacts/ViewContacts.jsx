@@ -17,6 +17,9 @@ import { getCompanyContactsFn } from "../../../requests/companies";
 import { getDataForTableRows } from "../../../utils/tables";
 import ContactsList from "./ContactsList";
 import AddNewContact from "./AddNewContact";
+
+// components
+import LoadingSpinner from "../../LoadingSpinner";
 const ViewContacts = ({ id }) => {
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
@@ -50,11 +53,16 @@ const ViewContacts = ({ id }) => {
       {/* Add New Contact Form */}
 
       <AddNewContact id={id}></AddNewContact>
-      {contactsLoading && <p style={{ textAlign: "center" }}>Loading...</p>}
+      {contactsLoading && (
+        <div>
+          <LoadingSpinner></LoadingSpinner>
+          <p style={{ textAlign: "center" }}>Loading...</p>
+        </div>
+      )}
       {(contacts?.length == 0 || !contacts) && !contactsLoading ? (
         <p style={{ textAlign: "center" }}>No Contacts Found !</p>
       ) : (
-        <ContactsList data={contacts}></ContactsList>
+        <ContactsList data={contacts} companyId={id}></ContactsList>
       )}
     </div>
   );

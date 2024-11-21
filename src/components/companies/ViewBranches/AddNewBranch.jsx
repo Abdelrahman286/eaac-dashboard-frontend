@@ -15,23 +15,23 @@ import "../../../styles/rounds.css";
 import { getDataForTableRows } from "../../../utils/tables";
 
 // Requests
-import { addContactFn } from "../../../requests/companies";
+import { addBranchFn } from "../../../requests/companies";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 // valdiation
-import { validateContacts } from "./validateContacts";
+import { validateAddBranch } from "./validateBranches";
 
 // icons
 import AddIcon from "@mui/icons-material/Add";
 
-const AddNewContact = ({ id }) => {
+const AddNewBranch = ({ id }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
 
-  const [showAddContactForm, setShowAddContactForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
@@ -41,35 +41,31 @@ const AddNewContact = ({ id }) => {
   };
 
   const {
-    mutate: addContact,
+    mutate: addBranch,
     isPending: addLoading,
     isError: isError,
     error: error,
   } = useMutation({
-    mutationFn: addContactFn,
+    mutationFn: addBranchFn,
     onSuccess: () => {
-      queryClient.invalidateQueries(["companyContacts"]);
-      showSnackbar("New Contact Successfully", "success");
+      queryClient.invalidateQueries(["companyBranches"]);
+      showSnackbar("New Branch Added Successfully", "success");
     },
     onError: (error) => {
-      showSnackbar("Faild to add New Contact", "error");
+      showSnackbar("Faild to add New Branch", "error");
     },
   });
   const handleSubmit = () => {
-    const errors = validateContacts(formData);
+    const errors = validateAddBranch(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      console.log(errors);
     } else {
       setFormErrors({});
-      console.log("send");
       const newObj = {
         ...formData,
-        branchId: 1,
         companyId: id,
-        title: formData?.jobTitle,
       };
-      addContact({ reqBody: newObj, token });
+      addBranch({ reqBody: newObj, token });
     }
   };
   return (
@@ -83,7 +79,7 @@ const AddNewContact = ({ id }) => {
         padding: "20px 10px",
       }}
     >
-      {!showAddContactForm && (
+      {!showAddForm && (
         <Box
           sx={{
             display: "flex",
@@ -95,14 +91,14 @@ const AddNewContact = ({ id }) => {
             color="success"
             startIcon={<AddIcon />} // Optional: add the icon if needed
             onClick={(e) => {
-              setShowAddContactForm(true);
+              setShowAddForm(true);
             }}
           >
-            Add Contact
+            Add Branch
           </Button>
         </Box>
       )}
-      {showAddContactForm && (
+      {showAddForm && (
         <>
           {/* first row */}
           <Box
@@ -113,36 +109,37 @@ const AddNewContact = ({ id }) => {
             }}
           >
             <TextField
-              error={Boolean(formErrors?.name)}
-              helperText={formErrors?.name}
-              value={formData?.name || ""}
+              error={Boolean(formErrors?.nameAr)}
+              helperText={formErrors?.nameAr}
+              value={formData?.nameAr || ""}
               onChange={handleFormChange}
-              id="name"
+              id="nameAr"
+              name="nameAr"
               size="small"
-              label="Name *"
-              name="Name"
+              label="Name (AR) *"
               fullWidth
             />
             <TextField
-              error={Boolean(formErrors?.jobTitle)}
-              helperText={formErrors?.jobTitle}
-              value={formData?.jobTitle || ""}
+              error={Boolean(formErrors?.nameEn)}
+              helperText={formErrors?.nameEn}
+              value={formData?.nameEn || ""}
               onChange={handleFormChange}
-              id="jobTitle"
+              id="nameEn"
+              name="nameEn"
               size="small"
-              label="Job Title *"
-              name="Name"
+              label="Name (EN) *"
               fullWidth
             />
+
             <TextField
-              error={Boolean(formErrors?.email1)}
-              helperText={formErrors?.email1}
-              value={formData?.email1 || ""}
+              error={Boolean(formErrors?.branchCode)}
+              helperText={formErrors?.branchCode}
+              value={formData?.branchCode || ""}
               onChange={handleFormChange}
-              id="email1"
+              id="branchCode"
+              name="branchCode"
               size="small"
-              label="Email *"
-              name="Name"
+              label="Branch Code *"
               fullWidth
             />
           </Box>
@@ -157,58 +154,27 @@ const AddNewContact = ({ id }) => {
             }}
           >
             <TextField
-              error={Boolean(formErrors?.phoneNum1)}
-              helperText={formErrors?.phoneNum1}
-              value={formData?.phoneNum1 || ""}
+              error={Boolean(formErrors?.descriptionAr)}
+              helperText={formErrors?.descriptionAr}
+              value={formData?.descriptionAr || ""}
               onChange={handleFormChange}
-              id="phoneNum1"
+              id="descriptionAr"
               size="small"
-              label="Phone Number 1 *"
-              name="Name"
+              label="Description"
+              name="descriptionAr"
               fullWidth
             />
             <TextField
-              error={Boolean(formErrors?.phoneNum2)}
-              helperText={formErrors?.phoneNum2}
-              value={formData?.phoneNum2 || ""}
+              error={Boolean(formErrors?.mainPhone)}
+              helperText={formErrors?.mainPhone}
+              value={formData?.mainPhone || ""}
               onChange={handleFormChange}
-              id="phoneNum2"
+              id="mainPhone"
               size="small"
-              label="Phone Number 2*"
-              name="Name"
+              label="Phone Number"
+              name="mainPhone"
               fullWidth
-            />
-            <TextField
-              error={Boolean(formErrors?.whatsAppNum)}
-              helperText={formErrors?.whatsAppNum}
-              value={formData?.whatsAppNum || ""}
-              onChange={handleFormChange}
-              id="whatsAppNum"
-              size="small"
-              label="What's App Number"
-              name="Name"
-              fullWidth
-            />
-          </Box>
-
-          {/* thired row (notes) */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 1,
-            }}
-          >
-            <TextField
-              error={Boolean(formErrors?.notes)}
-              helperText={formErrors?.notes}
-              value={formData?.notes || ""}
-              onChange={handleFormChange}
-              id="notes"
-              size="small"
-              label="Notes"
-              name="Name"
-              fullWidth
+              type="number"
             />
           </Box>
 
@@ -222,12 +188,12 @@ const AddNewContact = ({ id }) => {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => setShowAddContactForm(false)}
+              onClick={() => setShowAddForm(false)}
             >
               Cancel
             </Button>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
-              {addLoading ? "Loading..." : "Add Contact"}
+              {addLoading ? "Loading..." : "Add Branch"}
             </Button>
           </Box>
 
@@ -244,4 +210,4 @@ const AddNewContact = ({ id }) => {
   );
 };
 
-export default AddNewContact;
+export default AddNewBranch;

@@ -169,7 +169,7 @@ const UserProfile = () => {
     } else {
       setFormErrors({});
       // edit profile data
-      editProfile({ reqBody: formData, token, isFormData: true });
+      editProfile({ reqBody: formData, token });
     }
   };
 

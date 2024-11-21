@@ -43,6 +43,23 @@ export const getCompanyBranchesFn = (reqBody, token, config) => {
   return makeRequest(`${URL}/branch/getBranch`, reqBody, token, config);
 };
 
+// Add branch
+export const addBranchFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/branch/createBranch`, reqBody, token, config);
+};
+
+// Delete branch
+export const deletBranchFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/branch/deleteBranch`, reqBody, token, config);
+};
+
+// update Contact contact/updateContact
+export const editBranchFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/branch/updateBranch`, reqBody, token, config);
+};
+
+//-------------------------------------------------------------------
+
 // search companies
 export const searchCompaniesFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/company/getCompany`, reqBody, token, config);

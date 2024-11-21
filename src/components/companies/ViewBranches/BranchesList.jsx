@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 // components
-import CustomIconButton from "../../../components/CustomIconButton";
+import CustomIconButton from "../../CustomIconButton";
 
 // requests
-import { deleteContactFn } from "../../../requests/companies";
+import { deletBranchFn } from "../../../requests/companies";
 // MUI
 import {
   Tabs,
@@ -16,10 +16,6 @@ import {
   IconButton,
 } from "@mui/material";
 
-// icons
-import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
@@ -27,7 +23,7 @@ import { UserContext } from "../../../contexts/UserContext";
 // components
 import EditForm from "./EditForm";
 
-const ContactsList = ({ data, companyId }) => {
+const BranchesList = ({ data, companyId }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -41,23 +37,23 @@ const ContactsList = ({ data, companyId }) => {
 
   // Delete Mutation
   const {
-    mutate: deletContact,
+    mutate: deletBranch,
     isPending: deleteLoading,
     isError: isDeleteError,
   } = useMutation({
     onError: (error) => {
-      showSnackbar("Faild to Delete Contact Data", "error");
+      showSnackbar("Faild to Delete Branch Data", "error");
     },
-    mutationFn: deleteContactFn,
+    mutationFn: deletBranchFn,
     onSuccess: () => {
-      queryClient.invalidateQueries(["companyContacts"]);
-      showSnackbar("Contact Deleted Successfully", "success");
+      queryClient.invalidateQueries(["companyBranches"]);
+      showSnackbar("Branch Deleted Successfully", "success");
     },
   });
 
-  const handleDeleteContact = (contact) => {
-    deletContact({
-      reqBody: { id: contact.id },
+  const handleDeleteBranch = (branch) => {
+    deletBranch({
+      reqBody: { id: branch.id },
       token,
       config: { isFormData: true },
     });
@@ -68,13 +64,11 @@ const ContactsList = ({ data, companyId }) => {
       <div className="header">
         <span>#</span>
 
-        <span>Name</span>
-        <span>Job Title</span>
-        <span>Phone Number 1</span>
-        <span>Phone Number 2</span>
-        <span>What's App Number</span>
-        <span>Email</span>
-        <span>Notes</span>
+        <span>Name (AR)</span>
+        <span>Name (EN)</span>
+        <span>Description</span>
+        <span>Main Phone</span>
+        <span>Code</span>
         <span>Controls</span>
       </div>
 
@@ -88,13 +82,13 @@ const ContactsList = ({ data, companyId }) => {
               {idToEdit !== ele.id && (
                 <div className="data-row">
                   <span>{ele?.rowIndex}</span>
-                  <span>{ele?.Name || "-"}</span>
-                  <span>{ele?.JobTitle || "-"}</span>
-                  <span>{ele?.PhoneNum1 || "-"}</span>
-                  <span>{ele?.PhoneNum2 || "-"}</span>
-                  <span>{ele?.WhatsAppNum || "-"}</span>
-                  <span>{ele?.Email1 || "-"}</span>
-                  <span>{ele?.Notes || "-"}</span>
+                  <span>{ele?.Name_ar || "-"}</span>
+
+                  <span>{ele?.Name_en || "-"}</span>
+                  <span>{ele?.Description_ar || "-"}</span>
+                  <span>{ele?.MainPhone || "-"}</span>
+                  <span>{ele?.BranchCode || "-"}</span>
+
                   <span>
                     <CustomIconButton
                       icon={"edit"}
@@ -137,7 +131,7 @@ const ContactsList = ({ data, companyId }) => {
                     }}
                     disabled={deleteLoading}
                     onClick={(e) => {
-                      handleDeleteContact(ele);
+                      handleDeleteBranch(ele);
                     }}
                     variant="contained"
                     color="error"
@@ -151,7 +145,7 @@ const ContactsList = ({ data, companyId }) => {
                 <div className="data-row">
                   <EditForm
                     companyId={companyId}
-                    contact={ele}
+                    branch={ele}
                     onCancel={() => setIdToEdit("")}
                   ></EditForm>
                 </div>
@@ -164,4 +158,4 @@ const ContactsList = ({ data, companyId }) => {
   );
 };
 
-export default ContactsList;
+export default BranchesList;
