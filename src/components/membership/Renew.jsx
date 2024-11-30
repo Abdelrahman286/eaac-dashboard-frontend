@@ -25,13 +25,12 @@ import SearchableDropdown from "../SearchableDropdown";
 import {
   createMemebershipFn,
   getPaymentMethodsFn,
-  getStudentFn,
   getMemebershipPricesFn,
-  editMembershipFn,
+  renewMembershipFn,
 } from "../../requests/membership";
 
 // validations
-import { validateAddMembership, validateEdit } from "./validation";
+import { validateAddMembership, validateRenew } from "./validation";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
@@ -53,7 +52,7 @@ const membershipCardStatus = [
   { id: 8, value: "Deleivered" },
 ];
 
-const MutationForm = ({ onClose, isEditData, data }) => {
+const Renew = ({ onClose, data }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -66,11 +65,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
 
   const [previewImg, setPreviewImg] = useState("");
-
-  const handleSelectStudent = (_selectedStudent) => {
-    setFormData({ ...formData, clientId: _selectedStudent?.id });
-    setSelectedStudent(_selectedStudent);
-  };
 
   // --------- request data for dropdowns -----------
   const handleFormChange = (e) => {
@@ -105,12 +99,12 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   // send course data
   const {
-    mutate: addMembership,
+    mutate: renewMembership,
     isPending: addLoading,
     isError: isAddError,
     error: addError,
   } = useMutation({
-    mutationFn: createMemebershipFn,
+    mutationFn: renewMembershipFn,
     onSuccess: () => {
       onClose();
       queryClient.invalidateQueries(["membership-pagination"]);
@@ -124,13 +118,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const errors = validateAddMembership(formData);
+    const errors = validateRenew(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      addMembership({
+      renewMembership({
         reqBody: formData,
         token,
       });
@@ -139,16 +133,16 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   //   initialize edit data filling
   useEffect(() => {
-    if (!isEditData || !data) return;
+    if (!data) return;
     // Handle edit data initialization
     console.log(data);
     const rawFormData = {
-      id: [data.id],
+      clientId: data?.UserID?.id || "",
       membershipTypeId: data?.MembershipTypeID?.id || "",
       membershipCode: data?.MembershipCode || "",
-      startAt: data?.startAt || "",
       cardStatusId: data?.CardStatusID?.id,
-      statusId: data?.StatusID?.id || "",
+      period: "Annual",
+      //   statusId: data?.StatusID?.id || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -157,43 +151,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     );
 
     setFormData(newFormData);
-  }, [isEditData, data]);
-
-  const {
-    mutate: editMembership,
-    isPending: editLoading,
-    isError: isEditError,
-    error: editError,
-  } = useMutation({
-    mutationFn: editMembershipFn,
-    onSuccess: () => {
-      onClose();
-      queryClient.invalidateQueries(["membership-pagination"]);
-      queryClient.invalidateQueries(["membership-list"]);
-      showSnackbar("Membership is Edited Successfully", "success");
-    },
-    onError: (error) => {
-      showSnackbar("Faild to edit Membership Data", "error");
-    },
-  });
-
-  const handleEdit = (e) => {
-    e.preventDefault();
-    const errors = validateEdit(formData);
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-    } else {
-      setFormErrors({});
-
-      editMembership({
-        reqBody: formData,
-        token,
-        config: {
-          isFormData: false,
-        },
-      });
-    }
-  };
+  }, [data]);
 
   // payment methods (Method_en)
   const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
@@ -264,30 +222,9 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   return (
     <div className="membership-form-page">
-      {/* student data section  */}
-      {!isEditData && (
-        <Box>
-          <SearchableDropdown
-            styles={{
-              width: "600px",
-              paddingTop: "10px",
-            }}
-            isError={Boolean(formErrors?.clientId)}
-            helperText={formErrors?.clientId}
-            onSelect={handleSelectStudent}
-            isFromData={false}
-            label="Student"
-            fetchData={getStudentFn}
-            queryKey="studentForMemebership"
-            getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
-            getOptionId={(option) => option.id} // Custom ID field
-          ></SearchableDropdown>
-        </Box>
-      )}
-
       {/* Student Data */}
       <Box>
-        {selectedStudent?.id ? (
+        {data?.id ? (
           <Box
             sx={{
               padding: 2,
@@ -309,7 +246,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 Name
               </Typography>
               <Typography variant="body1">
-                {selectedStudent?.Name || "N/A"}
+                {data?.UserID.Name || "N/A"}
               </Typography>
             </Box>
 
@@ -322,7 +259,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 Phone Number
               </Typography>
               <Typography variant="body1">
-                {selectedStudent?.PhoneNumber || "N/A"}
+                {data?.UserID.PhoneNumber || "N/A"}
               </Typography>
             </Box>
 
@@ -336,7 +273,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 Membership Code
               </Typography>
               <Typography variant="body1">
-                {selectedStudent?.CourseID?.CourseCode || "N/A"}
+                {data?.MembershipCode || "N/A"}
               </Typography>
             </Box>
 
@@ -352,7 +289,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   Start Date
                 </Typography>
                 <Typography variant="body1">
-                  {selectedStudent?.StartDate?.split(" ")[0] || "N/A"}
+                  {data?.startAt || "N/A"}
                 </Typography>
               </Box>
               <Box>
@@ -363,9 +300,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 >
                   End Date
                 </Typography>
-                <Typography variant="body1">
-                  {selectedStudent?.EndDate?.split(" ")[0] || "N/A"}
-                </Typography>
+                <Typography variant="body1">{data?.endAt || "N/A"}</Typography>
               </Box>
             </Box>
 
@@ -380,7 +315,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 Membership Status
               </Typography>
               <Typography variant="body1">
-                {selectedStudent?.CourseID?.NonMemberPrice || "N/A"}
+                {data?.StatusID?.Name_en || "N/A"}
               </Typography>
             </Box>
           </Box>
@@ -388,7 +323,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       </Box>
 
       {/* new membership form */}
-
       <Box
         sx={{
           my: 1,
@@ -397,17 +331,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
           gap: 2,
         }}
       >
-        {!isEditData && (
-          <Typography
-            sx={{ textAlign: "center", mt: 1 }}
-            variant="body2"
-            //   color="text.secondary"
-            color="primary"
-          >
-            New Membership
-          </Typography>
-        )}
-
         {/* Field 1 : Membership type */}
         <Autocomplete
           sx={{
@@ -438,7 +361,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             />
           )}
         />
-
         <Box
           sx={{
             display: "flex",
@@ -474,68 +396,41 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             Generate
           </Button>
         </Box>
-        {!isEditData && (
-          <TextField
-            size={"small"}
-            label="Start Date"
-            variant="outlined"
-            fullWidth
-            type="Date"
-            value={convertDateFormatStudent(formData?.startDate) || ""}
-            id="startDate"
-            error={Boolean(formErrors?.startDate)}
-            helperText={formErrors?.startDate}
-            onChange={(e) => {
-              setFormData({
-                ...formData,
-                startDate: convertDateFormat(e.target.value),
-              });
-            }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        )}
-        {isEditData && (
-          <TextField
-            size={"small"}
-            label="Start Date"
-            variant="outlined"
-            fullWidth
-            type="Date"
-            value={formData?.startAt || ""}
-            id="startAt"
-            error={Boolean(formErrors?.startAt)}
-            helperText={formErrors?.startAt}
-            onChange={(e) => {
-              setFormData({
-                ...formData,
-                startAt: e.target.value,
-              });
-            }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        )}
 
-        {!isEditData && (
-          <TextField
-            size={"small"}
-            label="Photo"
-            variant="outlined"
-            fullWidth
-            type="file"
-            error={Boolean(formErrors?.image)}
-            helperText={formErrors?.image}
-            id="image"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={handleImgInput}
-          />
-        )}
-
+        <TextField
+          size={"small"}
+          label="Start Date"
+          variant="outlined"
+          fullWidth
+          type="Date"
+          value={convertDateFormatStudent(formData?.startDate) || ""}
+          id="startDate"
+          error={Boolean(formErrors?.startDate)}
+          helperText={formErrors?.startDate}
+          onChange={(e) => {
+            setFormData({
+              ...formData,
+              startDate: convertDateFormat(e.target.value),
+            });
+          }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          size={"small"}
+          label="Photo"
+          variant="outlined"
+          fullWidth
+          type="file"
+          error={Boolean(formErrors?.image)}
+          helperText={formErrors?.image}
+          id="image"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          onChange={handleImgInput}
+        />
         {previewImg && (
           <Box
             sx={{
@@ -569,137 +464,94 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             </Box>
           </Box>
         )}
-
-        {!isEditData && (
-          <TextField
-            size={"small"}
-            label="Membership Fees"
-            variant="outlined"
-            value={formData?.fee || ""}
-            onChange={handleFormChange}
-            id="fee"
-            name="fee"
-            fullWidth
-            type="number"
-            error={Boolean(formErrors?.fee)}
-            helperText={formErrors?.fee}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        )}
-
-        {!isEditData && (
-          <Autocomplete
-            loading={paymentMethodLoading}
-            value={
-              paymentMethods.find(
-                (item) => item.id == selectedPaymentMethod?.id
-              ) || null
-            }
-            onChange={(e, value) => {
-              setSelectedPaymentMethod(value);
-              setFormData({ ...formData, paymentMethodId: value?.id });
-            }}
-            options={paymentMethods}
-            getOptionLabel={(option) => option.Method_en || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                id="paymentMethod"
-                error={Boolean(formErrors?.paymentMethodId)}
-                helperText={formErrors?.paymentMethodId}
-                {...params}
-                label="Payment Method"
-                fullWidth
-              />
-            )}
-          />
-        )}
-
-        {isEditData && (
-          <Autocomplete
-            sx={{
-              flex: 1,
-            }}
-            value={
-              membershipCardStatus.find(
-                (item) => item.id == formData?.cardStatusId
-              ) || null
-            }
-            onChange={(e, value) => {
-              setFormData({ ...formData, cardStatusId: value?.id || "" });
-            }}
-            options={membershipCardStatus || []}
-            getOptionLabel={(option) => `${option?.value}` || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={Boolean(formErrors?.cardStatusId)}
-                helperText={formErrors?.cardStatusId}
-                label="Membership Card (Status)"
-                fullWidth
-              />
-            )}
-          />
-        )}
-        {/* <TextField
-          label="Notes"
-          placeholder="Notes"
-          id="notes"
-          //   onChange={handleFormChange}
-          //   error={Boolean(formErrors?.descriptionEn)}
-          //   helperText={formErrors?.descriptionEn}
-          //   value={formData?.descriptionEn || ""}
-          multiline
-          minRows={2}
-          fullWidth
+        <TextField
+          size={"small"}
+          label="Membership Fees"
           variant="outlined"
-        /> */}
+          value={formData?.fee || ""}
+          onChange={handleFormChange}
+          id="fee"
+          name="fee"
+          fullWidth
+          type="number"
+          error={Boolean(formErrors?.fee)}
+          helperText={formErrors?.fee}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <Autocomplete
+          loading={paymentMethodLoading}
+          value={
+            paymentMethods.find(
+              (item) => item.id == selectedPaymentMethod?.id
+            ) || null
+          }
+          onChange={(e, value) => {
+            setSelectedPaymentMethod(value);
+            setFormData({ ...formData, paymentMethodId: value?.id });
+          }}
+          options={paymentMethods}
+          getOptionLabel={(option) => option.Method_en || ""}
+          size="small"
+          renderInput={(params) => (
+            <TextField
+              id="paymentMethod"
+              error={Boolean(formErrors?.paymentMethodId)}
+              helperText={formErrors?.paymentMethodId}
+              {...params}
+              label="Payment Method"
+              fullWidth
+            />
+          )}
+        />
+
+        <Autocomplete
+          sx={{
+            flex: 1,
+          }}
+          value={
+            membershipCardStatus.find(
+              (item) => item.id == formData?.cardStatusId
+            ) || null
+          }
+          onChange={(e, value) => {
+            setFormData({ ...formData, cardStatusId: value?.id || "" });
+          }}
+          options={membershipCardStatus || []}
+          getOptionLabel={(option) => `${option?.value}` || ""}
+          size="small"
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              error={Boolean(formErrors?.cardStatusId)}
+              helperText={formErrors?.cardStatusId}
+              label="Membership Card (Status)"
+              fullWidth
+            />
+          )}
+        />
       </Box>
 
-      {isEditData ? (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-end",
 
-            pb: 1,
+          pb: 1,
+        }}
+      >
+        <FormButton
+          style={{
+            width: "180px",
           }}
-        >
-          <FormButton
-            style={{
-              width: "180px",
-            }}
-            isLoading={editLoading}
-            onClick={handleEdit}
-            buttonText="Edit Membership"
-            className="main-btn form-add-btn"
-          />
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-
-            pb: 1,
-          }}
-        >
-          <FormButton
-            style={{
-              width: "180px",
-            }}
-            isLoading={addLoading}
-            onClick={handleSubmit}
-            buttonText="Pay Membership"
-            className="main-btn form-add-btn"
-          />
-        </Box>
-      )}
+          isLoading={addLoading}
+          onClick={handleSubmit}
+          buttonText="Edit Membership"
+          className="main-btn form-add-btn"
+        />
+      </Box>
 
       {isAddError && (
         <p className="invalid-message">
@@ -707,15 +559,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             "An Error Occurred, please try Again"}
         </p>
       )}
-
-      {isEditError && (
-        <p className="invalid-message">
-          {editError?.responseError?.failed?.response?.msg ||
-            "An Error Occurred, please try Again"}
-        </p>
-      )}
     </div>
   );
 };
 
-export default MutationForm;
+export default Renew;

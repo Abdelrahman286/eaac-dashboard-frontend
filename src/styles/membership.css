@@ -24,3 +24,6 @@
     margin-left: 10px;
   }
 }
+.edit-membership-modal {
+  min-width: 50vw;
+}

@@ -5,8 +5,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Box, Chip, Avatar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import Tooltip from "@mui/material/Tooltip";
 // contexts
@@ -17,15 +15,19 @@ import { AppContext } from "../../contexts/AppContext";
 import { getDataForTableRows } from "../../utils/tables";
 
 // requests
-import { deleteRoomFn, getRoomsFn, restoreRoomFn } from "../../requests/rooms";
+import {
+  getUsersMemeberships,
+  deleteMemebershipFn,
+} from "../../requests/membership";
 // components
 import DeleteConfirmation from "../DeleteConfirmation";
-import RestoreConfirmation from "../RestoreConfirmation";
 import CustomIconButton from "../CustomIconButton";
-// import MutationForm from "./MutationForm";
+import MutationForm from "./MutationForm";
+import Renew from "./Renew";
 import Modal from "../Modal";
 
-const MemebershipTable = ({ onDataChange = () => {} }) => {
+const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
+  const { search, cardStatusId, clientId, membershipTypeId } = filterData;
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -37,8 +39,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // restore
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
-  const [idToRestore, setIdToRestore] = useState("");
+  const [showRenewModal, setShowRenewModal] = useState(false);
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
@@ -46,39 +47,36 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
     pageSize: 10, // Initial page size
   });
 
-  const paginationReqBody = {};
+  const paginationReqBody = {
+    // filter parameters
+    ...(search && { search }),
+    ...(cardStatusId && { cardStatusId }),
+    ...(clientId && { clientId }),
+    ...(membershipTypeId && { membershipTypeId }),
+  };
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
+
+    // filter parameters
+    ...(search && { search }),
+    ...(cardStatusId && { cardStatusId }),
+    ...(clientId && { clientId }),
+    ...(membershipTypeId && { membershipTypeId }),
   };
 
-  // check if there's search term
-  if (searchResults?.key == "room" && searchResults?.searchTerm) {
-    paginationReqBody.search = searchResults?.searchTerm;
-    dataListReqBody.search = searchResults?.searchTerm;
-  }
-
-  // check disabled key in request body
-
-  if (disabledList?.key == "room") {
-    paginationReqBody.disabled = "1"; // get pagination data
-    dataListReqBody.disabled = "1"; // get the list
-  }
-
-  // Query to fetch pagination data (e.g., total elements, number of pages)
   const {
     data: paginationData,
     isLoading: isPaginationLoading,
     isError: paginationErr,
   } = useQuery({
     queryFn: () => {
-      // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getRoomsFn(paginationReqBody, token, {
+      return getUsersMemeberships(paginationReqBody, token, {
         isFormData: true,
-        urlParams: `page=1`, // Use dynamic page number
+        urlParams: `page=1`,
       });
     },
     queryKey: [
-      "room-pagination",
+      "membership-pagination",
       paginationReqBody,
       dataListReqBody,
       disabledList?.key,
@@ -93,7 +91,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "room-list",
+      "membership-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
@@ -101,14 +99,14 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
       disabledList?.key,
     ],
     queryFn: () => {
-      return getRoomsFn(dataListReqBody, token, {
+      return getUsersMemeberships(dataListReqBody, token, {
         isFormData: true,
-        urlParams: `page=${paginationModel.page + 1}`, // Use the dynamic page number
+        urlParams: `page=${paginationModel.page + 1}`,
       });
     },
 
-    enabled: !!paginationData, // Enable this query only when paginationData is available
-    keepPreviousData: true, // Keep previous data while fetching new data
+    enabled: !!paginationData,
+    keepPreviousData: true,
   });
 
   //------------------- Data transformation
@@ -133,23 +131,21 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
   }, [listData]);
 
   //------------- delete course-------------------------
-  const { mutate: deleteRoom, isPending: deleteLoading } = useMutation({
-    mutationFn: deleteRoomFn,
+  const { mutate: deleteMembership, isPending: deleteLoading } = useMutation({
+    mutationFn: deleteMemebershipFn,
     onSuccess: () => {
-      console.log("Room deleted successfully");
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
-        queryKey: ["room-pagination"],
+        queryKey: ["membership-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["room-list"],
+        queryKey: ["membership-list"],
       });
-      showSnackbar("Room Deleted Successfully ", "info");
+      showSnackbar("Membership Deleted Successfully ", "info");
       setShowDeleteModal(false);
     },
     onError: (error) => {
-      console.log("Error at Deleting Room ", error);
-      showSnackbar("Failed to Delete Room Data", "error");
+      showSnackbar("Failed to Delete Membership Data", "error");
     },
   });
 
@@ -159,62 +155,29 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
     setIdToDelete(rowData?.id);
   };
   const confirmDelete = () => {
-    deleteRoom({
+    deleteMembership({
       reqBody: {
-        id: idToDelete,
+        id: [idToDelete],
+        statusId: "4",
       },
       token,
       config: {
-        isFormData: true,
-      },
-    });
-  };
-
-  // restore
-  const handleRestore = (rowData) => {
-    setShowRestoreModal(true);
-    setIdToRestore(`${rowData?.id}`);
-  };
-  const confirmRestore = () => {
-    restoreRoom({
-      reqBody: {
-        id: [idToRestore],
-        statusId: "1",
-      },
-      token,
-      config: {
-        isFormData: true,
+        isFormData: false,
       },
     });
   };
 
   // handle edit
-
   const handleEdit = (row) => {
     setShowEditModal(true);
     setDataToEdit(row);
   };
 
-  // restore deleted company
-  const { mutate: restoreRoom, isPending: restoreLoading } = useMutation({
-    mutationFn: restoreRoomFn,
-
-    onSuccess: () => {
-      console.log("room restored");
-      queryClient.invalidateQueries({
-        queryKey: ["room-pagination"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["room-list"],
-      });
-      setShowRestoreModal(false);
-      showSnackbar("Room Data Restored Successfully ", "success");
-    },
-    onError: (error) => {
-      console.log("error at restoring Room data", error);
-      showSnackbar("Failed to Restore Room Data", "error");
-    },
-  });
+  // handle Renew
+  const handleRenew = (row) => {
+    setShowRenewModal(true);
+    setDataToEdit(row);
+  };
 
   const columns = [
     {
@@ -225,7 +188,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
     {
       field: "Image",
-      headerName: "Logo",
+      headerName: "Image",
       flex: 0.6,
       minWidth: 50,
       renderCell: (params) => {
@@ -239,7 +202,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
             }}
           >
             <Avatar
-              src={params?.row.Image}
+              src={params?.row?.UserID?.Image}
               alt="Logo"
               variant="circular"
               sx={{ width: 40, height: 40 }}
@@ -255,7 +218,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        return `${row?.UserID?.Name || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -266,7 +229,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        return `${row?.companyName || "?"}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -277,7 +240,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        return `${row?.UserID?.PhoneNumber || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -288,7 +251,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        return `${row?.MembershipCode || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -299,8 +262,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        // return `${row?.Name_en || ""}`;
-        return "1-1-2020";
+        return `${row?.startAt || ""}`;
       },
       flex: 1.2,
       minWidth: 100,
@@ -311,8 +273,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
 
       //   editable: true,
       valueGetter: (value, row) => {
-        // return `${row?.Name_en || ""}`;
-        return "1-1-2020";
+        return `${row?.endAt || ""}`;
       },
       flex: 1.2,
       minWidth: 100,
@@ -321,16 +282,38 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
       field: "cardStatus",
       headerName: "Card Status",
 
-      //   editable: true,
-      renderCell: () => {
-        return (
-          <Chip
-            label={"Ready"}
-            color="warning"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+      renderCell: (params) => {
+        if (params?.row?.CardStatusID?.id == 6) {
+          // requested to print
+          return (
+            <Chip
+              label={"Pending"}
+              color="warning"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else if (params?.row?.CardStatusID?.id == 7) {
+          // ready to delivery
+          return (
+            <Chip
+              label={"Ready"}
+              color="primary"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else if (params?.row?.CardStatusID?.id == 8) {
+          // Delivered
+          return (
+            <Chip
+              label={"Delivered"}
+              color="success"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        }
       },
       flex: 1.2,
       minWidth: 110,
@@ -339,42 +322,54 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
       field: "membershipType",
       headerName: "Membership Type",
 
-      //   editable: true,
-      renderCell: () => {
-        return (
-          <Chip
-            label={"lifetime"}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+      renderCell: (params) => {
+        if (params?.row?.MembershipTypeID?.id == 1) {
+          return (
+            <Chip
+              label={"lifetime"}
+              color="primary"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else if (params?.row?.MembershipTypeID?.id == 2) {
+          return (
+            <Chip
+              label={"Student"}
+              color="secondary"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        } else return "-";
       },
       flex: 1.2,
       minWidth: 140,
     },
     {
       field: "membershipStatus",
-      headerName: "Membership status ",
+      headerName: "Membership status",
 
-      renderCell: () => {
-        return (
-          <Chip
-            label={"Active"}
-            color="success"
-            size="small"
-            sx={{ fontWeight: "bold", fontSize: "14px" }}
-          />
-        );
+      renderCell: (params) => {
+        if (params?.row?.StatusID?.id == 1) {
+          return (
+            <Chip
+              label={"Active"}
+              color="success"
+              size="small"
+              sx={{ fontWeight: "bold", fontSize: "14px" }}
+            />
+          );
+        }
       },
       flex: 1.2,
-      minWidth: 150,
+      minWidth: 120,
     },
     {
       field: "ClientPhotos",
       headerName: "Client Photos",
 
-      renderCell: () => {
+      renderCell: (params) => {
         return (
           <div
             style={{
@@ -386,25 +381,25 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
             }}
           >
             <a
-              href="https://google.com"
+              href={params?.row?.Image}
               style={{
                 fontSize: "12px",
               }}
             >
-              link aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              Image
             </a>
           </div>
         );
       },
       flex: 1.2,
-      minWidth: 160,
-    },
-    {
-      field: "notes",
-      headerName: "Notes",
       minWidth: 100,
-      flex: 0.5, // Makes the column responsive, taking up half a unit of space
     },
+    // {
+    //   field: "notes",
+    //   headerName: "Notes",
+    //   minWidth: 100,
+    //   flex: 0.5,
+    // },
 
     {
       field: "controls",
@@ -412,7 +407,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
       flex: 2,
       minWidth: 260,
       renderCell: (params) => {
-        if (disabledList?.key == "room") {
+        if (disabledList?.key == "membership") {
           return (
             <Tooltip title="Restore">
               <IconButton
@@ -432,25 +427,21 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
               title="Receipt"
               //   onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
-            <CustomIconButton
-              icon={"view"}
-              title="View"
-              //   onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
+
             <CustomIconButton
               icon={"renew"}
               title="Renew"
-              //   onClick={() => handleEdit(params.row)}
+              onClick={() => handleRenew(params.row)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"edit"}
               title="Edit"
-              //   onClick={() => handleEdit(params.row)}
+              onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"delete"}
               title="Delete"
-              //   onClick={() => handleDelete(params.row)}
+              onClick={() => handleDelete(params.row)}
             ></CustomIconButton>
           </div>
         );
@@ -470,19 +461,32 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
         </h2>
       )}
 
-      {/* {showEditModal && (
+      {showEditModal && (
         <Modal
-          classNames={"h-70per"}
-          title={"Edit Room"}
+          classNames={"edit-membership-modal"}
+          title={"Edit Membership"}
           onClose={() => setShowEditModal(false)}
         >
           <MutationForm
-            onClose={() => setShowEditModal(false)}
             isEditData={true}
             data={dataToEdit}
+            onClose={() => setShowEditModal(false)}
           ></MutationForm>
         </Modal>
-      )} */}
+      )}
+
+      {showRenewModal && (
+        <Modal
+          classNames={"edit-membership-modal"}
+          title={"Renew Membership"}
+          onClose={() => setShowRenewModal(false)}
+        >
+          <Renew
+            data={dataToEdit}
+            onClose={() => setShowRenewModal(false)}
+          ></Renew>
+        </Modal>
+      )}
 
       {showDeleteModal && (
         <Modal title={""} onClose={() => setShowDeleteModal(false)}>
@@ -494,7 +498,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
         </Modal>
       )}
 
-      {showRestoreModal && (
+      {/* {showRestoreModal && (
         <Modal title={""} onClose={() => setShowRestoreModal(false)}>
           <RestoreConfirmation
             closeFn={() => setShowRestoreModal(false)}
@@ -502,7 +506,7 @@ const MemebershipTable = ({ onDataChange = () => {} }) => {
             isLoading={restoreLoading}
           ></RestoreConfirmation>
         </Modal>
-      )}
+      )} */}
 
       <Box sx={{ height: "100%", width: "100%" }}>
         <DataGrid

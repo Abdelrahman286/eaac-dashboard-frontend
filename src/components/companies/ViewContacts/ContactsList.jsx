@@ -4,7 +4,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import CustomIconButton from "../../../components/CustomIconButton";
 
 // requests
-import { deleteContactFn } from "../../../requests/companies";
+import { editContactFn } from "../../../requests/companies";
 // MUI
 import {
   Tabs,
@@ -48,16 +48,17 @@ const ContactsList = ({ data, companyId }) => {
     onError: (error) => {
       showSnackbar("Faild to Delete Contact Data", "error");
     },
-    mutationFn: deleteContactFn,
+    mutationFn: editContactFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["companyContacts"]);
       showSnackbar("Contact Deleted Successfully", "success");
+      setIdToDelete("");
     },
   });
 
   const handleDeleteContact = (contact) => {
     deletContact({
-      reqBody: { id: contact.id },
+      reqBody: { id: [contact.id], statusId: "4" },
       token,
       config: { isFormData: true },
     });

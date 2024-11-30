@@ -50,6 +50,7 @@ const AddNewContact = ({ id }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(["companyContacts"]);
       showSnackbar("New Contact Successfully", "success");
+      setShowAddContactForm(false);
     },
     onError: (error) => {
       showSnackbar("Faild to add New Contact", "error");

@@ -18,122 +18,104 @@ import AddIcon from "@mui/icons-material/Add";
 import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 
-// requests
-import {
-  getInstructorsFn,
-  getRoundsFn,
-  getSessionsFn,
-} from "../../requests/attendance";
-
 // excel
 import ExportToExcel from "../ExportToExcel";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
 
+import { getStudentFn } from "../../requests/membership";
+
 // components
 import MutationForm from "./MutationForm";
 import Modal from "../Modal";
+import SearchableDropdown from "../SearchableDropdown";
 
-// Dummy data
+// They aren't handled in the backend
 const memebershipStatus = [
   { id: 1, value: "Active" },
   { id: 2, value: "Expired" },
 ];
 
 const membershipCardStatus = [
-  { id: 1, value: "All" },
-  { id: 2, value: "Requested to print" },
-  { id: 3, value: "Ready to Deliver" },
-  { id: 4, value: "Deleivered" },
+  { id: 6, value: "Requested to print" },
+  { id: 7, value: "Ready to Deliver" },
+  { id: 8, value: "Deleivered" },
 ];
 
 const membershipTypes = [
-  { id: 1, value: "student" },
-  { id: 2, value: "lifetime" },
+  { id: 1, value: "LifeTime" },
+  { id: 2, value: "Student" },
 ];
 
-const Header = ({ onChange, paramsInstructorId, excelData }) => {
+const Header = ({ excelData, onFilterChange }) => {
+  console.log(excelData);
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
 
-  const [clientId, setClientId] = useState("");
-  const [roundId, setRoundId] = useState("");
-  const [sessionId, setSessionId] = useState("");
-
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
   const [showAddForm, setShowAddForm] = useState(false);
+  const [formData, setFormData] = useState({});
 
   const handleAddMembership = () => {
     setShowAddForm(true);
   };
 
-  // handle redirect
-  //   useEffect(() => {
-  //     if (paramsInstructorId) {
-  //       setInstructorId(paramsInstructorId);
-  //     }
-  //   }, []);
-
-  // get students
-  const { data: studentList, isLoading: studentLoading } = useQuery({
-    queryFn: () => {
-      return getStudentFn(
-        {
-          numOfElements: "6000",
-        },
-        token,
-        { isFormData: false }
-      );
-    },
-
-    queryKey: ["students"],
-  });
-  const students = getDataForTableRows(studentList?.success?.response?.data);
-
-  //   const handleInstructorSelect = (_instructor) => {
-  //     setInstructorId(_instructor?.InstructorID);
-  //     setRoundId("");
-  //     setSessionId("");
-  //   };
-
   const handleFilters = () => {
-    //     const params = {
-    //       instructorId,
-    //       roundId,
-    //       sessionId,
-    //       startDate,
-    //       endDate,
-    //     };
-    //     onChange(params);
+    onFilterChange(formData);
   };
 
+  // Modified Rows
+  const modifiedDataRows = excelData.map((ele) => {
+    const { MembershipTypeID, CardStatusID, StatusID } = ele;
+    let newCardStatus = "";
+    let membershipType = "";
+
+    // Card status
+    if (CardStatusID?.id == 6) {
+      newCardStatus = "Pending";
+    } else if (CardStatusID?.id == 7) {
+      newCardStatus = "Ready";
+    } else if (CardStatusID?.id == 8) {
+      newCardStatus = "Delivered";
+    }
+
+    // membership type
+    if (MembershipTypeID?.id == 1) {
+      membershipType = "Lifetime";
+    } else if (MembershipTypeID?.id == 2) {
+      membershipType = "Student";
+    }
+
+    // Return a new object with the original data and the roomFeatures
+    return {
+      ...ele,
+      newCardStatus,
+      membershipType,
+    };
+  });
   // Excel export
   const headers = [
-    { key: "Name", label: "Name" },
-    { key: "PhoneNumber", label: "Phone" },
-    { key: "RoundID.Name_en", label: "Group" },
-    { key: "RoomID.Name_en", label: "Room" },
-    { key: "Date", label: "Session Name" },
-    { key: "Name_en", label: "Session Date" },
-    { key: "AttendTime", label: "checkIn" },
-    { key: "LeaveTime", label: "checkOut" },
-    { key: "workedHours", label: "worked Hours" },
-  ];
+    { key: "UserID.Name", label: "Student Name" },
+    { key: "companyName", label: "Company Name" },
+    { key: "UserID.PhoneNumber", label: "Phone" },
 
-  //   useEffect(() => {
-  //     console.log(instructorId);
-  //   }, [instructorId]);
+    { key: "MembershipCode", label: "Membership Code" },
+    { key: "startAt", label: "Issue Date" },
+    { key: "endAt", label: "Expire Date" },
+
+    { key: "StatusID.Name_en", label: "Membership Status" },
+    { key: "Image", label: "Client Photo" },
+
+    { key: "newCardStatus", label: "Card Status" },
+    { key: "membershipType", label: "Membership Type" },
+  ];
 
   return (
     <div className="header-wrapper">
       <Box
         sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}
       >
-        {/* Row 1 - Group/Round, Session, and Instructor */}
         <Box
           sx={{
             display: "flex",
@@ -143,6 +125,10 @@ const Header = ({ onChange, paramsInstructorId, excelData }) => {
         >
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <TextField
+              value={formData?.search || ""}
+              onChange={(e) => {
+                setFormData({ ...formData, search: e.target.value || "" });
+              }}
               size={"small"}
               label="Search By Memebership Code"
               variant="outlined"
@@ -156,17 +142,13 @@ const Header = ({ onChange, paramsInstructorId, excelData }) => {
               }}
             />
           </Box>
-          {/* Autocomplete for Group/Round */}
+
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <Autocomplete
+              disabled
               sx={{
                 flex: 1,
               }}
-              //   value={students.find((item) => item.id == clientId) || null}
-              //   onChange={(e, value) => {
-              //     handleStudentSelect(value);
-              //   }}
-              //   loading={studentLoading}
               options={memebershipStatus || []}
               getOptionLabel={(option) => `${option?.value}` || ""}
               size="small"
@@ -176,17 +158,19 @@ const Header = ({ onChange, paramsInstructorId, excelData }) => {
             />
           </Box>
 
-          {/* Autocomplete for Session */}
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <Autocomplete
               sx={{
                 flex: 1,
               }}
-              //   value={students.find((item) => item.id == clientId) || null}
-              //   onChange={(e, value) => {
-              //     handleStudentSelect(value);
-              //   }}
-              //   loading={studentLoading}
+              value={
+                membershipCardStatus.find(
+                  (item) => item.id == formData?.cardStatusId
+                ) || null
+              }
+              onChange={(e, value) => {
+                setFormData({ ...formData, cardStatusId: value?.id || "" });
+              }}
               options={membershipCardStatus || []}
               getOptionLabel={(option) => `${option?.value}` || ""}
               size="small"
@@ -202,39 +186,43 @@ const Header = ({ onChange, paramsInstructorId, excelData }) => {
 
           {/* Autocomplete for student */}
         </Box>
-        {/* start & end time row */}
+
         <Box
           sx={{
             display: "flex",
             gap: 1,
           }}
         >
+          <Box
+            sx={{
+              flex: 1,
+            }}
+          >
+            <SearchableDropdown
+              onSelect={(_client) => {
+                // console.log(_client);
+                setFormData({ ...formData, clientId: _client?.id || "" });
+              }}
+              fetchData={getStudentFn}
+              isFromData={false}
+              label="Student"
+              queryKey="studentForMemebership"
+              getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
+              getOptionId={(option) => option.id} // Custom ID field
+            ></SearchableDropdown>
+          </Box>
           <Autocomplete
             sx={{
               flex: 1,
             }}
-            value={students.find((item) => item.id == clientId) || null}
+            value={
+              membershipTypes.find(
+                (item) => item.id == formData?.membershipTypeId
+              ) || null
+            }
             onChange={(e, value) => {
-              handleStudentSelect(value);
+              setFormData({ ...formData, membershipTypeId: value?.id || "" });
             }}
-            loading={studentLoading}
-            options={students || []}
-            getOptionLabel={(option) => `[${option?.id}]-${option?.Name}` || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField {...params} label="Students" fullWidth />
-            )}
-          />
-
-          <Autocomplete
-            sx={{
-              flex: 1,
-            }}
-            //   value={students.find((item) => item.id == clientId) || null}
-            //   onChange={(e, value) => {
-            //     handleStudentSelect(value);
-            //   }}
-            //   loading={studentLoading}
             options={membershipTypes || []}
             getOptionLabel={(option) => `${option?.value}` || ""}
             size="small"
@@ -302,8 +290,8 @@ const Header = ({ onChange, paramsInstructorId, excelData }) => {
           {/* Export XLS Button */}
 
           <ExportToExcel
-            data={excelData}
-            fileName={"stundet attenance"}
+            data={modifiedDataRows}
+            fileName={"Memberships"}
             headers={headers}
           ></ExportToExcel>
         </Box>

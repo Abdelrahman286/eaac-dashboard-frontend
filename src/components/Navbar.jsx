@@ -148,7 +148,6 @@ const Navbar = () => {
     };
   }, []);
 
-  console.log(userData);
   return (
     <div className={`nav-page ${closed}`}>
       <div className={`side-menu`}>

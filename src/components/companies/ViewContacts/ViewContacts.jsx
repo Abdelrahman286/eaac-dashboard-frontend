@@ -26,7 +26,11 @@ const ViewContacts = ({ id }) => {
   const queryClient = useQueryClient();
 
   // Contacts List
-  const { data: contactsList, isLoading: contactsLoading } = useQuery({
+  const {
+    data: contactsList,
+    isLoading: contactsLoading,
+    isError,
+  } = useQuery({
     queryFn: () => {
       return getCompanyContactsFn(
         {
@@ -37,6 +41,7 @@ const ViewContacts = ({ id }) => {
       );
     },
     enabled: !!id,
+    retry: 1,
     queryKey: ["companyContacts", id],
   });
   const contacts =
@@ -59,7 +64,11 @@ const ViewContacts = ({ id }) => {
           <p style={{ textAlign: "center" }}>Loading...</p>
         </div>
       )}
-      {(contacts?.length == 0 || !contacts) && !contactsLoading ? (
+      {isError ? (
+        <p style={{ textAlign: "center" }}>
+          No Contacts Found !. Please try again.
+        </p>
+      ) : (contacts?.length == 0 || !contacts) && !contactsLoading ? (
         <p style={{ textAlign: "center" }}>No Contacts Found !</p>
       ) : (
         <ContactsList data={contacts} companyId={id}></ContactsList>

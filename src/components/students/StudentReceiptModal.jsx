@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 
 import html2pdf from "html2pdf.js";
-import "../../styles/companies.css";
 
 import FormButton from "../FormButton";
 import { UserContext } from "../../contexts/UserContext";
