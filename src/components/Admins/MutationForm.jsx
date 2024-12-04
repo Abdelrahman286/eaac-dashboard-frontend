@@ -21,17 +21,13 @@ import FormButton from "../FormButton";
 
 // Requests
 import {
-  editInstructorFn,
-  createInstrctorFn,
   getBranchesFn,
-  getCoursesFn,
-} from "../../requests/instructors";
+  editAdminFn,
+  createAdminFn,
+} from "../../requests/admins";
 
 // validations
-import {
-  validateAddInstructor,
-  validateEditInstuctor,
-} from "../../utils/requestValidations";
+import { validateAdd, validateEdit } from "./validate";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
@@ -56,7 +52,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: 1,
         },
         token
       );
@@ -70,51 +66,34 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  //----- courses
-  const { data: coursesList, isLoading: coursesLoading } = useQuery({
-    queryFn: () => {
-      return getCoursesFn(
-        {
-          numOfElements: "2000",
-          //   companyId: "1",
-        },
-        token
-      );
-    },
-
-    queryKey: ["courses"],
-  });
-  const courses = getDataForTableRows(coursesList?.success?.response?.data);
-
   // send course data
   const {
-    mutate: sendInstructorData,
+    mutate: sendAdminData,
     isPending: addLoading,
     isError: isAddError,
     error: addError,
   } = useMutation({
-    mutationFn: createInstrctorFn,
+    mutationFn: createAdminFn,
     onSuccess: () => {
       onClose();
-      queryClient.invalidateQueries(["instructor-pagination"]);
-      queryClient.invalidateQueries(["instructor-list"]);
-      showSnackbar("Instructor Added Successfully", "success");
+      queryClient.invalidateQueries(["admin-pagination"]);
+      queryClient.invalidateQueries(["admin-list"]);
+      showSnackbar("Admin Added Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at adding new Instructor", error);
-      showSnackbar("Failed to Add New Instructor", "error");
+      showSnackbar("Failed to Add New Admin", "error");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const errors = validateAddInstructor(formData);
+    const errors = validateAdd(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      sendInstructorData({
+      sendAdminData({
         reqBody: formData,
         token,
       });
@@ -129,7 +108,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
     const rawFormData = {
-      id: [data.InstructorID],
+      id: [data.id],
       branchId: data?.BranchID?.id || "",
       name: data?.Name || "",
       jobTitle: data?.JobTitle || "",
@@ -150,44 +129,48 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   }, [isEditData, data]);
 
   const {
-    mutate: editInstructor,
+    mutate: editAdmin,
     isPending: editLoading,
     isError: isEditError,
     error: editingError,
   } = useMutation({
-    mutationFn: editInstructorFn,
+    mutationFn: editAdminFn,
     onSuccess: () => {
       onClose();
-      queryClient.invalidateQueries(["instructor-pagination"]);
-      queryClient.invalidateQueries(["instructor-list"]);
-      showSnackbar("Instructor Edited Successfully", "success");
+      queryClient.invalidateQueries(["admin-pagination"]);
+      queryClient.invalidateQueries(["admin-list"]);
+      showSnackbar("Admin Edited Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at editing Instructor data", error);
-      showSnackbar("Faild to edit Instructor Data", "error");
+      showSnackbar("Faild to edit Admin Data", "error");
     },
   });
 
   const handleEdit = (e) => {
     e.preventDefault();
 
-    const errors = validateEditInstuctor(formData);
+    const errors = validateEdit(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-      editInstructor({
+      editAdmin({
         reqBody: formData,
         token,
       });
     }
   };
 
+  //   for DEBUG
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
   return (
-    <div className="instructor-form-page">
+    <div className="admin-form-page">
       <form>
-        <div className="instructor-form">
+        <div className="admin-form">
           <Box
             sx={{
               display: "flex",
@@ -217,7 +200,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.jobTitle)}
                 helperText={formErrors?.jobTitle}
                 value={formData?.jobTitle || ""}
-                label="Job Title *"
+                label="Job Title"
                 name="jobTitle"
               />
 
@@ -293,33 +276,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 )}
               />
 
-              {/* Course Id */}
-              <Autocomplete
-                loading={coursesLoading}
-                value={
-                  courses.find((course) => course.id === formData.courseId) ||
-                  null
-                }
-                options={courses}
-                getOptionLabel={(option) => option?.Name_en}
-                onChange={(e, value) =>
-                  setFormData({
-                    ...formData,
-                    courseId: value ? value.id : null,
-                  })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    id="courseId"
-                    error={Boolean(formErrors?.courseId)}
-                    helperText={formErrors?.courseId}
-                    {...params}
-                    label="Course *"
-                    autoComplete="off"
-                    autoCorrect="off"
-                  />
-                )}
-              />
               <TextField
                 id="govIssuedId"
                 onChange={handleFormChange}
@@ -337,6 +293,26 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 value={formData?.email || ""}
                 label="Email *"
                 name="Email"
+              />
+
+              <TextField
+                id="password"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.password)}
+                helperText={formErrors?.password}
+                value={formData?.password || ""}
+                label={isEditData ? "password" : "Password *"}
+                name="password"
+              />
+
+              <TextField
+                id="confirmPassword"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.confirmPassword)}
+                helperText={formErrors?.confirmPassword}
+                value={formData?.confirmPassword || ""}
+                label={isEditData ? "Confirm Password" : "Confirm Password *"}
+                name="confirmPassword"
               />
             </Box>
           </Box>

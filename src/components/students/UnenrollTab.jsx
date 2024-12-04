@@ -24,6 +24,7 @@ import {
   getRoundsFn,
   unEnrollStudentFn,
   getPaidAmountFn,
+  getPaymentMethodsFn,
 } from "../../requests/students";
 
 // utils
@@ -357,6 +358,7 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
               label="Refund(EGP)"
               name="Refund(EGP)"
               size="small"
+              type="number"
             />
             <Autocomplete
               loading={paymentMethodLoading}

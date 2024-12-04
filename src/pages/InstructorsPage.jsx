@@ -7,7 +7,7 @@ const HeaderActions = lazy(() =>
 const InstructorsTable = lazy(() =>
   import("../components/Instructors/InstructorsTable")
 );
-const RoomsPage = () => {
+const AdminsTable = () => {
   // for excel export
   const [data, setData] = useState([]);
   const handleDataChange = (coursesData) => {
@@ -18,11 +18,10 @@ const RoomsPage = () => {
     <div className="instructors-page">
       <Suspense fallback={<LoadingSpinner />}>
         <HeaderActions data={data}></HeaderActions>
-        {/* // data grid table */}
         <InstructorsTable onDataChange={handleDataChange}></InstructorsTable>
       </Suspense>
     </div>
   );
 };
 
-export default RoomsPage;
+export default AdminsTable;

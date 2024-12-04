@@ -384,7 +384,44 @@ const CompaniesTable = ({ onDataChange }) => {
         }
 
         if (params?.row?.DeginoviaClient?.code == "1") {
-          return <div></div>;
+          return (
+            <div>
+              <Tooltip title="Branches">
+                <IconButton
+                  color="success"
+                  aria-label="view"
+                  onClick={() => {
+                    setCompanyIdToShow(params.row?.id);
+                    setShowBranches(true);
+                  }}
+                >
+                  <FmdGoodIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Contacts">
+                <IconButton
+                  color="primary"
+                  aria-label="view"
+                  onClick={() => {
+                    setCompanyIdToShow(params.row?.id);
+                    setShowContacts(true);
+                  }}
+                >
+                  <PhoneIcon />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="View">
+                <IconButton
+                  color="primary"
+                  aria-label="view"
+                  onClick={() => handleShowCompany(params.row)}
+                >
+                  <VisibilityIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          );
         } else {
           return (
             <div>

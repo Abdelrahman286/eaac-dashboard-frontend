@@ -25,6 +25,7 @@ import {
   transferStudentFn,
   getPaymentMethodsFn,
   getPromoCodes,
+  getTransferAmount,
   calculatePriceFn,
   enrollFn,
 } from "../../requests/students";
@@ -56,6 +57,36 @@ const TransferTab = ({ data, groups, closeFn }) => {
     setTargetGroup(selectedRound);
   };
 
+  // get difference amount
+  const { data: differenceAmountObj, isLoading: differenceLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getTransferAmount(
+        {
+          studentId: data?.id,
+          currentRoundId: selectedCurrentGroup?.id,
+          newRoundId: selectedTargetGroup?.id,
+        },
+        token,
+
+        { isFormData: false }
+      );
+    },
+
+    queryKey: [
+      "differenceAmount",
+      data?.id,
+      selectedCurrentGroup?.id,
+      selectedTargetGroup?.id,
+    ],
+    enabled: Boolean(
+      data?.id && selectedCurrentGroup?.id && selectedTargetGroup?.id
+    ),
+  });
+  const differenceAmount =
+    differenceAmountObj?.success?.response?.priceDifference;
+
+  console.log(selectedCurrentGroup);
   // payment methods (Method_en)
   const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
     useQuery({
@@ -571,11 +602,8 @@ const TransferTab = ({ data, groups, closeFn }) => {
             InputProps={{ readOnly: true }}
             sx={{ marginTop: "8x" }}
             id="difference"
-            value={"??"}
-            //   onChange={handleFormChange}
-            //   error={Boolean(formErrors?.nameEn)}
-            //   helperText={formErrors?.nameEn}
-            //   value={}
+            readOnly
+            value={differenceLoading ? "Loading..." : differenceAmount || "-"}
             InputLabelProps={{ shrink: true }}
             label="Difference"
             name="difference"
