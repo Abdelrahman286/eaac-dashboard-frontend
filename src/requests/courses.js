@@ -40,3 +40,17 @@ export const getCategoriesFn = (reqBody, token, config) =>
     token,
     config
   );
+
+// get extra
+export const getExtrasFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/extra/getExtra`, reqBody, token, config);
+};
+// add extra
+
+export const addExtraFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/extra/createExtra`, reqBody, token, config);
+};
+// update extra
+export const editExtraFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/extra/updateExtra`, reqBody, token, config);
+};

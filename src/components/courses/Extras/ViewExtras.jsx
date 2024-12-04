@@ -11,40 +11,42 @@ import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 // requests
-import { getCompanyBranchesFn } from "../../../requests/companies";
 
+import { getExtrasFn } from "../../../requests/courses";
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
-import BranchesList from "./BranchesList";
-import AddNewBranch from "./AddNewBranch.jsx";
+import ExtrasList from "./ExtrasList";
+import AddNewExtra from "./AddNewExtra";
 
 // components
 import LoadingSpinner from "../../LoadingSpinner";
-const ViewBranches = ({ id }) => {
+const ViewExtras = ({ data }) => {
+  // data = whole course data
   const { token } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
 
-  // Branches List
-  const { data: branchesList, isLoading: branchesLoading } = useQuery({
+  // Contacts List
+  const {
+    data: dataList,
+    isLoading: dataLoading,
+    isError,
+  } = useQuery({
     queryFn: () => {
-      return getCompanyBranchesFn(
+      return getExtrasFn(
         {
           numOfElements: "9000",
-          companyId: id,
-          //   companyId: 1,
+          courseId: data?.id,
         },
         token
       );
     },
-    enabled: !!id,
-    queryKey: ["companyBranches", id],
+    enabled: !!data?.id,
+    retry: 1,
+    queryKey: ["courseExtras", data.id],
   });
-  const branches =
-    getDataForTableRows(branchesList?.success?.response?.data) || {};
-
-  console.log(branches);
-  console.log(branches);
+  const extras = getDataForTableRows(dataList?.success?.response?.data) || {};
+  console.log(extras);
   return (
     <div
       style={{
@@ -53,22 +55,26 @@ const ViewBranches = ({ id }) => {
       }}
       className="contacts-modal"
     >
-      {/* Add New Branches Form */}
+      {/* Add New Contact Form */}
 
-      <AddNewBranch id={id}></AddNewBranch>
-      {branchesLoading && (
+      <AddNewExtra id={data?.id}></AddNewExtra>
+      {dataLoading && (
         <div>
           <LoadingSpinner></LoadingSpinner>
           <p style={{ textAlign: "center" }}>Loading...</p>
         </div>
       )}
-      {(branches?.length == 0 || !branches) && !branchesLoading ? (
-        <p style={{ textAlign: "center" }}>No Branches Found !</p>
+      {isError ? (
+        <p style={{ textAlign: "center" }}>
+          No Extras Found !. Please try again.
+        </p>
+      ) : (extras?.length == 0 || !extras) && !dataLoading ? (
+        <p style={{ textAlign: "center" }}>No Contacts Found !</p>
       ) : (
-        <BranchesList data={branches} companyId={id}></BranchesList>
+        <ExtrasList data={extras} courseId={data?.id}></ExtrasList>
       )}
     </div>
   );
 };
 
-export default ViewBranches;
+export default ViewExtras;

@@ -20,6 +20,14 @@ export const validateAddBranch = (formData) => {
     errors.branchCode = "Please Fill in the Branch Code";
   }
 
+  if (isBlank(formData?.address)) {
+    errors.address = "Please Fill in the Address";
+  }
+
+  if (isBlank(formData?.cityId)) {
+    errors.cityId = "Please Select Address City";
+  }
+
   if (formData?.mainPhone && !validatePhoneNumber(formData.mainPhone)) {
     errors.mainPhone = "Please Enter a Valid Phone Number";
   }
@@ -38,6 +46,14 @@ export const validateEditBranch = (formData) => {
 
   if (isBlank(formData?.branchCode)) {
     errors.branchCode = "Please Fill in the Branch Code";
+  }
+
+  if (isBlank(formData?.address)) {
+    errors.address = "Please Fill in the Address";
+  }
+
+  if (isBlank(formData?.cityId)) {
+    errors.cityId = "Please Select Address City";
   }
 
   if (formData?.mainPhone && !validatePhoneNumber(formData.mainPhone)) {

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import CustomIconButton from "../../CustomIconButton";
 
 // requests
-import { deletBranchFn } from "../../../requests/companies";
+import { editExtraFn } from "../../../requests/courses";
 // MUI
 import {
   Tabs,
@@ -16,6 +16,10 @@ import {
   IconButton,
 } from "@mui/material";
 
+// icons
+import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
@@ -23,7 +27,7 @@ import { UserContext } from "../../../contexts/UserContext";
 // components
 import EditForm from "./EditForm";
 
-const BranchesList = ({ data, companyId }) => {
+const ExtrasList = ({ data, courseId }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -37,23 +41,24 @@ const BranchesList = ({ data, companyId }) => {
 
   // Delete Mutation
   const {
-    mutate: deletBranch,
+    mutate: deleteExtra,
     isPending: deleteLoading,
     isError: isDeleteError,
   } = useMutation({
     onError: (error) => {
-      showSnackbar("Faild to Delete Branch Data", "error");
+      showSnackbar("Faild to Delete Extra Data", "error");
     },
-    mutationFn: deletBranchFn,
+    mutationFn: editExtraFn,
     onSuccess: () => {
-      queryClient.invalidateQueries(["companyBranches"]);
-      showSnackbar("Branch Deleted Successfully", "success");
+      queryClient.invalidateQueries(["courseExtras"]);
+      showSnackbar("Course Extra Deleted Successfully", "success");
+      setIdToDelete("");
     },
   });
 
-  const handleDeleteBranch = (branch) => {
-    deletBranch({
-      reqBody: { id: branch.id },
+  const handleDeleteExtra = (extra) => {
+    deleteExtra({
+      reqBody: { id: [extra.id], statusId: "4" },
       token,
       config: { isFormData: true },
     });
@@ -64,13 +69,18 @@ const BranchesList = ({ data, companyId }) => {
       <div className="header">
         <span>#</span>
 
-        <span>Name (AR)</span>
-        <span>Name (EN)</span>
+        <span>Extra Name</span>
         <span>Description</span>
-        <span>Main Phone</span>
-        <span>Code</span>
-        <span>Address</span>
-        <span>Controls</span>
+
+        <span>Type</span>
+        <span>Price</span>
+        <span
+          style={{
+            width: "140px",
+          }}
+        >
+          Controls
+        </span>
       </div>
 
       {arrayWithIndex?.length == 0 && (
@@ -83,15 +93,18 @@ const BranchesList = ({ data, companyId }) => {
               {idToEdit !== ele.id && (
                 <div className="data-row">
                   <span>{ele?.rowIndex}</span>
-                  <span>{ele?.Name_ar || "-"}</span>
 
                   <span>{ele?.Name_en || "-"}</span>
-                  <span>{ele?.Description_ar || "-"}</span>
-                  <span>{ele?.MainPhone || "-"}</span>
-                  <span>{ele?.BranchCode || "-"}</span>
-                  <span>{ele?.AddressID?.Address || "-"}</span>
+                  <span>{ele?.Description_en || "-"}</span>
 
-                  <span>
+                  <span>{ele?.ExtraType || "-"}</span>
+                  <span>{ele?.MemberPrice || "-"}</span>
+
+                  <span
+                    style={{
+                      width: "140px",
+                    }}
+                  >
                     <CustomIconButton
                       icon={"edit"}
                       title="Edit"
@@ -133,7 +146,7 @@ const BranchesList = ({ data, companyId }) => {
                     }}
                     disabled={deleteLoading}
                     onClick={(e) => {
-                      handleDeleteBranch(ele);
+                      handleDeleteExtra(ele);
                     }}
                     variant="contained"
                     color="error"
@@ -146,8 +159,8 @@ const BranchesList = ({ data, companyId }) => {
               {idToEdit == ele.id && (
                 <div className="data-row">
                   <EditForm
-                    companyId={companyId}
-                    branch={ele}
+                    courseId={courseId}
+                    extra={ele}
                     onCancel={() => setIdToEdit("")}
                   ></EditForm>
                 </div>
@@ -160,4 +173,4 @@ const BranchesList = ({ data, companyId }) => {
   );
 };
 
-export default BranchesList;
+export default ExtrasList;

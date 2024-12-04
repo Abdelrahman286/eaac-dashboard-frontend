@@ -10,12 +10,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+// utils
+import { getDataForTableRows } from "../../../utils/tables";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 // Requests
-import { editBranchFn } from "../../../requests/companies";
+import { editBranchFn, getCitiesFn } from "../../../requests/companies";
 
 // validations
 import { validateEditBranch } from "./validateBranches";
@@ -32,18 +34,48 @@ const EditForm = ({ branch, onCancel, companyId }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  //-------------------- Cities -------------------------
+
+  const { data: citiesList, isLoading: citiesLoading } = useQuery({
+    queryFn: () => {
+      return getCitiesFn(
+        {
+          numOfElements: "2000",
+          //   provenceId: formData?.provinceId,
+          provenceId: 1,
+        },
+        token,
+        {
+          isFormData: true,
+        }
+      );
+    },
+
+    retry: 2,
+
+    queryKey: ["cities"],
+  });
+
+  // Data transformation : to only return arrays
+  const citiesObj = citiesList?.success?.response?.data;
+  const cities = getDataForTableRows(citiesObj);
+
   // initial data filling
   useEffect(() => {
     const { Name_ar, Name_en, Description_ar, MainPhone, id, BranchCode } =
       branch;
 
+    console.log(branch);
+
     const intialFill = {
       id: [id],
-      nameAr: Name_ar,
-      nameEn: Name_en,
-      descriptionAr: Description_ar,
-      mainPhone: MainPhone,
-      branchCode: BranchCode,
+      nameAr: Name_ar || "",
+      nameEn: Name_en || "",
+      descriptionAr: Description_ar || "",
+      mainPhone: MainPhone || "",
+      branchCode: BranchCode || "",
+      address: branch?.AddressID?.Address || "",
+      cityId: branch?.AddressID?.cityId || "",
     };
 
     setFormData(intialFill);
@@ -106,7 +138,7 @@ const EditForm = ({ branch, onCancel, companyId }) => {
           <TextField
             error={Boolean(formErrors?.nameAr)}
             helperText={formErrors?.nameAr}
-            value={formData?.name || ""}
+            value={formData?.nameAr || ""}
             onChange={handleFormChange}
             id="nameAr"
             size="small"
@@ -160,6 +192,58 @@ const EditForm = ({ branch, onCancel, companyId }) => {
             name="mainPhone"
             fullWidth
             type="number"
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 1,
+            margin: "10px 0px",
+          }}
+        >
+          <TextField
+            sx={{
+              display: "flex",
+              flex: 1,
+            }}
+            error={Boolean(formErrors?.address)}
+            helperText={formErrors?.address}
+            value={formData?.address || ""}
+            onChange={handleFormChange}
+            id="address"
+            size="small"
+            label="Address *"
+            name="address"
+            fullWidth
+          />
+
+          <Autocomplete
+            size="small"
+            sx={{
+              display: "flex",
+              flex: 1,
+            }}
+            onChange={(e, value) => {
+              setFormData({ ...formData, cityId: value?.id });
+            }}
+            value={cities.find((item) => item.id == formData.cityId) || null}
+            loading={citiesLoading}
+            options={cities}
+            getOptionLabel={(option) => option?.Name_en}
+            renderInput={(params) => (
+              <TextField
+                error={Boolean(formErrors?.cityId)}
+                helperText={formErrors?.cityId}
+                id="cityId"
+                {...params}
+                label="City *"
+                sx={{ marginBottom: "8px" }}
+                autoComplete="off"
+                autoCorrect="off"
+              />
+            )}
           />
         </Box>
 

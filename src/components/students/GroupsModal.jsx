@@ -12,7 +12,7 @@ import TransferTab from "./TransferTab";
 import UnenrollTab from "./UnenrollTab";
 
 // requests
-import { getRoundsFn } from "../../requests/students";
+import { getRoundsFn, getClientBalanceFn } from "../../requests/students";
 
 // contexts
 import { AppContext } from "../../contexts/AppContext";
@@ -53,6 +53,24 @@ const GroupsModal = ({ closeFn, data }) => {
     queryKey: ["studentGroups", data?.id],
   });
   const groups = getDataForTableRows(groupsList?.success?.response?.data);
+
+  // get Client Balance
+  const { data: clientBalanceObj, isLoading: clientBalanceLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getClientBalanceFn(
+        {
+          //   numOfElements: "2000",
+          studentId: data?.id,
+        },
+        token,
+        { isFormData: false }
+      );
+    },
+
+    queryKey: ["clientBalance", data?.id],
+  });
+  const clientBalance = clientBalanceObj?.success?.response?.Balance;
 
   return (
     <Box>
@@ -191,7 +209,7 @@ const GroupsModal = ({ closeFn, data }) => {
 
           <TextField
             label="Client Balance"
-            value={data?.balance || "-"}
+            value={clientBalanceLoading ? "Loading..." : clientBalance || "-"}
             fullWidth
             size="small"
             sx={{ flex: 1 }}
@@ -199,7 +217,7 @@ const GroupsModal = ({ closeFn, data }) => {
             InputLabelProps={{
               style: {
                 color: `${
-                  String(data?.balance).startsWith("-") ? "red" : "green"
+                  String(clientBalance).startsWith("-") ? "red" : "green"
                 }`,
               },
             }}

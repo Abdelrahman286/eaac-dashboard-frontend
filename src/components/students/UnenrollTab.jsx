@@ -20,12 +20,14 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 // requests
-import { getRoundsFn, unEnrollStudentFn } from "../../requests/students";
+import {
+  getRoundsFn,
+  unEnrollStudentFn,
+  getPaidAmountFn,
+} from "../../requests/students";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
-
-
 
 // validation
 import { validateUnEnroll } from "../../utils/validateStudents";
@@ -58,6 +60,24 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
   const paymentMethods = getDataForTableRows(
     paymentMethodsList?.success?.response?.data
   );
+
+  // get paid amount
+  const { data: paidAmountObj, isLoading: paidAmountLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getPaidAmountFn(
+        {
+          studentId: data?.id,
+          roundId: selectedGroup?.id,
+        },
+        token,
+        { isFormData: false }
+      );
+    },
+
+    queryKey: ["paidAmount", data?.id, selectedGroup?.id],
+  });
+  const paidAmount = paidAmountObj?.success?.response?.Balance;
 
   //------------ Send unEnroll data
   const { mutate: sendUnenrollData, isPending: unEnrollLoading } = useMutation({
@@ -312,9 +332,11 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
                 color="text.secondary"
                 fontWeight="bold"
               >
-                Paid Amount For the Course
+                Paid Amount For this round
               </Typography>
-              <Typography variant="body1">????</Typography>
+              <Typography variant="body1">
+                {paidAmountLoading ? "Loading..." : paidAmount || "-"}
+              </Typography>
             </Box>
           </Box>
           <Box

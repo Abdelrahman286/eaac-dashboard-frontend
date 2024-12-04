@@ -15,7 +15,7 @@ import "../../../styles/rounds.css";
 import { getDataForTableRows } from "../../../utils/tables";
 
 // Requests
-import { addBranchFn } from "../../../requests/companies";
+import { addBranchFn, getCitiesFn } from "../../../requests/companies";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
@@ -40,6 +40,32 @@ const AddNewBranch = ({ id }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  //-------------------- Cities -------------------------
+
+  const { data: citiesList, isLoading: citiesLoading } = useQuery({
+    queryFn: () => {
+      return getCitiesFn(
+        {
+          numOfElements: "2000",
+          //   provenceId: formData?.provinceId,
+          provenceId: 1,
+        },
+        token,
+        {
+          isFormData: true,
+        }
+      );
+    },
+
+    retry: 2,
+
+    queryKey: ["cities"],
+  });
+
+  // Data transformation : to only return arrays
+  const citiesObj = citiesList?.success?.response?.data;
+  const cities = getDataForTableRows(citiesObj);
+
   const {
     mutate: addBranch,
     isPending: addLoading,
@@ -48,6 +74,7 @@ const AddNewBranch = ({ id }) => {
   } = useMutation({
     mutationFn: addBranchFn,
     onSuccess: () => {
+      setShowAddForm(false);
       queryClient.invalidateQueries(["companyBranches"]);
       showSnackbar("New Branch Added Successfully", "success");
     },
@@ -178,6 +205,58 @@ const AddNewBranch = ({ id }) => {
             />
           </Box>
 
+          {/* third row */}
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+            }}
+          >
+            <TextField
+              sx={{
+                display: "flex",
+                flex: 1,
+              }}
+              error={Boolean(formErrors?.address)}
+              helperText={formErrors?.address}
+              value={formData?.address || ""}
+              onChange={handleFormChange}
+              id="address"
+              size="small"
+              label="Address *"
+              name="address"
+              fullWidth
+            />
+
+            <Autocomplete
+              size="small"
+              sx={{
+                display: "flex",
+                flex: 1,
+              }}
+              onChange={(e, value) => {
+                setFormData({ ...formData, cityId: value?.id });
+              }}
+              value={cities.find((item) => item.id == formData.cityId) || null}
+              loading={citiesLoading}
+              options={cities}
+              getOptionLabel={(option) => option?.Name_en}
+              renderInput={(params) => (
+                <TextField
+                  error={Boolean(formErrors?.cityId)}
+                  helperText={formErrors?.cityId}
+                  id="cityId"
+                  {...params}
+                  label="City *"
+                  sx={{ marginBottom: "8px" }}
+                  autoComplete="off"
+                  autoCorrect="off"
+                />
+              )}
+            />
+          </Box>
           <Box
             sx={{
               display: "flex",

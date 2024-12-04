@@ -81,3 +81,23 @@ export const transferStudentFn = ({ reqBody, token, config }) => {
 export const unEnrollStudentFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/client/unrollStudent`, reqBody, token, config);
 };
+
+// get client balance
+export const getClientBalanceFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/payment/getClientBalance`, reqBody, token, config);
+};
+
+// get paid amount for round
+export const getPaidAmountFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/payment/getClientBalance`, reqBody, token, config);
+};
+
+// get tranfer amount
+export const getTransferAmount = (reqBody, token, config) => {
+  return makeRequest(
+    `${URL}/payment/getClientRoundDeiff`,
+    reqBody,
+    token,
+    config
+  );
+};

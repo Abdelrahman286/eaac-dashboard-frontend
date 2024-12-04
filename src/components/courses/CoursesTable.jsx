@@ -7,10 +7,12 @@ import { AppContext } from "../../contexts/AppContext";
 import { getDataForTableRows } from "../../utils/tables";
 
 import Modal from "../Modal";
+import ViewExtras from "./Extras/ViewExtras";
 // table controls
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import Tooltip from "@mui/material/Tooltip";
@@ -41,6 +43,10 @@ const CoursesTable = ({ onDataChange }) => {
   // restore
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [idToRestore, setIdToRestore] = useState("");
+
+  // course extra states
+  const [courseExtraToshow, setCourseExtraToshow] = useState({});
+  const [showExtras, setShowExtras] = useState(false);
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
@@ -215,6 +221,12 @@ const CoursesTable = ({ onDataChange }) => {
     });
   };
 
+  // handle extras modal
+
+  const handleExtras = (row) => {
+    setCourseExtraToshow(row);
+    setShowExtras(true);
+  };
   const columns = [
     {
       field: "rowIndex",
@@ -314,6 +326,16 @@ const CoursesTable = ({ onDataChange }) => {
 
         return (
           <div>
+            <Tooltip title="Extras">
+              <IconButton
+                // disabled={deleteLoading}
+                color="primary"
+                aria-label="extras"
+                onClick={() => handleExtras(params.row)}
+              >
+                <ListAltIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Edit">
               <IconButton
                 aria-label="edit"
@@ -349,6 +371,20 @@ const CoursesTable = ({ onDataChange }) => {
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
+      )}
+
+      {showExtras && (
+        <Modal
+          classNames={"h-70per"}
+          title={"Course Extras"}
+          onClose={() => setShowExtras(false)}
+        >
+          <ViewExtras
+            onClose={() => setShowExtras(false)}
+            isEditData={true}
+            data={courseExtraToshow}
+          ></ViewExtras>
+        </Modal>
       )}
 
       {showEditModal && (

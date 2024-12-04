@@ -217,11 +217,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     }
   };
 
-  // for DEBUG
-  useEffect(() => {
-    // console.log(formData);
-  }, [formData]);
-
   return (
     <div className="course-form-page">
       <form>
@@ -351,35 +346,20 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   variant="outlined"
                   sx={{ flex: 1 }}
                 />
-
-                {/* Checkbox for PC Requirement */}
-                <FormControlLabel
-                  sx={{ display: "none" }}
-                  disabled
-                  control={
-                    <Checkbox
-                    //   onChange={handleFormChange}
-                    //   error={Boolean(formErrors?.memberPrice)}
-                    //   helperText={formErrors?.memberPrice}
-                    //   value={formData.memberPrice || ""}
-                    />
-                  }
-                  label="Requires PC"
-                />
               </Box>
             </Box>
 
             {/* Right Side */}
             <Box flex={1} display="flex" flexDirection="column" gap={2}>
-              {/* {!isEditData && ( */}
-              <CourseExtras
-                isEdit={isEditData}
-                editData={editedCourseExtras}
-                error={formErrors?.extras}
-                isError={Boolean(formErrors?.extras)}
-                onDataChange={handleCourseExtrasChange}
-              />
-              {/* )} */}
+              {!isEditData && (
+                <CourseExtras
+                  isEdit={isEditData}
+                  editData={editedCourseExtras}
+                  error={formErrors?.extras}
+                  isError={Boolean(formErrors?.extras)}
+                  onDataChange={handleCourseExtrasChange}
+                />
+              )}
 
               {/* Price for Members and Non-Members */}
               <Box display="flex" gap={2}>
