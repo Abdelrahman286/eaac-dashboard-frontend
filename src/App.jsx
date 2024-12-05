@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Navbar from "./components/Navbar";
 import NotFoundPage from "./pages/NotFoundPage";
-import Settings from "./pages/Settings";
 
 import CompaniesPage from "./pages/CompaniesPage";
 import CoursesPage from "./pages/CoursesPage";
@@ -30,7 +29,49 @@ const Memebership = lazy(() => import("./pages/Memebership"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const AdminsPage = lazy(() => import("./pages/AdminsPage"));
 const ReceiptsPage = lazy(() => import("./pages/ReceiptsPage"));
-const ClientPaymentsPage = lazy(() => import("./pages/ClientPaymentsPage"));
+
+// Accounting
+const AccountingPage = lazy(() => import("./pages/AccountingPage"));
+const ClientPaymentsPage = lazy(() =>
+  import("./components/Accounting/Client-payments/ClientPayments")
+);
+const AccountPaymentsPage = lazy(() =>
+  import("./components/Accounting/Account-payments/AccountPaymentsPage")
+);
+
+// Settings
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const CouponsPage = lazy(() =>
+  import("./components/settings/coupons/CouponsPage")
+);
+const PaymentMethodsPage = lazy(() =>
+  import("./components/settings/PaymentMethods/PaymentMethods")
+);
+const ExpensesTypesPage = lazy(() =>
+  import("./components/settings/ExpensesTypes/ExpensesPage")
+);
+
+// Financial Reports
+const FinancialReportsPage = lazy(() => import("./pages/FinancialReportsPage"));
+const AccountMovementsPage = lazy(() =>
+  import("./components/financialReports/account-movements/AccountMovementsPage")
+);
+const ClientBalance = lazy(() =>
+  import("./components/financialReports/client-balance/ClientBalance")
+);
+const Expenses = lazy(() =>
+  import("./components/financialReports/expenses/Expenses")
+);
+const Revenue = lazy(() =>
+  import("./components/financialReports/Revenue/Revenue")
+);
+const Refund = lazy(() =>
+  import("./components/financialReports/refund/Refund")
+);
+const DailyMovements = lazy(() =>
+  import("./components/financialReports/daily-movements/DailyMovements")
+);
+
 // context
 import { AppContext } from "./contexts/AppContext";
 import { UserContext } from "./contexts/UserContext";
@@ -147,14 +188,33 @@ function App() {
             }
           ></Route>
 
+          {/* --------------------- Accounting ---------------------- */}
           <Route
-            path="/client-payments"
+            path="/accounting"
             element={
               <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
-                <ClientPaymentsPage></ClientPaymentsPage>
+                <AccountingPage></AccountingPage>
               </Suspense>
             }
-          ></Route>
+          >
+            <Route
+              path="/accounting/client-payments"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <ClientPaymentsPage></ClientPaymentsPage>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/accounting/account-payments"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <AccountPaymentsPage></AccountPaymentsPage>
+                </Suspense>
+              }
+            ></Route>
+          </Route>
 
           <Route
             path="/receipts"
@@ -165,7 +225,115 @@ function App() {
             }
           ></Route>
 
-          <Route path="/settings" element={<Settings></Settings>}></Route>
+          {/* ---------------- settings ------------------------  */}
+          <Route
+            path="/settings"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <SettingsPage></SettingsPage>
+              </Suspense>
+            }
+          >
+            <Route
+              path="/settings/coupons"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <CouponsPage></CouponsPage>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/settings/payment-methods"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <PaymentMethodsPage></PaymentMethodsPage>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/settings/expenses-types"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <ExpensesTypesPage></ExpensesTypesPage>
+                </Suspense>
+              }
+            ></Route>
+          </Route>
+
+          {/* ---------------- Financial Reports ------------------------  */}
+          <Route
+            path="/financial-reports"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <FinancialReportsPage></FinancialReportsPage>
+              </Suspense>
+            }
+          >
+            <Route
+              path="/financial-reports/account-movements"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <AccountMovementsPage></AccountMovementsPage>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/financial-reports/client-balance"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <ClientBalance></ClientBalance>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/financial-reports/expenses"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <Expenses></Expenses>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/financial-reports/revenue"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <Revenue></Revenue>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/financial-reports/daily-movements"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <DailyMovements></DailyMovements>
+                </Suspense>
+              }
+            ></Route>
+
+            <Route
+              path="/financial-reports/refund"
+              element={
+                <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                  <Refund></Refund>
+                </Suspense>
+              }
+            ></Route>
+          </Route>
+
+          <Route
+            path="/receipts"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <ReceiptsPage></ReceiptsPage>
+              </Suspense>
+            }
+          ></Route>
         </Route>
 
         <Route

@@ -110,7 +110,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     isError: isAddError,
     error: addError,
   } = useMutation({
-    mutationFn: createMemebershipFn,
+    mutationFn: createMemebershipFn, // from requests.js
     onSuccess: () => {
       onClose();
       queryClient.invalidateQueries(["membership-pagination"]);
@@ -141,7 +141,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   useEffect(() => {
     if (!isEditData || !data) return;
     // Handle edit data initialization
-    console.log(data);
+
     const rawFormData = {
       id: [data.id],
       membershipTypeId: data?.MembershipTypeID?.id || "",
@@ -261,6 +261,11 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return "";
     }
   };
+
+  //for debug
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   return (
     <div className="membership-form-page">

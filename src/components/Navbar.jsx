@@ -24,6 +24,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaidIcon from "@mui/icons-material/Paid";
+import SummarizeIcon from "@mui/icons-material/Summarize";
 
 //requests
 import { getProfileData } from "../requests/profile";
@@ -75,31 +76,9 @@ const Navbar = () => {
   const routes = [
     { paths: ["/"], icon: <HomeIcon></HomeIcon>, label: "Home" },
     {
-      paths: ["/profile"],
-      icon: <AccountCircleIcon></AccountCircleIcon>,
-      label: "Profile",
-    },
-    {
-      paths: ["/admins"],
-      icon: <AssignmentIndIcon></AssignmentIndIcon>,
-      label: "Admins",
-    },
-    {
-      paths: ["/rounds"],
-      icon: <EventRepeatIcon></EventRepeatIcon>,
-      label: "Rounds",
-    },
-
-    {
-      paths: ["/students"],
-      icon: <PeopleAltIcon></PeopleAltIcon>,
-      label: "Students",
-    },
-
-    {
-      paths: ["/instructors"],
-      icon: <Groups2Icon></Groups2Icon>,
-      label: "Instructors",
+      paths: ["/companies"],
+      icon: <ApartmentIcon></ApartmentIcon>,
+      label: "Companies",
     },
     {
       paths: ["/rooms"],
@@ -112,10 +91,21 @@ const Navbar = () => {
       label: "Courses",
     },
     {
-      paths: ["/companies"],
-      icon: <ApartmentIcon></ApartmentIcon>,
-      label: "Companies",
+      paths: ["/students"],
+      icon: <PeopleAltIcon></PeopleAltIcon>,
+      label: "Students",
     },
+    {
+      paths: ["/instructors"],
+      icon: <Groups2Icon></Groups2Icon>,
+      label: "Instructors",
+    },
+    {
+      paths: ["/rounds"],
+      icon: <EventRepeatIcon></EventRepeatIcon>,
+      label: "Rounds",
+    },
+
     {
       paths: ["/attendance", "/attendance/students", "/attendance/instructors"],
       icon: <AssignmentIcon></AssignmentIcon>,
@@ -127,16 +117,47 @@ const Navbar = () => {
       icon: <AddCardIcon></AddCardIcon>,
       label: "Membership",
     },
+    // Accounting
     {
-      paths: ["/client-payments"],
+      paths: [
+        "/accounting",
+        "/accounting/client-payments",
+        "/accounting/account-payments",
+      ],
       icon: <PaidIcon></PaidIcon>,
-      label: "Client Payments",
+      label: "Accounting",
     },
 
     {
       paths: ["/receipts"],
       icon: <ReceiptLongIcon></ReceiptLongIcon>,
       label: "Receipts",
+    },
+
+    // Financial Reports
+    {
+      paths: [
+        "/financial-reports",
+        "/financial-reports/account-movements",
+        "/financial-reports/client-balance",
+        "/financial-reports/expenses",
+        "/financial-reports/revenue",
+        "/financial-reports/refund",
+        "/financial-reports/daily-movements",
+      ],
+      icon: <SummarizeIcon></SummarizeIcon>,
+      label: "Financial Reports",
+    },
+
+    {
+      paths: ["/admins"],
+      icon: <AssignmentIndIcon></AssignmentIndIcon>,
+      label: "Admins",
+    },
+    {
+      paths: ["/profile"],
+      icon: <AccountCircleIcon></AccountCircleIcon>,
+      label: "Profile",
     },
 
     {

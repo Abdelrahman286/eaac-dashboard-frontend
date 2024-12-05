@@ -1,29 +1,32 @@
+# Get Coupons
 
+url : api/discount/getDiscount
 
+request body :
 
-# x-data-grid 
+{
+"id" : 1,
+"disabled" : 1,
+"search" : "Voucher"
+}
 
+# Create Coupon
 
-## columns / table head insclduing rendering the data in columns 
+url : api/discount/getDiscount
+request Body : {
+"voucherCode" : "911",
+"discountPercentage" : 33,
+"percentageFlag" : 0
+}
 
-- sortable  
-- type 
-- describiton  : for tooltip 
-- width 
+# Update Coupon
 
-- valueGetter : to combine 2 value in the same row and make a new cell 
+url : /api/discount/updateDiscountVoucher
+request body :
+{
+"id" : [1],
+"voucherCode" : "Test Voucher",
+"discountPercentage" : 33,
+"percentageFlag" : 0 ,
 
-- renderCell : to add buttons or any html components 
-
-
-
-
-# Data grid component config 
-
-- pageSizeOptions={[5, 10]}  , specify the number of allowed elements per page 
-
-
-
-# Pagination 
-
-- 
+}
