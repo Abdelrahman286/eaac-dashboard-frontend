@@ -16,7 +16,6 @@ import Components from "./pages/Components";
 import InstructorsPage from "./pages/InstructorsPage";
 import RoundsPage from "./pages/RoundsPage";
 import StudentsPage from "./pages/StudentsPage";
-// import Memebership from "./pages/Memebership";
 
 // lazy loaded pages
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
@@ -30,7 +29,8 @@ const InstructorAttendace = lazy(() =>
 const Memebership = lazy(() => import("./pages/Memebership"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const AdminsPage = lazy(() => import("./pages/AdminsPage"));
-
+const ReceiptsPage = lazy(() => import("./pages/ReceiptsPage"));
+const ClientPaymentsPage = lazy(() => import("./pages/ClientPaymentsPage"));
 // context
 import { AppContext } from "./contexts/AppContext";
 import { UserContext } from "./contexts/UserContext";
@@ -143,6 +143,24 @@ function App() {
             element={
               <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
                 <Memebership></Memebership>
+              </Suspense>
+            }
+          ></Route>
+
+          <Route
+            path="/client-payments"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <ClientPaymentsPage></ClientPaymentsPage>
+              </Suspense>
+            }
+          ></Route>
+
+          <Route
+            path="/receipts"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <ReceiptsPage></ReceiptsPage>
               </Suspense>
             }
           ></Route>

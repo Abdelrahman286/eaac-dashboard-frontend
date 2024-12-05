@@ -22,6 +22,8 @@ import Groups2Icon from "@mui/icons-material/Groups2";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import PaidIcon from "@mui/icons-material/Paid";
 
 //requests
 import { getProfileData } from "../requests/profile";
@@ -125,6 +127,18 @@ const Navbar = () => {
       icon: <AddCardIcon></AddCardIcon>,
       label: "Membership",
     },
+    {
+      paths: ["/client-payments"],
+      icon: <PaidIcon></PaidIcon>,
+      label: "Client Payments",
+    },
+
+    {
+      paths: ["/receipts"],
+      icon: <ReceiptLongIcon></ReceiptLongIcon>,
+      label: "Receipts",
+    },
+
     {
       paths: ["/settings"],
       icon: <SettingsIcon></SettingsIcon>,

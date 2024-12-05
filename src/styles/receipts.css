@@ -1,0 +1,29 @@
+@import url(variables.css);
+
+.receipt-page {
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 12px;
+
+  .outlet-wrapper {
+    /* background: red; */
+    margin-top: 20px;
+  }
+
+  .xls-btn {
+    background: #5a5a5a;
+    margin-left: 10px;
+    min-width: 160px;
+  }
+
+  .add-btn {
+    min-width: 160px;
+    background: #02542d;
+    margin-left: 10px;
+  }
+}
+.edit-receipt-modal {
+  min-width: 50vw;
+}
