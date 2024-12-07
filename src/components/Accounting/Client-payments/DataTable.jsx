@@ -8,43 +8,28 @@ import IconButton from "@mui/material/IconButton";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import Tooltip from "@mui/material/Tooltip";
 // contexts
-import { UserContext } from "../../contexts/UserContext";
-import { AppContext } from "../../contexts/AppContext";
+import { UserContext } from "../../../contexts/UserContext";
+import { AppContext } from "../../../contexts/AppContext";
 
 // utils
-import { getDataForTableRows } from "../../utils/tables";
+import { getDataForTableRows } from "../../../utils/tables";
+
 // requests
-import { getReceiptsFn } from "../../requests/receipts";
+
+import { getPaymentsFn } from "../../../requests/ClientPayments";
+
 // components
-import CustomIconButton from "../CustomIconButton";
-import ReceiptModal from "./ReceiptModal";
-import EditNotes from "./EditNotes";
-import Modal from "../Modal";
+import Modal from "../../Modal";
+import CustomIconButton from "../../CustomIconButton";
 
-const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
-  // studentId, receipt type, search , start date, end date
-  const { studentId } = filterData;
+const DataTable = ({ onDataChange = () => {}, filterData }) => {
+  const { studentId, roundId, paymentMethodId, startDate, endDate } =
+    filterData;
+
   const queryClient = useQueryClient();
-
   const { token } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
-  // show receipt
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
-  const [receiptToShow, setReceiptToShow] = useState({});
-
-  // edit notes
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [receiptToEdit, setReceiptToEdit] = useState({});
-
-  const handleShow = (row) => {
-    setShowReceiptModal(true);
-    setReceiptToShow(row);
-  };
-  const handleEdit = (row) => {
-    setReceiptToEdit(row);
-    setShowEditModal(true);
-  };
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
     page: 0, // MUI uses 0-based index
@@ -54,11 +39,20 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   const paginationReqBody = {
     // filter parameters
     ...(studentId && { studentId }),
+    ...(roundId && { roundId }),
+    ...(paymentMethodId && { paymentMethodId }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
+
     // filter parameters
     ...(studentId && { studentId }),
+    ...(roundId && { roundId }),
+    ...(paymentMethodId && { paymentMethodId }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
 
   const {
@@ -67,12 +61,12 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
     isError: paginationErr,
   } = useQuery({
     queryFn: () => {
-      return getReceiptsFn(paginationReqBody, token, {
-        isFormData: true,
+      return getPaymentsFn(paginationReqBody, token, {
+        isFormData: false,
         urlParams: `page=1`,
       });
     },
-    queryKey: ["receipt-pagination", paginationReqBody, dataListReqBody],
+    queryKey: ["clientPayments-pagination", paginationReqBody, dataListReqBody],
     retry: 1,
   });
 
@@ -83,15 +77,15 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "receipt-list",
+      "clientPayments-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
       dataListReqBody,
     ],
     queryFn: () => {
-      return getReceiptsFn(dataListReqBody, token, {
-        isFormData: true,
+      return getPaymentsFn(dataListReqBody, token, {
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
     },
@@ -125,34 +119,23 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "rowIndex",
       headerName: "#",
-      flex: 0.5,
+      flex: 0.5, // Makes the column responsive, taking up half a unit of space
     },
 
     {
-      field: "BillCode",
-      headerName: "Receipt Code",
+      field: "Name_en",
+      headerName: "Student Name",
       valueGetter: (value, row) => {
-        return `${row?.BillCode || "-"}`;
+        return `${row?.Payor?.Name || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
     },
-
-    {
-      field: "type",
-      headerName: "Type",
-      valueGetter: (value, row) => {
-        return `${row?.type || "-"}`;
-      },
-      flex: 1.2,
-      minWidth: 160,
-    },
-
     {
       field: "Description",
-      headerName: "Description",
+      headerName: "Descripition",
       valueGetter: (value, row) => {
-        return `${row?.Description || "-"}`;
+        return `${row?.Description || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -161,55 +144,92 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
       field: "Notes",
       headerName: "Notes",
       valueGetter: (value, row) => {
-        return `${row?.Notes || "-"}`;
+        return `${row?.Notes || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
     },
     {
-      field: "4",
+      field: "Round",
+      headerName: "Round Code",
+      valueGetter: (value, row) => {
+        return `${row?.RoundID?.RoundCode || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 160,
+    },
+    {
+      field: "paymentMethod",
+      headerName: "Payment Method",
+      valueGetter: (value, row) => {
+        return `${row?.PaymentMethodID?.Method_en || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+    {
+      field: "Date",
       headerName: "Date",
       valueGetter: (value, row) => {
-        return `${row?.BillCode || "-"}`;
+        return `${row?.date || ""}`;
       },
       flex: 1.2,
-      minWidth: 160,
+      minWidth: 100,
     },
     {
-      field: "issuedTo",
-      headerName: "Issued To",
+      field: "time",
+      headerName: "Time",
       valueGetter: (value, row) => {
-        return `${row?.Payor?.Name || "-"}`;
+        return `${row?.time || ""}`;
       },
-      flex: 1.2,
-      minWidth: 160,
+      flex: 1,
+      minWidth: 100,
     },
     {
-      field: "round",
-      headerName: "Round",
+      field: "Credit",
+      headerName: "Credit",
       valueGetter: (value, row) => {
-        return `${row?.RoundID?.Name_en || "-"}`;
+        return `${row?.Credit || ""}`;
+      },
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: "Debit",
+      headerName: "Debit",
+      valueGetter: (value, row) => {
+        return `${row?.Debit || ""}`;
+      },
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: "Balance",
+      headerName: "Balance",
+      valueGetter: (value, row) => {
+        return `${row?.Balance || ""}`;
       },
       flex: 1.2,
-      minWidth: 160,
+      minWidth: 100,
     },
+
     {
       field: "controls",
       headerName: "Controls",
-      flex: 1.2,
-      minWidth: 120,
+      flex: 1,
+      minWidth: 100,
       renderCell: (params) => {
         return (
           <div>
             <CustomIconButton
               icon={"receipt"}
               title="Receipt"
-              onClick={() => handleShow(params.row)}
+              //   onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
+              title="Correct Movement"
+              //   onClick={() => handleEdit(params.row)}
             ></CustomIconButton>
           </div>
         );
@@ -227,28 +247,6 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
-      )}
-
-      {showReceiptModal && (
-        <Modal
-          //   classNames={"edit-receipt-modal"}
-          title={"Receipt Data"}
-          onClose={() => setShowReceiptModal(false)}
-        >
-          <ReceiptModal
-            data={receiptToShow}
-            onClose={() => setShowReceiptModal(false)}
-          ></ReceiptModal>
-        </Modal>
-      )}
-
-      {showEditModal && (
-        <Modal title={"Edit Notes"} onClose={() => setShowEditModal(false)}>
-          <EditNotes
-            data={receiptToEdit}
-            onClose={() => setShowEditModal(false)}
-          ></EditNotes>
-        </Modal>
       )}
 
       <Box sx={{ height: "100%", width: "100%" }}>
@@ -304,4 +302,4 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   );
 };
 
-export default ReceiptsTable;
+export default DataTable;

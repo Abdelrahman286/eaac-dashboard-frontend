@@ -101,6 +101,8 @@ const EnrollTab = () => {
         getOptionId={(option) => option.id} // Custom ID field
         onSelect={handleRoundSelect}
         initialValue={testValue} // New initial value prop
+        // to limit the number of elements in dropdown
+        requestParams={{ numOfElements: 50 }}
       ></SearchableDropdown>
     </Box>
   );

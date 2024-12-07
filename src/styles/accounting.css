@@ -17,4 +17,16 @@
     margin-left: 10px;
     min-width: 160px;
   }
+
+  .client-payments-page {
+    /* background: red; */
+  }
+}
+
+.show-add-payment-modal {
+  min-width: 50vw;
+  max-height: 75vh;
+}
+.show-add-expenses-modal {
+  width: 50vw;
 }

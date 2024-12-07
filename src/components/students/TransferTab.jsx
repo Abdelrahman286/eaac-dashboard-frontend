@@ -372,8 +372,9 @@ const TransferTab = ({ data, groups, closeFn }) => {
           isError={Boolean(formErrors?.targetGroup)}
           helperText={formErrors?.targetGroup}
           isFromData={false}
-          requestParams={{ studentId: 1 }}
-          label="Traget Round"
+          //   requestParams={{ studentId: 1 }
+
+          label="Target Round"
           fetchData={getRoundsFn}
           queryKey="rounds"
           getOptionLabel={(option) => `${option?.Name_en}`}
