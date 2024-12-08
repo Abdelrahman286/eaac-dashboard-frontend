@@ -16,6 +16,7 @@ import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import Tooltip from "@mui/material/Tooltip";
 import PhoneIcon from "@mui/icons-material/Phone";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
+import FilePresentIcon from "@mui/icons-material/FilePresent";
 // request functions
 import { deleteCompanyFn } from "../../requests/companies";
 
@@ -26,6 +27,7 @@ import DeleteConfirmation from "../DeleteConfirmation";
 import RestoreConfirmation from "../RestoreConfirmation";
 import ViewContacts from "./ViewContacts/ViewContacts";
 import ViewBranches from "./ViewBranches/ViewBranches";
+import CompanyAttachmentsModal from "./CompanyAttachmentsModal";
 
 // lazy loaded components
 const MutationForm = lazy(() => import("./MutationForm"));
@@ -55,6 +57,9 @@ const CompaniesTable = ({ onDataChange }) => {
   const [showContacts, setShowContacts] = useState(false);
   const [showBranches, setShowBranches] = useState(false);
   const [companyIdToshow, setCompanyIdToShow] = useState("");
+
+  const [showAttachments, setShowAttachments] = useState(false);
+  const [attachmentsToShow, setAttachmentsToShow] = useState({});
 
   const handleClose = () => {
     setShowModal(false);
@@ -168,7 +173,7 @@ const CompaniesTable = ({ onDataChange }) => {
       setShowDeleteModal(false);
     },
     onError: (error) => {
-      console.log("Error at Deleting Company ", error);
+      showSnackbar("Error At Deleting Company Data ", "error");
     },
   });
 
@@ -218,18 +223,6 @@ const CompaniesTable = ({ onDataChange }) => {
       console.log("error at restoring compay data", error);
     },
   });
-  const restoreDisabledCompany = (row) => {
-    const id = row?.id;
-
-    restoreCompany({
-      reqBody: {
-        id: [id],
-        // id: id,
-        statusId: "1",
-      },
-      token,
-    });
-  };
 
   // restore
   const handleRestore = (rowData) => {
@@ -386,6 +379,17 @@ const CompaniesTable = ({ onDataChange }) => {
         if (params?.row?.DeginoviaClient?.code == "1") {
           return (
             <div>
+              <Tooltip title="Attachments">
+                <IconButton
+                  aria-label="view"
+                  onClick={(e) => {
+                    setShowAttachments(true);
+                    setAttachmentsToShow(params.row);
+                  }}
+                >
+                  <FilePresentIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Branches">
                 <IconButton
                   color="success"
@@ -425,6 +429,17 @@ const CompaniesTable = ({ onDataChange }) => {
         } else {
           return (
             <div>
+              <Tooltip title="Attachments">
+                <IconButton
+                  aria-label="view"
+                  onClick={(e) => {
+                    setShowAttachments(true);
+                    setAttachmentsToShow(params.row);
+                  }}
+                >
+                  <FilePresentIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Branches">
                 <IconButton
                   color="success"
@@ -569,6 +584,18 @@ const CompaniesTable = ({ onDataChange }) => {
           >
             <ViewCompany rowData={companyToShow}></ViewCompany>
           </Suspense>
+        </Modal>
+      )}
+
+      {showAttachments && (
+        <Modal
+          title={"Company Attachments"}
+          onClose={() => setShowAttachments(false)}
+          classNames={"h-70per"}
+        >
+          <CompanyAttachmentsModal
+            rowData={attachmentsToShow}
+          ></CompanyAttachmentsModal>
         </Modal>
       )}
 

@@ -17,13 +17,10 @@ import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 // components
 import FormButton from "../FormButton";
-
 // Requests
 import { editRoomFn, createRoomFn, getBranchesFn } from "../../requests/rooms";
-
 // validations
 import { validateAddRoom } from "../../utils/requestValidations";
-
 // utils
 import { getDataForTableRows } from "../../utils/tables";
 

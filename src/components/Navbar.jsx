@@ -161,7 +161,12 @@ const Navbar = () => {
     },
 
     {
-      paths: ["/settings"],
+      paths: [
+        "/settings",
+        "/settings/coupons",
+        "/settings/payment-methods",
+        "/settings/expenses-types",
+      ],
       icon: <SettingsIcon></SettingsIcon>,
       label: "Settings",
     },

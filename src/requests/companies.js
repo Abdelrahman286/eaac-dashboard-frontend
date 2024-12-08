@@ -75,3 +75,18 @@ export const getProvincesFn = (reqBody, token, config) =>
 // citites
 export const getCitiesFn = (reqBody, token, config) =>
   makeRequest(`${URL}/city/getCity`, reqBody, token, config);
+
+// get attachmetns
+export const getCompanyAttachmentsFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/company/getAttach`, reqBody, token, config);
+};
+
+// delete Attachements
+export const deleteAttachmentFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/company/updateAttach`, reqBody, token, config);
+};
+
+// add attachment
+export const addAttachmentFn = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/company/createAttach`, reqBody, token, config);
+};
