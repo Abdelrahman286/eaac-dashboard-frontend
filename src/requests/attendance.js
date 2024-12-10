@@ -38,3 +38,22 @@ export const postInstructorAttendanceFn = ({ reqBody, token, config }) => {
     config
   );
 };
+
+// Reports
+export const getStudentAttendanceReportFn = (reqBody, token, config) => {
+  return makeRequest(
+    `${URL}/attend/getClientAttendanceReport`,
+    reqBody,
+    token,
+    config
+  );
+};
+
+export const getInstructorAttendanceReportFn = (reqBody, token, config) => {
+  return makeRequest(
+    `${URL}/attend/getInstructorAttendanceReport`,
+    reqBody,
+    token,
+    config
+  );
+};

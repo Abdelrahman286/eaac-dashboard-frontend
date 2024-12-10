@@ -8,7 +8,6 @@ import { Box, TextField, Autocomplete, Button } from "@mui/material";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-
 // requests
 import {
   getStudentFn,
@@ -22,6 +21,11 @@ import ExportToExcel from "../../ExportToExcel";
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 
+// components
+import SearchableDropdown from "../../SearchableDropdown";
+import StudentAttendanceReport from "./StudentAttendanceReport";
+import Modal from "../../Modal";
+
 const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -30,6 +34,9 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const [clientId, setClientId] = useState("");
   const [roundId, setRoundId] = useState("");
   const [sessionId, setSessionId] = useState("");
+
+  // attendance report
+  const [showReport, setShowReport] = useState(false);
 
   // handle redirect
   useEffect(() => {
@@ -72,22 +79,6 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   });
   const sessions = getDataForTableRows(sessionsList?.success?.response?.data);
 
-  // get students
-  const { data: studentList, isLoading: studentLoading } = useQuery({
-    queryFn: () => {
-      return getStudentFn(
-        {
-          numOfElements: "6000",
-        },
-        token,
-        { isFormData: false }
-      );
-    },
-
-    queryKey: ["students"],
-  });
-  const students = getDataForTableRows(studentList?.success?.response?.data);
-
   const handleStudentSelect = (_student) => {
     setClientId(_student?.id);
     setRoundId("");
@@ -118,166 +109,154 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   ];
 
   return (
-    <Box sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-      {/* Row 1 - Group/Round, Session, and Instructor */}
+    <div className="header-wrapper">
       <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "column", md: "row" },
-          gap: 1,
-        }}
+        sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}
       >
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <Autocomplete
-            value={students.find((item) => item.id == clientId) || null}
-            onChange={(e, value) => {
-              handleStudentSelect(value);
-            }}
-            loading={studentLoading}
-            options={students || []}
-            getOptionLabel={(option) => `[${option?.id}]-${option?.Name}` || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Students"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
-        {/* Autocomplete for Group/Round */}
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <Autocomplete
-            value={groups.find((item) => item.id == roundId) || null}
-            onChange={(e, value) => {
-              setRoundId(value?.id);
-            }}
-            loading={groupsLoading}
-            options={groups || []}
-            getOptionLabel={(option) => option?.Name_en || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Group/Round"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
+        {showReport && (
+          <Modal
+            //   classNames={"h-70per"}
+            title={"Students Attendance Report"}
+            onClose={() => setShowReport(false)}
+          >
+            <StudentAttendanceReport
+              onClose={() => setShowReport(false)}
+              clientId={clientId}
+              roundId={roundId}
+              sessionId={sessionId}
+              // isEditData={true}
+              // data={dataToEdit}
+            ></StudentAttendanceReport>
+          </Modal>
+        )}
 
-        {/* Autocomplete for Session */}
-        <Box sx={{ flex: 1, minWidth: "200px" }}>
-          <Autocomplete
-            value={sessions.find((item) => item.id == sessionId) || null}
-            onChange={(e, value) => {
-              setSessionId(value?.id);
-            }}
-            options={sessions}
-            getOptionLabel={(option) =>
-              `${option?.Name_en} (${option?.StartTime})` || ""
-            }
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Session"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
-
-        <Button
-          onClick={handleFilters}
-          variant="contained"
-          color="primary"
-          sx={{
-            height: "40px",
-            padding: 0,
-            margin: 0,
-            marginTop: "16px",
-          }}
-        >
-          Filter
-        </Button>
-
-        {/* Autocomplete for student */}
-      </Box>
-
-      {/* Row 3 - Buttons */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-          justifyContent: { sm: "flex-end" },
-          marginLeft: "auto",
-
-          width: {
-            xs: "100%",
-            sm: "100%",
-            md: "70%",
-            lg: "50%",
-          },
-        }}
-      >
-        {/* Show Attendance Report Button */}
+        {/* Row 1 - Group/Round, Session, and Instructor */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: { xs: "center", sm: "flex-start" },
+            flexDirection: { xs: "column", sm: "column", md: "row" },
+            gap: 1,
           }}
         >
+          <Box sx={{ flex: 1, minWidth: "200px" }}>
+            <SearchableDropdown
+              onSelect={(_client) => {
+                // console.log(_client);
+                handleStudentSelect(_client);
+              }}
+              fetchData={getStudentFn}
+              isFromData={false}
+              label="Student"
+              queryKey="studentForMemebership"
+              getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
+              getOptionId={(option) => option.id} // Custom ID field
+              // to limit the number of elements in dropdown
+              requestParams={{ numOfElements: 50 }}
+              // initial Value
+              // intialValue={students.find((item) => item.id == clientId) || null}
+            ></SearchableDropdown>
+          </Box>
+          {/* Autocomplete for Group/Round */}
+          <Box sx={{ flex: 1, minWidth: "200px" }}>
+            <Autocomplete
+              value={groups.find((item) => item.id == roundId) || null}
+              onChange={(e, value) => {
+                setRoundId(value?.id);
+              }}
+              loading={groupsLoading}
+              options={groups || []}
+              getOptionLabel={(option) => option?.Name_en || ""}
+              size="small"
+              renderInput={(params) => (
+                <TextField {...params} label="Group/Round" fullWidth />
+              )}
+            />
+          </Box>
+
+          {/* Autocomplete for Session */}
+          <Box sx={{ flex: 1, minWidth: "200px" }}>
+            <Autocomplete
+              value={sessions.find((item) => item.id == sessionId) || null}
+              onChange={(e, value) => {
+                setSessionId(value?.id);
+              }}
+              options={sessions}
+              getOptionLabel={(option) =>
+                `${option?.Name_en} (${option?.StartTime})` || ""
+              }
+              size="small"
+              renderInput={(params) => (
+                <TextField {...params} label="Session" fullWidth />
+              )}
+            />
+          </Box>
+
           <Button
-            size="small"
+            onClick={handleFilters}
             variant="contained"
             color="primary"
-            startIcon={<DownloadIcon />}
             sx={{
-              width: "280px", // Constant width
-              paddingY: 0.1,
               height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
+              padding: 0,
+              margin: 0,
             }}
           >
-            Show Attendance Report
+            Filter
           </Button>
+
+          {/* Autocomplete for student */}
         </Box>
 
-        {/* Export XLS Button */}
-        {/* <Box
+        {/* Row 3 - Buttons */}
+        <Box
           sx={{
             display: "flex",
-            justifyContent: { xs: "center", sm: "flex-start" },
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: { sm: "flex-end" },
+            marginLeft: "auto",
+
+            width: {
+              xs: "100%",
+              sm: "100%",
+              md: "70%",
+              lg: "50%",
+            },
           }}
         >
-          <Button
-            size="small"
-            variant="contained"
-            color="secondary"
-            startIcon={<DownloadIcon />}
+          {/* Show Attendance Report Button */}
+          <Box
             sx={{
-              width: "140px", // Constant width
-              paddingY: 0.1,
-              height: "32px",
+              display: "flex",
+              justifyContent: { xs: "center", sm: "flex-start" },
             }}
           >
-            Export XLS
-          </Button>
-        </Box> */}
-        <ExportToExcel
-          data={excelData}
-          fileName={"stundet attenance"}
-          headers={headers}
-        ></ExportToExcel>
+            <Button
+              onClick={() => setShowReport(true)}
+              size="small"
+              variant="contained"
+              color="primary"
+              startIcon={<DownloadIcon />}
+              sx={{
+                width: "280px", // Constant width
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Show Attendance Report
+            </Button>
+          </Box>
+
+          <ExportToExcel
+            data={excelData}
+            fileName={"stundet attenance"}
+            headers={headers}
+          ></ExportToExcel>
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 

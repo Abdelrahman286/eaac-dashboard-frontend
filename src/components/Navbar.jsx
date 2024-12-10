@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -41,8 +41,9 @@ import fallbackImageUrl from "../assets/profileImg.webp";
 const Navbar = () => {
   const navigate = useNavigate();
   const { token, user, logout } = useContext(UserContext);
-  const [closed, setClosed] = useState("");
+  const [closed, setClosed] = useState("closed");
   const { pathname } = useLocation();
+  const isMounted = useRef(false);
 
   // fetch user profile data
   const { data: userDataObj, isLoading: getUserLoading } = useQuery({
@@ -181,8 +182,10 @@ const Navbar = () => {
         setClosed("");
       }
     };
-    checkScreenWidth();
+
+    // checkScreenWidth();
     window.addEventListener("resize", checkScreenWidth);
+
     return () => {
       window.removeEventListener("resize", checkScreenWidth);
     };

@@ -7,7 +7,7 @@ import HeaderActions from "./HeaderActions";
 import DataTable from "./DataTable";
 const StudentAttendance = () => {
   const { studentId: paramStudentId } = useParams();
-  
+
   const queryClient = useQueryClient();
   // states to get student attendence (request body states)
   const [clientId, setClientId] = useState("");

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import "../../styles/Instructors.css";
 import { useNavigate } from "react-router-dom";
@@ -22,8 +22,10 @@ import MutationForm from "./MutationForm";
 
 // utils
 import ExportToExcel from "../ExportToExcel";
+// hooks
+import useQueryParam from "../../hooks/useQueryParams";
+
 const HeaderActions = ({ data }) => {
-  const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -77,6 +79,14 @@ const HeaderActions = ({ data }) => {
   const handleGoBack = () => {
     setDisabledList({});
   };
+
+  // url action handler
+  const urlAction = useQueryParam("action");
+  useEffect(() => {
+    if (urlAction == "add") {
+      setShowModal(true);
+    }
+  }, [urlAction]);
 
   return (
     <div className="page-actions">

@@ -360,7 +360,7 @@ const CompaniesTable = ({ onDataChange }) => {
       field: "controls",
       headerName: "Controls",
       flex: 2,
-      minWidth: 220,
+      minWidth: 250,
       renderCell: (params) => {
         if (disabledList?.key === "company") {
           return (

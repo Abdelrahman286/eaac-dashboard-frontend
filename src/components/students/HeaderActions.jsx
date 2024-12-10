@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import "../../styles/students.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
@@ -22,6 +22,9 @@ import MutationForm from "./MutationForm";
 
 // utils
 import ExportToExcel from "../ExportToExcel";
+
+// hooks
+import useQueryParam from "../../hooks/useQueryParams";
 const HeaderActions = ({ data }) => {
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
@@ -76,6 +79,14 @@ const HeaderActions = ({ data }) => {
   const handleGoBack = () => {
     setDisabledList({});
   };
+
+  // url action handler
+  const urlAction = useQueryParam("action");
+  useEffect(() => {
+    if (urlAction == "add") {
+      setShowModal(true);
+    }
+  }, [urlAction]);
 
   return (
     <div className="page-actions">

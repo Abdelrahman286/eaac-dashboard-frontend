@@ -209,6 +209,8 @@ const Header = ({ excelData, onFilterChange }) => {
               queryKey="studentForMemebership"
               getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
               getOptionId={(option) => option.id} // Custom ID field
+              // to limit the number of elements in dropdown
+              requestParams={{ numOfElements: 50 }}
             ></SearchableDropdown>
           </Box>
           <Autocomplete

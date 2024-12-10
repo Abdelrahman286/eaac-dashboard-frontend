@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import "../../../styles/rooms.css";
 
@@ -26,6 +26,9 @@ import FormButton from "../../FormButton";
 
 // utils
 import ExportToExcel from "../../ExportToExcel";
+
+// hooks
+import useQueryParam from "../../../hooks/useQueryParams";
 
 const Header = ({ data }) => {
   const { setSearchResults, disabledList, setDisabledList } =
@@ -76,6 +79,14 @@ const Header = ({ data }) => {
   const handleGoBack = () => {
     setDisabledList({});
   };
+
+  // url action handler
+  const urlAction = useQueryParam("action");
+  useEffect(() => {
+    if (urlAction == "add") {
+      setShowModal(true);
+    }
+  }, [urlAction]);
 
   return (
     <div className="page-actions">
