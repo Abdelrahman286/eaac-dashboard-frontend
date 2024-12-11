@@ -20,11 +20,17 @@ import ExportToExcel from "../../ExportToExcel";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
+// components
+import InstructorAttendanceReport from "./InstructorAttendanceReport";
+import Modal from "../../Modal";
 
 const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
+
+  // attendance report
+  const [showReport, setShowReport] = useState(false);
 
   const [instructorId, setInstructorId] = useState("");
   const [roundId, setRoundId] = useState("");
@@ -122,15 +128,22 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
     { key: "workedHours", label: "worked Hours" },
   ];
 
-  useEffect(() => {
-    console.log(instructorId);
-  }, [instructorId]);
-
   return (
     <div className="header-wrapper">
       <Box
         sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}
       >
+        {showReport && (
+          <Modal
+            title={"Instructor Attendance Report"}
+            onClose={() => setShowReport(false)}
+          >
+            <InstructorAttendanceReport
+              onClose={() => setShowReport(false)}
+              instructorId={instructorId}
+            ></InstructorAttendanceReport>
+          </Modal>
+        )}
         {/* Row 1 - Group/Round, Session, and Instructor */}
         <Box
           sx={{
@@ -156,12 +169,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               }
               size="small"
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Instructors"
-                  margin="normal"
-                  fullWidth
-                />
+                <TextField {...params} label="Instructors" fullWidth />
               )}
             />
           </Box>
@@ -177,12 +185,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               getOptionLabel={(option) => option?.Name_en || ""}
               size="small"
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Group/Round"
-                  margin="normal"
-                  fullWidth
-                />
+                <TextField {...params} label="Group/Round" fullWidth />
               )}
             />
           </Box>
@@ -200,12 +203,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               }
               size="small"
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Session"
-                  margin="normal"
-                  fullWidth
-                />
+                <TextField {...params} label="Session" fullWidth />
               )}
             />
           </Box>
@@ -229,7 +227,6 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
             name="startDate"
             type="date"
             fullWidth
-            margin="normal"
             InputLabelProps={{
               shrink: true,
             }}
@@ -244,12 +241,10 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
             name="endDate"
             type="date"
             fullWidth
-            margin="normal"
             InputLabelProps={{
               shrink: true,
             }}
           />
-
           <Button
             onClick={handleFilters}
             variant="contained"
@@ -258,7 +253,6 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               height: "40px",
               padding: 0,
               margin: 0,
-              marginTop: "16px",
             }}
           >
             Filter
@@ -301,6 +295,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
                 padding: "16px 4px",
                 borderRadius: "20px",
               }}
+              onClick={() => setShowReport(true)}
             >
               Show Attendance Report
             </Button>

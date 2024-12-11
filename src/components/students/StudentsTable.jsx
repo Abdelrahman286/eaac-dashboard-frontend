@@ -477,12 +477,13 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"memberships"}
               title="Membership"
-              onClick={() => console.log("show attendance")}
+              onClick={() => navigate(`/membership`)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"payments"}
               title="Payments"
-              onClick={() => setStudentReceipt({ name: "test" })}
+              //   onClick={() => setStudentReceipt({ name: "test" })}
+              onClick={() => navigate(`/accounting/client-payments`)}
             ></CustomIconButton>
             <CustomIconButton
               icon={"blockUser"}

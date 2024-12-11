@@ -65,7 +65,7 @@ const SearchableDropdown = ({
         inputValue &&
         inputValue !==
           getOptionLabel(
-            options.find((item) => getOptionId(item) === selectedId)
+            options.find((item) => getOptionId(item) == selectedId)
           )
       ) {
         setSearchTerm(inputValue);
@@ -78,7 +78,7 @@ const SearchableDropdown = ({
     <Box sx={{ ...styles }}>
       <Autocomplete
         sx={{ width: "100%" }}
-        value={options.find((item) => getOptionId(item) === selectedId) || null}
+        value={options.find((item) => getOptionId(item) == selectedId) || null}
         getOptionLabel={getOptionLabel}
         size="small"
         options={options}

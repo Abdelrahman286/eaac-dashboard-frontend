@@ -38,12 +38,24 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   // attendance report
   const [showReport, setShowReport] = useState(false);
 
-  // handle redirect
-  useEffect(() => {
-    if (paramStudentId) {
-      setClientId(paramStudentId);
-    }
-  }, []);
+  // get params student
+  const { data: studentObj, isLoading: getStudentLoading } = useQuery({
+    retry: 2,
+    queryFn: () => {
+      return getStudentFn(
+        {
+          ...(paramStudentId && { id: paramStudentId }),
+        },
+        token,
+
+        { isFormData: false }
+      );
+    },
+    enabled: !!paramStudentId,
+    queryKey: ["paramsStudent", paramStudentId],
+  });
+  const paramsStudent =
+    getDataForTableRows(studentObj?.success?.response?.data)[0] || {};
 
   // get groups
   const { data: groupsList, isLoading: groupsLoading } = useQuery({
@@ -149,11 +161,11 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
               label="Student"
               queryKey="studentForMemebership"
               getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
-              getOptionId={(option) => option.id} // Custom ID field
+              getOptionId={(option) => option?.id} // Custom ID field
               // to limit the number of elements in dropdown
               requestParams={{ numOfElements: 50 }}
               // initial Value
-              // intialValue={students.find((item) => item.id == clientId) || null}
+              //   initialValue={paramsStudent}
             ></SearchableDropdown>
           </Box>
           {/* Autocomplete for Group/Round */}

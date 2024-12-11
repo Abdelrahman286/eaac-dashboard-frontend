@@ -22,7 +22,9 @@ const ExportToExcel = ({ headers, data, fileName }) => {
 
     // Map the data rows with support for nested keys
     const dataRows = data.map((row) =>
-      headers.map((header) => getNestedValue(row, header.key) || "")
+      headers.map((header) => {
+        return getNestedValue(row, header.key) || "";
+      })
     );
 
     console.log("Data Rows:", dataRows); // Check dataRows content

@@ -172,3 +172,36 @@ export function generateRandomNumber() {
   }
   return result;
 }
+
+// get time difference
+
+export function getTimeDifference(startTime, endTime) {
+  if (!startTime || !endTime) return;
+  // Convert time to seconds
+  const timeToSeconds = (time) => {
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    return hours * 3600 + minutes * 60 + seconds;
+  };
+
+  const startSeconds = timeToSeconds(startTime);
+  const endSeconds = timeToSeconds(endTime);
+
+  // Calculate the difference in seconds
+  let diffInSeconds = endSeconds - startSeconds;
+
+  // Handle cases where the end time is on the next day
+  if (diffInSeconds < 0) {
+    diffInSeconds += 24 * 3600; // Add one day's worth of seconds
+  }
+
+  // Convert seconds back to HH:mm:ss format
+  const seconds = diffInSeconds % 60;
+  const totalMinutes = Math.floor(diffInSeconds / 60);
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+
+  // Pad with leading zeros if necessary
+  const pad = (num) => String(num).padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
