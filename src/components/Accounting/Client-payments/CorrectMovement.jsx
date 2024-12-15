@@ -17,24 +17,27 @@ import {
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-// utils
+// requests
 import {
   getStudentFn,
   getRoundsFn,
-  getPaymentMethodsFn,
   getExtrasFn,
-  addPayemntFn,
+  addCorrectMovements,
 } from "../../../requests/ClientPayments";
 
 // components
 import SearchableDropdown from "../../SearchableDropdown";
 
 // validation
-import { validateAddPayment } from "./validate";
+import { validateAddCorrectMovement } from "./validate";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 
+const moveTypes = [
+  { id: 1, value: "debit" },
+  { id: 2, value: "credit" },
+];
 const CorrectMovement = ({ onClose }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -93,25 +96,6 @@ const CorrectMovement = ({ onClose }) => {
   });
   const rounds = getDataForTableRows(groupsList?.success?.response?.data);
 
-  // payment methods (Method_en)
-  const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
-    useQuery({
-      queryFn: () => {
-        return getPaymentMethodsFn(
-          {
-            numOfElements: "2000",
-          },
-          token,
-          { isFormData: false }
-        );
-      },
-
-      queryKey: ["paymentMethods"],
-    });
-  const paymentMethods = getDataForTableRows(
-    paymentMethodsList?.success?.response?.data
-  );
-
   // course extras
   const { data: courseExtrasList, isLoading: courseExtrasLoading } = useQuery({
     queryFn: () => {
@@ -138,7 +122,7 @@ const CorrectMovement = ({ onClose }) => {
     isError: isError,
     error: addError,
   } = useMutation({
-    mutationFn: addPayemntFn,
+    mutationFn: addCorrectMovements,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -155,7 +139,7 @@ const CorrectMovement = ({ onClose }) => {
     },
   });
   const handleSubmit = () => {
-    const errors = validateAddPayment(formData);
+    const errors = validateAddCorrectMovement(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -497,31 +481,29 @@ const CorrectMovement = ({ onClose }) => {
             style={{ margin: "10px 0px" }}
           />
           <Autocomplete
-            loading={paymentMethodLoading}
             value={
-              paymentMethods.find(
-                (item) => item.id == formData?.paymentMethodId
-              ) || null
+              moveTypes.find((item) => item?.value == formData?.moveType) ||
+              null
             }
             onChange={(e, value) => {
-              setFormData({ ...formData, paymentMethodId: value?.id || "" });
+              setFormData({ ...formData, moveType: value?.value || "" });
             }}
-            options={paymentMethods}
-            getOptionLabel={(option) => option.Method_en || ""}
+            options={moveTypes}
+            getOptionLabel={(option) => option.value || ""}
             size="small"
             renderInput={(params) => (
               <TextField
                 id="paymentMethod"
-                error={Boolean(formErrors?.paymentMethodId)}
-                helperText={formErrors?.paymentMethodId}
+                error={Boolean(formErrors?.moveType)}
+                helperText={formErrors?.moveType}
                 {...params}
-                label="Payment Method"
+                label="Move Type"
                 fullWidth
               />
             )}
           />
           <TextField
-            id="paymentAmount"
+            id="notes"
             onChange={(e) => {
               setFormData({ ...formData, notes: e.target.value || "" });
             }}
@@ -555,7 +537,7 @@ const CorrectMovement = ({ onClose }) => {
             variant="contained"
             color="success"
             sx={{
-              minWidth: "130px", // Constant width
+              minWidth: "160px", // Constant width
               paddingY: 0.1,
               height: "40px",
               padding: "16px 4px",
@@ -565,7 +547,7 @@ const CorrectMovement = ({ onClose }) => {
             {addLoading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Pay"
+              "Correct Movement"
             )}
           </Button>
         </Box>

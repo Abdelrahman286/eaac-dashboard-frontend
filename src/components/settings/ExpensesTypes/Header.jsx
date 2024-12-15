@@ -198,7 +198,7 @@ const Header = ({ data }) => {
       </div>
       {showModal && (
         <Modal
-          title={"dd Expenses Type"}
+          title={"Expenses Type"}
           onClose={handleClose}
           classNames={"course-form-width"}
         >

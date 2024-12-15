@@ -14,19 +14,19 @@ const Stats = () => {
   const cardData = [
     {
       label: "Cash",
-      value: 150000,
+      value: 0,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
     },
     {
       label: "Vodafone Cash",
-      value: 12000,
+      value: 0,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
     },
     {
       label: "InstaPay",
-      value: 500,
+      value: 0,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
     },

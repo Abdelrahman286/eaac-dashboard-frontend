@@ -26,6 +26,9 @@ import SearchableDropdown from "../../SearchableDropdown";
 import StudentAttendanceReport from "./StudentAttendanceReport";
 import Modal from "../../Modal";
 
+// hooks
+import useQueryParam from "../../../hooks/useQueryParams";
+
 const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -120,6 +123,14 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
     { key: "percentageOfSessionsAttended", label: "Percentage" },
   ];
 
+  // handle notification redirect
+  const roundParamsId = useQueryParam("paramsRound");
+  useEffect(() => {
+    if (roundParamsId) {
+      console.log(roundParamsId);
+      setRoundId(roundParamsId);
+    }
+  }, [roundParamsId]);
   return (
     <div className="header-wrapper">
       <Box

@@ -327,7 +327,7 @@ const AdminsTable = ({ onDataChange }) => {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 100,
+      minWidth: 180,
       renderCell: (params) => {
         if (disabledList?.key == "admin") {
           return (

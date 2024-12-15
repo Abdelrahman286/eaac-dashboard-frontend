@@ -11,6 +11,20 @@ export const refundFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/payment/refundPayment`, reqBody, token, config);
 };
 
+// add correct movement
+export const addCorrectMovements = ({ reqBody, token, config }) => {
+  return makeRequest(
+    `${URL}/payment/correctMovementNewValues`,
+    reqBody,
+    token,
+    config
+  );
+};
+// correct certain movement
+export const correctCertainMovement = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/payment/correctMovement`, reqBody, token, config);
+};
+
 // get rounds
 export const getRoundsFn = (reqBody, token, config) => {
   return makeRequest(`${URL}/round/getRound`, reqBody, token, config);

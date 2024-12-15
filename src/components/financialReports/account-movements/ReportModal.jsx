@@ -3,20 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import html2pdf from "html2pdf.js";
 import "../../../styles/financial-reports.css";
 // MUI
-import {
-  Box,
-  Chip,
-  Avatar,
-  Typography,
-  Divider,
-  Button,
-  AppBar,
-  Toolbar,
-} from "@mui/material";
+import { Box, Typography, Button, AppBar, Toolbar } from "@mui/material";
 
 // contexts
 import { UserContext } from "../../../contexts/UserContext";
-import { AppContext } from "../../../contexts/AppContext";
 
 // icons
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
@@ -25,7 +15,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { getDataForTableRows } from "../../../utils/tables";
 import companyLogo from "../../../assets/receipt-logo.png";
 // requests
-import { getExpensesReport } from "../../../requests/financialReports";
+import { getAccountMovements } from "../../../requests/financialReports";
 
 const ReportModal = ({ filterData, onClose, filterDataView }) => {
   const { token } = useContext(UserContext);
@@ -59,14 +49,14 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
   // get report data
 
   const {
-    data: reportDataList,
+    data: reportList,
     isLoading,
     isError,
   } = useQuery({
     queryFn: () => {
-      return getExpensesReport(
+      return getAccountMovements(
         {
-          numOfElements: "5000",
+          numOfElements: "9000",
           ...(paymentMethodId && { paymentMethodId }),
           ...(startDate && { startDate }),
           ...(endDate && { endDate }),
@@ -76,14 +66,12 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
       );
     },
 
-    queryKey: ["expensesReportPdf", paymentMethodId, startDate, endDate],
+    queryKey: ["accountMovementsPdf", paymentMethodId, startDate, endDate],
   });
-  const expensesReport = getDataForTableRows(
-    reportDataList?.success?.response?.data
-  );
+  const reportData = getDataForTableRows(reportList?.success?.response?.data);
 
   const handlePrintPdf = () => {
-    const documentClass = "expenses-report";
+    const documentClass = "report-content-page";
     const element = document.querySelector(`.${documentClass}`);
 
     if (element) {
@@ -147,7 +135,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
 
         <div className="separator" style={{ margin: "10px 0px" }}></div>
 
-        <div className="expenses-report">
+        <div className="report-content-page">
           <AppBar
             position="static"
             sx={{ backgroundColor: "transparent", boxShadow: "none" }}
@@ -171,7 +159,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                 component="div"
                 sx={{ textAlign: "center", color: "black" }}
               >
-                Expenses Report
+                Account Movements Report
               </Typography>
             </Toolbar>
           </AppBar>
@@ -217,22 +205,10 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                     color="text.secondary"
                     fontWeight="bold"
                   >
-                    Start Date
+                    Date
                   </Typography>
                   <Typography variant="body1">
-                    {filterData?.startDate || "N/A"}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    fontWeight="bold"
-                  >
-                    End Date
-                  </Typography>
-                  <Typography variant="body1">
-                    {filterData?.endDate || "N/A"}
+                    {filterData?.date || "N/A"}
                   </Typography>
                 </Box>
               </Box>
@@ -242,36 +218,47 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
           {/* table data */}
           {isError && <p style={{ textAlign: "center" }}>No Rows Found</p>}
           {isLoading && <p style={{ textAlign: "center" }}>Loading...</p>}
-          {expensesReport?.length !== 0 && (
+          {reportData?.length !== 0 && (
             <div>
               <div>
                 <div className="report-table">
                   <div className="header">
                     <span>#</span>
-                    <span>Descripition</span>
-                    <span>Expenses Type</span>
-                    <span>Receipt Serial NO.</span>
-                    <span>Payment Method</span>
+                    <span>Description</span>
                     <span>Notes</span>
-                    <span>Paid (EGP)</span>
+                    <span>Date</span>
+                    <span>Time</span>
+                    <span>Group/Round</span>
+                    <span>Debit</span>
+                    <span>Credit</span>
+                    <span>Balance</span>
                   </div>
 
                   <div className="data-list">
-                    {expensesReport?.map((ele, index) => {
+                    {reportData?.map((ele, index) => {
                       return (
                         <div className="row-wrapper" key={index}>
                           <div className="data-row">
                             <span>{index + 1 || "-"}</span>
-                            <span>
-                              {ele?.ExpenseTypeID?.Description_en || "-"}
-                            </span>
-                            <span>{ele?.ExpenseTypeID?.Name_en || "-"}</span>
-                            <span>{ele?.BillID?.BillCode || "-"}</span>
-                            <span>
-                              {ele?.PaymentMethodID?.Method_en || "-"}
-                            </span>
+
+                            <span>{ele?.Description || "-"}</span>
                             <span>{ele?.Notes || "-"}</span>
-                            <span>{ele?.paidAmount || "-"}</span>
+                            <span>{ele?.created_at?.split(" ")[0] || "-"}</span>
+                            <span>{ele?.created_at?.split(" ")[1] || "-"}</span>
+                            <span>{ele?.RoundID?.Name_en || "-"}</span>
+                            <span>
+                              {ele?.Debit == undefined ? "-" : ele.Debit || "0"}
+                            </span>
+                            <span>
+                              {ele?.Credit == undefined
+                                ? "-"
+                                : ele.Credit || "0"}
+                            </span>
+                            <span>
+                              {ele?.Balance == undefined
+                                ? "-"
+                                : ele.Balance || "0"}
+                            </span>
                           </div>
                         </div>
                       );

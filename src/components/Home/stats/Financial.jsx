@@ -1,56 +1,53 @@
 import React from "react";
 import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
 import {
-  AttachMoney,
-  CalendarToday,
   TrendingUp,
-  TrendingDown,
   AccountBalanceWallet,
   AccountBalance,
 } from "@mui/icons-material";
 
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-const Stats = () => {
+const Stats = ({ data }) => {
   const cardData = [
     {
-      label: "Year Sales",
-      value: 150000,
+      label: "Annual Sales",
+      value: data?.annualSells,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
     },
     {
       label: "Month Sales",
-      value: 12000,
+      value: data?.monthSells,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #2196f3, #64b5f6)", // Blue gradient
     },
     {
       label: "Today Sales",
-      value: 500,
+      value: data?.todaySells,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #ff9800, #ffb74d)", // Orange gradient
     },
     {
       label: "Month Expenses",
-      value: 3000,
+      value: data?.monthExpenses,
       icon: <AccountBalanceWallet />,
       gradient: "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
     },
     {
       label: "Month Income",
-      value: 9000,
+      value: data?.monthIncome,
       icon: <AccountBalance />,
       gradient: "linear-gradient(135deg, #3f51b5, #7986cb)", // Blue gradient
     },
     {
       label: "Day Expenses",
-      value: 200,
+      value: data?.todayExpenses,
       icon: <AccountBalanceWallet />,
       gradient: "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
     },
     {
       label: "Day Income",
-      value: 500,
+      value: data?.todayIncome,
       icon: <AccountBalance />,
       gradient: "linear-gradient(135deg, #ff5722, #ff8a65)", // Deep Orange gradient
     },

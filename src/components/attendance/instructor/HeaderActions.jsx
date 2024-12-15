@@ -24,6 +24,9 @@ import { getDataForTableRows } from "../../../utils/tables";
 import InstructorAttendanceReport from "./InstructorAttendanceReport";
 import Modal from "../../Modal";
 
+// hooks
+import useQueryParam from "../../../hooks/useQueryParams";
+
 const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -127,6 +130,14 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
     { key: "LeaveTime", label: "checkOut" },
     { key: "workedHours", label: "worked Hours" },
   ];
+
+  // handle notification redirect
+  const roundParamsId = useQueryParam("paramsRound");
+  useEffect(() => {
+    if (roundParamsId) {
+      setRoundId(roundParamsId);
+    }
+  }, [roundParamsId]);
 
   return (
     <div className="header-wrapper">

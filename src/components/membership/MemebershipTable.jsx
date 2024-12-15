@@ -25,6 +25,7 @@ import CustomIconButton from "../CustomIconButton";
 import MutationForm from "./MutationForm";
 import Renew from "./Renew";
 import Modal from "../Modal";
+import MembershipReceipt from "./MembershipReceipt";
 
 const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
   const { search, cardStatusId, clientId, membershipTypeId } = filterData;
@@ -40,6 +41,10 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
 
   // restore
   const [showRenewModal, setShowRenewModal] = useState(false);
+
+  // receipt
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptId, setReceiptId] = useState("");
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
@@ -178,8 +183,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     setShowRenewModal(true);
     setDataToEdit(row);
   };
-
-
 
   const columns = [
     {
@@ -427,7 +430,10 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
             <CustomIconButton
               icon={"receipt"}
               title="Receipt"
-              //   onClick={() => handleEdit(params.row)}
+              onClick={() => {
+                setShowReceipt(true);
+                setReceiptId(params?.row?.id);
+              }}
             ></CustomIconButton>
 
             <CustomIconButton
@@ -500,15 +506,17 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
         </Modal>
       )}
 
-      {/* {showRestoreModal && (
-        <Modal title={""} onClose={() => setShowRestoreModal(false)}>
-          <RestoreConfirmation
-            closeFn={() => setShowRestoreModal(false)}
-            restoreFn={confirmRestore}
-            isLoading={restoreLoading}
-          ></RestoreConfirmation>
+      {showReceipt && (
+        <Modal
+          title={"Membership Receipt"}
+          onClose={() => setShowReceipt(false)}
+        >
+          <MembershipReceipt
+            closeFn={() => setShowReceipt(false)}
+            id={receiptId}
+          ></MembershipReceipt>
         </Modal>
-      )} */}
+      )}
 
       <Box sx={{ height: "100%", width: "100%" }}>
         <DataGrid

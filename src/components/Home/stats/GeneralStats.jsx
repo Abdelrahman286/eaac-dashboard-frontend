@@ -11,16 +11,43 @@ import {
 } from "@mui/icons-material";
 
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-const DashboardStats = () => {
-  // Sample data for the statistics
+const DashboardStats = ({ data }) => {
   const stats = [
-    { label: "Students", value: 1200, icon: <PeopleIcon /> },
-    { label: "Instructors", value: 50, icon: <SchoolIcon /> },
-    { label: "Courses", value: 30, icon: <EventIcon /> },
-    { label: "Rounds", value: 10, icon: <AccessTimeIcon /> },
-    { label: "Sessions", value: 200, icon: <AccountBoxIcon /> },
-    { label: "Members", value: 500, icon: <GroupIcon /> },
-    { label: "Companies", value: 20, icon: <BusinessIcon /> },
+    {
+      label: "Students",
+      value: data?.numberOfActiveCompanies,
+      icon: <PeopleIcon />,
+    },
+    {
+      label: "Instructors",
+      value: data?.numberOfActiveInstructors,
+      icon: <SchoolIcon />,
+    },
+    {
+      label: "Courses",
+      value: data?.numberOfActiveCourses,
+      icon: <EventIcon />,
+    },
+    {
+      label: "Rounds",
+      value: data?.numberOfActiveRounds,
+      icon: <AccessTimeIcon />,
+    },
+    {
+      label: "Sessions",
+      value: data?.numberOfActiveSessions,
+      icon: <AccountBoxIcon />,
+    },
+    {
+      label: "Members",
+      value: data?.numberOfActiveMemberships,
+      icon: <GroupIcon />,
+    },
+    {
+      label: "Companies",
+      value: data?.numberOfActiveCompanies,
+      icon: <BusinessIcon />,
+    },
   ];
 
   return (

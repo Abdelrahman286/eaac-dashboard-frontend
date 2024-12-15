@@ -132,6 +132,8 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
           </Button>
         </Box>
 
+        <div className="separator" style={{ margin: "10px 0px" }}></div>
+
         <div className="report-content-page">
           <AppBar
             position="static"
@@ -156,7 +158,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                 component="div"
                 sx={{ textAlign: "center", color: "black" }}
               >
-                Daily Movements Report Report
+                Daily Movements Report
               </Typography>
             </Toolbar>
           </AppBar>

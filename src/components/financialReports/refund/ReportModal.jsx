@@ -133,6 +133,8 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
           </Button>
         </Box>
 
+        <div className="separator" style={{ margin: "10px 0px" }}></div>
+
         <div className="report-content-page">
           <AppBar
             position="static"

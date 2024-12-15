@@ -35,3 +35,32 @@ export const validateAddPayment = (formData) => {
 
   return errors;
 };
+
+export const validateAddCorrectMovement = (formData) => {
+  const errors = {};
+
+  if (isBlank(formData?.clientId)) {
+    errors.clientId = "Please Select Student";
+  }
+
+  if (isBlank(formData?.roundId)) {
+    errors.roundId = "Please Select Round";
+  }
+
+  if (isBlank(formData?.moveType)) {
+    errors.moveType = "Please Select Move Type";
+  }
+
+  if (isBlank(formData?.paymentAmount)) {
+    errors.paymentAmount = "Please fill in Payment Amount";
+  }
+
+  if (
+    !isBlank(formData?.paymentAmount) &&
+    !isValidPositiveNumber(formData?.paymentAmount)
+  ) {
+    errors.paymentAmount = "Please fill in Payment Amount";
+  }
+
+  return errors;
+};

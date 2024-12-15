@@ -1,16 +1,41 @@
-import React, { useContext, useEffect } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import html2pdf from "html2pdf.js";
 
-import "../../styles/students.css";
+import "../../../styles/students.css";
 
+// MUI
 import { Box, Button } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
+// utils
+import { getDataForTableRows } from "../../../utils/tables";
+// contexts
+import { UserContext } from "../../../contexts/UserContext";
 
 // images
-import receiptLogo from "../../assets/receipt-logo.png";
+import receiptLogo from "../../../assets/receipt-logo.png";
 
-const ReceiptModal = ({ data, onClose }) => {
+// requests
+import { getReceiptsFn } from "../../../requests/receipts";
+
+const ReceiptModal = ({ id, onClose }) => {
+  const { token } = useContext(UserContext);
+
+  const { data, isLoading, isError } = useQuery({
+    queryFn: () => {
+      return getReceiptsFn(
+        {
+          paymentId: id,
+        },
+        token,
+        { isFormData: false }
+      );
+    },
+
+    queryKey: ["membershipReceipt", id],
+  });
+  const receiptData = getDataForTableRows(data?.success?.response?.data)[0];
+
   // fix z index issue for header inputs
   useEffect(() => {
     const header = document.querySelector(".header-wrapper");
@@ -36,121 +61,6 @@ const ReceiptModal = ({ data, onClose }) => {
       };
     }
   }, []);
-
-  const printSpecificElement = () => {
-    const elementToPrint = document.querySelector(".receipt-section");
-    if (!elementToPrint) return;
-
-    // Open a new window to print the content
-    const printWindow = window.open("", "", "height=600,width=800");
-
-    // Write the basic HTML structure to the new window
-    printWindow.document.write("<html><head><title>Print</title>");
-
-    // Copy styles from the main document to the print window
-    const styles = document.querySelectorAll("link[rel='stylesheet'], style");
-
-    // Add the stylesheets to the print window
-    styles.forEach((style) => {
-      printWindow.document.write(style.outerHTML);
-    });
-
-    // Add a small CSS to ensure the printed content fits well
-    printWindow.document.write(`
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-        }
-        .receipt-section {
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          background-color: #f9f9f9;
-          direction: rtl;
-          width: 650px;
-          margin: auto;
-        }
-           .receipt-box {
-    padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    direction: rtl;
-  }
-
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .header-left p {
-    margin: 0;
-  }
-
-  .header-right {
-    width: 25%;
-  }
-
-  .receipt-logo {
-    width: 100%;
-    border-radius: 4px;
-  }
-
-  /* Divider */
-  .divider {
-    margin: 16px 0;
-    border: none;
-    border-top: 1px solid #ddd;
-  }
-
-  /* Content */
-  .content {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-
-  .content p {
-    margin-bottom: 8px;
-  }
-
-  .content-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  /* Summary */
-  .summary {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-      </style>
-    `);
-
-    printWindow.document.write("</head><body>");
-
-    // Write the content of the receipt-section element to the new window
-    printWindow.document.write(elementToPrint.outerHTML);
-
-    printWindow.document.write("</body></html>");
-    printWindow.document.close();
-
-    // Wait for the window to load, then trigger the print dialog
-    printWindow.onload = () => {
-      printWindow.print(); // Open the print dialog
-    };
-  };
 
   const handlePrintPdf = () => {
     const documentClass = "receipt-box";
@@ -190,16 +100,29 @@ const ReceiptModal = ({ data, onClose }) => {
   return (
     <div className="student-receipt-modal">
       <div className="separator"></div>
+
       <br></br>
+
+      {isLoading && (
+        <p
+          style={{
+            textAlign: "center",
+          }}
+        >
+          Loading...
+        </p>
+      )}
       <div className="receipt-section">
         <div className="receipt-box">
           <div className="header">
             <div className="header-left">
               <p>
-                <strong>رقم#</strong> <span>{data?.number || "..."}</span>
+                <strong>رقم#</strong>{" "}
+                <span>{receiptData?.number || "..."}</span>
               </p>
               <p>
-                <strong>التاريخ</strong> <span>{data?.date || "..."}</span>
+                <strong>التاريخ</strong>{" "}
+                <span>{receiptData?.date || "..."}</span>
               </p>
             </div>
             <div className="header-right">
@@ -211,49 +134,56 @@ const ReceiptModal = ({ data, onClose }) => {
 
           <div className="content">
             <p>
-              <strong> العميل</strong> <span>{data?.Payor?.Name || "..."}</span>
+              <strong> العميل</strong>{" "}
+              <span>{receiptData?.Payor?.Name || "..."}</span>
             </p>
             <p>
-              <strong> المبلغ</strong> <span>{data?.totalPrice || "..."}</span>
+              <strong> المبلغ</strong>{" "}
+              <span>{receiptData?.totalPrice || "..."}</span>
             </p>
             <div className="content-row">
               <p>
                 <strong> طريقه الدفع</strong>{" "}
-                <span> {data?.PaymentMethodID?.Method_en || "..."}</span>
+                <span> {receiptData?.PaymentMethodID?.Method_en || "..."}</span>
               </p>
               <p>
                 <strong>كوبون الخصم</strong>{" "}
-                <span> {data?.DiscountVoucherID?.VoucherCode || "..."}</span>
+                <span>
+                  {" "}
+                  {receiptData?.DiscountVoucherID?.VoucherCode || "..."}
+                </span>
               </p>
             </div>
             <p>
               <strong> رقم الموبايل</strong>{" "}
-              <span>{data?.Payor?.PhoneNumber || "..."}</span>
+              <span>{receiptData?.Payor?.PhoneNumber || "..."}</span>
             </p>
             <p>
               <strong>كود العضويه</strong>{" "}
-              <span>{data?.membershipCode || "..."}</span>
+              <span>{receiptData?.membershipCode || "..."}</span>
             </p>
             <p>
               <strong> البيان </strong>
-              <span>{data?.Description || "..."}</span>
+              <span>{receiptData?.Description || "..."}</span>
             </p>
             <p>
-              <strong> ملاحظات</strong> <span>{data?.Notes || "..."}</span>
+              <strong> ملاحظات</strong>{" "}
+              <span>{receiptData?.Notes || "..."}</span>
             </p>
 
             <div className="content-row">
               <p>
                 <strong> المجموعه | الدوره</strong>{" "}
-                <span> {data?.RoundID?.Name_en || "..."}</span>
+                <span> {receiptData?.RoundID?.Name_en || "..."}</span>
               </p>
               <p>
-                <strong>الكورس</strong> <span> {data?.course || "..."}</span>
+                <strong>الكورس</strong>{" "}
+                <span> {receiptData?.course || "..."}</span>
               </p>
             </div>
             <p>
               <strong> اجمالي سعر الدوره</strong>
-              <span>{data?.totalPrice || "???"}</span>
+              <span>{receiptData?.totalPrice || "???"}</span>
             </p>
           </div>
 
@@ -262,10 +192,12 @@ const ReceiptModal = ({ data, onClose }) => {
           <div className="summary">
             <div className="summary-row">
               <p>
-                <strong> المدفوع</strong> <span>{data?.Debit || "???"}</span>
+                <strong> المدفوع</strong>{" "}
+                <span>{receiptData?.Debit || "???"}</span>
               </p>
               <p>
-                <strong> المتبقي</strong> <span>{data?.Credit || "???"}</span>
+                <strong> المتبقي</strong>{" "}
+                <span>{receiptData?.Credit || "???"}</span>
               </p>
             </div>
             <div className="summary-row">
@@ -303,22 +235,6 @@ const ReceiptModal = ({ data, onClose }) => {
           marginTop: "20px",
         }}
       >
-        {/* <Button
-          variant="outlined"
-          color="secondary"
-          startIcon={<PrintIcon />}
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-          }}
-          onClick={() => {
-            console.log("Print clicked");
-            printSpecificElement();
-          }}
-        >
-          Print
-        </Button> */}
-
         <Button
           variant="outlined"
           color="secondary"

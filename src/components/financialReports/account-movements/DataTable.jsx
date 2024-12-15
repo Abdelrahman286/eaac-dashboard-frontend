@@ -1,38 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 // MUI
-import { Box, Chip, Avatar } from "@mui/material";
+import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import IconButton from "@mui/material/IconButton";
-import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
-import Tooltip from "@mui/material/Tooltip";
+
 // contexts
 import { UserContext } from "../../../contexts/UserContext";
-import { AppContext } from "../../../contexts/AppContext";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 
 // requests
-import { getPaymentsFn } from "../../../requests/ClientPayments";
+import { getAccountMovements } from "../../../requests/financialReports";
 
-// components
-import Modal from "../../Modal";
-import CustomIconButton from "../../CustomIconButton";
-import CorrectCertainMovement from "./CorrectCertainMovement";
-import PaymentReceipt from "./PaymentReceipt";
+const DataTable = ({ filterData }) => {
+  const { paymentMethodId, startDate, endDate } = filterData;
 
-const DataTable = ({ onDataChange = () => {}, filterData }) => {
-  const { studentId, roundId, paymentMethodId, startDate, endDate } =
-    filterData;
-
-  const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
-  const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
-
-  const [showCorrection, setShowCorrection] = useState(false);
-  const [idToCorrect, setIdToCorrect] = useState("");
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
@@ -40,24 +25,15 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     pageSize: 10, // Initial page size
   });
 
-  // receipt
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [receiptId, setReceiptId] = useState("");
-
   const paginationReqBody = {
     // filter parameters
-    ...(studentId && { studentId }),
-    ...(roundId && { roundId }),
     ...(paymentMethodId && { paymentMethodId }),
     ...(startDate && { startDate }),
     ...(endDate && { endDate }),
   };
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
-
     // filter parameters
-    ...(studentId && { studentId }),
-    ...(roundId && { roundId }),
     ...(paymentMethodId && { paymentMethodId }),
     ...(startDate && { startDate }),
     ...(endDate && { endDate }),
@@ -69,12 +45,16 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     isError: paginationErr,
   } = useQuery({
     queryFn: () => {
-      return getPaymentsFn(paginationReqBody, token, {
+      return getAccountMovements(paginationReqBody, token, {
         isFormData: false,
         urlParams: `page=1`,
       });
     },
-    queryKey: ["clientPayments-pagination", paginationReqBody, dataListReqBody],
+    queryKey: [
+      "accountMovements-pagination",
+      paginationReqBody,
+      dataListReqBody,
+    ],
     retry: 1,
   });
 
@@ -85,14 +65,14 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "clientPayments-list",
+      "accountMovements-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
       dataListReqBody,
     ],
     queryFn: () => {
-      return getPaymentsFn(dataListReqBody, token, {
+      return getAccountMovements(dataListReqBody, token, {
         isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
@@ -116,13 +96,6 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
-  // hoist the data for excel export
-  useEffect(() => {
-    if (listData) {
-      onDataChange(dataList);
-    }
-  }, [listData]);
-
   const columns = [
     {
       field: "rowIndex",
@@ -131,22 +104,13 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     },
 
     {
-      field: "Name_en",
-      headerName: "Student Name",
-      valueGetter: (value, row) => {
-        return `${row?.Payor?.Name || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 160,
-    },
-    {
       field: "Description",
-      headerName: "Descripition",
+      headerName: "Description",
       valueGetter: (value, row) => {
         return `${row?.Description || ""}`;
       },
       flex: 1.2,
-      minWidth: 160,
+      minWidth: 120,
     },
     {
       field: "Notes",
@@ -155,99 +119,62 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
         return `${row?.Notes || ""}`;
       },
       flex: 1.2,
-      minWidth: 160,
+      minWidth: 120,
     },
-    {
-      field: "Round",
-      headerName: "Round Code",
-      valueGetter: (value, row) => {
-        return `${row?.RoundID?.RoundCode || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 160,
-    },
-    {
-      field: "paymentMethod",
-      headerName: "Payment Method",
-      valueGetter: (value, row) => {
-        return `${row?.PaymentMethodID?.Method_en || ""}`;
-      },
-      flex: 1.2,
-      minWidth: 100,
-    },
+
     {
       field: "Date",
       headerName: "Date",
       valueGetter: (value, row) => {
-        return `${row?.date || ""}`;
+        return `${row?.created_at?.split(" ")[0] || ""}`;
       },
       flex: 1.2,
-      minWidth: 100,
+      minWidth: 120,
     },
+
     {
-      field: "time",
+      field: "Time",
       headerName: "Time",
       valueGetter: (value, row) => {
-        return `${row?.time || ""}`;
+        return `${row?.created_at?.split(" ")[1] || ""}`;
       },
-      flex: 1,
-      minWidth: 100,
+      flex: 1.2,
+      minWidth: 120,
     },
+
     {
-      field: "Credit",
-      headerName: "Credit",
+      field: "round",
+      headerName: "Group/Round",
       valueGetter: (value, row) => {
-        return `${row?.Credit || ""}`;
+        return `${row?.RoundID?.Name_en || ""}`;
       },
-      flex: 1,
-      minWidth: 100,
+      flex: 1.2,
+      minWidth: 120,
     },
     {
       field: "Debit",
       headerName: "Debit",
-      valueGetter: (value, row) => {
-        return `${row?.Debit || ""}`;
-      },
-      flex: 1,
-      minWidth: 100,
+      valueGetter: (value, row) =>
+        row?.Debit == undefined ? "-" : row.Debit || "0",
+      flex: 1.2,
+      minWidth: 120,
     },
     {
-      field: "Balance",
-      headerName: "Balance",
-      valueGetter: (value, row) => {
-        return `${row?.Balance || ""}`;
-      },
+      field: "Credit",
+      headerName: "Credit",
+      valueGetter: (value, row) =>
+        row?.Credit == undefined ? "-" : row.Credit || "0",
       flex: 1.2,
-      minWidth: 100,
+      minWidth: 120,
     },
 
     {
-      field: "controls",
-      headerName: "Controls",
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params) => {
-        return (
-          <div>
-            <CustomIconButton
-              icon={"receipt"}
-              title="Receipt"
-              onClick={() => {
-                setShowReceipt(true);
-                setReceiptId(params?.row?.id);
-              }}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"edit"}
-              title="Correct Movement"
-              onClick={() => {
-                setShowCorrection(true);
-                setIdToCorrect(params?.row?.id);
-              }}
-            ></CustomIconButton>
-          </div>
-        );
-      },
+      field: "Balance",
+      headerName: "Balance",
+      valueGetter: (value, row) =>
+        row?.Balance == undefined ? "-" : row.Balance || "0",
+      flex: 1.2,
+      minWidth: 120,
     },
   ];
 
@@ -256,33 +183,13 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     updatedDataList = [];
   }
   return (
-    <div className="membership-table-wrapper">
+    <div>
       {paginationErr && (
         <h2 className="invalid-message">
           No data available. Please try again.
         </h2>
       )}
 
-      {showCorrection && (
-        <Modal
-          title={"Correct Movement"}
-          onClose={() => setShowCorrection(false)}
-        >
-          <CorrectCertainMovement
-            onClose={() => setShowCorrection(false)}
-            idToCorrect={idToCorrect}
-          ></CorrectCertainMovement>
-        </Modal>
-      )}
-
-      {showReceipt && (
-        <Modal title={"Payment Receipt"} onClose={() => setShowReceipt(false)}>
-          <PaymentReceipt
-            closeFn={() => setShowReceipt(false)}
-            id={receiptId}
-          ></PaymentReceipt>
-        </Modal>
-      )}
       <Box sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           // pagination buttons

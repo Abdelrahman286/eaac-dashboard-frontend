@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import html2pdf from "html2pdf.js";
 import "../../styles/companies.css";
+import "../../styles/financial-reports.css";
 import PrintIcon from "@mui/icons-material/Print";
 import FormButton from "../FormButton";
 import { UserContext } from "../../contexts/UserContext";
@@ -25,12 +26,11 @@ import { useQuery } from "@tanstack/react-query";
 const ViewCompany = ({ rowData }) => {
   const { token } = useContext(UserContext);
   // fetch contacts
-  const { data: contactsList } = useQuery({
+  const { data: contactsList, isLoading: contactsLoading } = useQuery({
     queryFn: () => {
       return getCompanyContactsFn(
         {
           companyId: `${rowData.id}`,
-          //   companyId: "1",
           numOfElements: "20000",
         },
         token,
@@ -44,11 +44,11 @@ const ViewCompany = ({ rowData }) => {
   const contacts = contactsList?.success?.response?.data;
 
   // fetch branches
-  const { data: branchesList } = useQuery({
+  const { data: branchesList, isLoading: branchesLoading } = useQuery({
     queryFn: () => {
       return getCompanyBranchesFn(
         {
-          companyId: `${rowData.id}`,
+          companyId: `${rowData?.id}`,
           numOfElements: "20000",
         },
         token,
@@ -57,35 +57,38 @@ const ViewCompany = ({ rowData }) => {
         }
       );
     },
-    queryKey: ["company-branches"],
+    queryKey: ["company-branches", rowData.id],
   });
   const branches = branchesList?.success?.response?.data;
 
   // company attachement
   const attachements = rowData?.CompanyAttach;
 
-  const handlePrintDocument = async () => {
+  const handlePrintDocument = () => {
     const documentClass = "view-single-company-page";
     const element = document.querySelector(`.${documentClass}`);
 
     if (element) {
       const opt = {
-        margin: 1,
+        margin: [0, 20, 0, 20], // [top, left, bottom, right] in px (adjusted for 1200px width)
         filename: "document.pdf",
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
-          scale: 2, // Use a scale that better fits your div size
+          scale: 2, // Increase scale for better quality with larger width
           logging: true,
-          width: 740, // Set width explicitly to match your div size
-          windowWidth: 740, // Ensures the capture size is correct
-          // Adjust the following if needed for better image rendering
-          allowTaint: true, // Allows cross-origin images to be drawn
-          useCORS: true, // Enables CORS if images are from a different origin
+          width: 1200, // Set width to 1200px
+          windowWidth: 1200, // Ensure the capture area matches the div size
+          allowTaint: true, // Allow cross-origin images
+          useCORS: true, // Enable CORS for cross-origin image support
         },
         jsPDF: {
-          unit: "in",
-          format: [7.4, 11], // Match the width (740px ~ 7.4 inches), height is a standard letter size
+          unit: "px", // Use pixels for precise size control
+          format: [1240, 1754], // Width 1200px + 40px margins, height in pixels
           orientation: "portrait",
+          putTotalPages: true,
+        },
+        pagebreak: {
+          mode: ["avoid-all", "css", "legacy"], // Avoid breaking important elements
         },
       };
 
@@ -109,254 +112,163 @@ const ViewCompany = ({ rowData }) => {
         </div>
 
         {/* // start company data */}
+        <div style={{ margin: "16px 0" }}>
+          {/* General Information */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Name (AR):</strong>{" "}
+                <span>{rowData?.Name_ar || ""}</span>
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Name (EN):</strong> {rowData?.Name_en || ""}
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Code:</strong> {rowData?.ClientCode || ""}
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Phone Number:</strong> {rowData?.MainPhone || ""}
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Commercial Registration No:</strong>{" "}
+                {rowData?.CommercialRegistrationNumber || ""}
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Tax Registration No.:</strong>{" "}
+                {rowData?.TaxCardNumber || ""}
+              </p>
+            </div>
+            <div style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.5" }}>
+                <strong>Business Lines (Fields of Work):</strong>{" "}
+                {rowData?.Business || ""}
+              </p>
+            </div>
+          </div>
 
-        <Divider sx={{ marginY: 2 }} />
-        {/* General Information */}
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Name (AR):</strong> {rowData?.Name_ar || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Name (EN):</strong> {rowData?.Name_en || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Code:</strong> {rowData?.ClientCode || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Phone Number:</strong> {rowData?.MainPhone || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Commercial Registeration No</strong>{" "}
-              {rowData?.CommercialRegistrationNumber || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Tax Registeration No.</strong>{" "}
-              {rowData?.TaxCardNumber || ""}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Business Lines (Fields of Work)</strong>{" "}
-              {rowData?.Business || ""}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Divider sx={{ marginY: 2 }} />
-        {/* Notes */}
-        <Typography variant="h6" gutterBottom>
-          Notes
-        </Typography>
-        <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
-          {rowData?.Notes || "No additional notes provided."}
-        </Typography>
+          <div
+            style={{ margin: "16px 0", borderBottom: "1px solid #ccc" }}
+          ></div>
+
+          {/* Notes */}
+          <h6
+            style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: "bold" }}
+          >
+            Notes
+          </h6>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "14px",
+              lineHeight: "1.5",
+              whiteSpace: "pre-line",
+            }}
+          >
+            {rowData?.Notes || "No additional notes provided."}
+          </p>
+        </div>
         {/* // end company data */}
 
         <h2>Branches</h2>
+        {branchesLoading && <p style={{ textAlign: "center" }}>Loading...</p>}
 
-        <div className="group">
-          {branches?.length > 0
-            ? branches.map((ele, index) => {
-                return (
-                  <div key={index}>
-                    <div className="data-row">
-                      <label># {index + 1}</label>
-                      <span>{ele.Name_ar || ""}</span>
-                      <span>{ele.Name_en || ""}</span>
-                      <span>{ele.MainPhone || ""}</span>
+        {branches?.length > 0 && (
+          <div style={{ width: "100%" }}>
+            <div className="report-table">
+              <div className="header">
+                <span>#</span>
+                <span
+                  style={{
+                    width: "100px",
+                  }}
+                >
+                  Name (AR)
+                </span>
+                <span
+                  style={{
+                    width: "100px",
+                  }}
+                >
+                  Branch Code
+                </span>
+                <span>Main Phone</span>
+                <span>Description</span>
+                <span>Address</span>
+              </div>
 
-                      <label htmlFor="">opens at</label>
-                      <span>{ele.OpensAt || ""}</span>
-
-                      <label htmlFor="">closes at</label>
-                      <span>{ele.ClosesAt || ""}</span>
-
-                      <p>{ele.AddressID.Address || ""}</p>
-
-                      <br></br>
-                      <br></br>
+              <div className="data-list">
+                {branches?.map((ele, index) => {
+                  return (
+                    <div className="row-wrapper" key={index}>
+                      <div className="data-row">
+                        <span>{index + 1 || "-"}</span>
+                        <span
+                          style={{
+                            width: "100px",
+                          }}
+                        >
+                          {ele?.Name_ar || "-"}
+                        </span>
+                        <span
+                          style={{
+                            width: "100px",
+                          }}
+                        >
+                          {ele?.BranchCode || "-"}
+                        </span>
+                        <span>{ele?.MainPhone || "-"}</span>
+                        <span>{ele?.Description_ar || "-"}</span>
+                        <span>{ele?.AddressID?.Address || "-"}</span>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            : ""}
-        </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         <h2>Contacts</h2>
-
+        {contactsLoading && <p style={{ textAlign: "center" }}>Loading...</p>}
         {contacts?.length > 0 && (
-          <div
-            className="group"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <table
-              style={{
-                // background: "red",
-                maxWidth: "600px",
-                borderCollapse: "collapse",
-                tableLayout: "fixed",
-              }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "50px", // Set a fixed width for the index column
-                    }}
-                  >
-                    #
-                  </th>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "150px", // Fixed width for name column
-                      wordWrap: "break-word", // Ensure long text wraps
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal", // Ensure wrapping
-                    }}
-                  >
-                    Name
-                  </th>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "150px", // Fixed width for title column
-                      wordWrap: "break-word",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    Title
-                  </th>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "150px", // Fixed width for phone number column
-                      wordWrap: "break-word",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    Phone Number
-                  </th>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "200px", // Fixed width for email column
-                      wordWrap: "break-word",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    Email
-                  </th>
-                  <th
-                    style={{
-                      padding: "10px",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f2f2f2",
-                      width: "200px", // Fixed width for notes column
-                      wordWrap: "break-word",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    Notes
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {contacts.map((contact, index) => (
-                  <tr key={index}>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        wordWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {index + 1}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {contact?.Name || ""}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {contact?.Title || ".."}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {contact?.PhoneNum1 || ".."}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {contact?.Email1 || ".."}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {contact?.Notes || ".."}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ width: "100%" }}>
+            <div className="report-table">
+              <div className="header">
+                <span>#</span>
+                <span>Name</span>
+                <span>Title</span>
+                <span>Phone Number</span>
+                <span>Email</span>
+                <span>Notes</span>
+              </div>
+
+              <div className="data-list">
+                {contacts?.map((ele, index) => {
+                  return (
+                    <div className="row-wrapper" key={index}>
+                      <div className="data-row">
+                        <span>{index + 1 || "-"}</span>
+                        <span>{ele?.Name || "-"}</span>
+                        <span>{ele?.Title || "-"}</span>
+                        <span>{ele?.PhoneNum1 || "-"}</span>
+                        <span>{ele?.Email1 || "-"}</span>
+                        <span>{ele?.Notes || "-"}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
 

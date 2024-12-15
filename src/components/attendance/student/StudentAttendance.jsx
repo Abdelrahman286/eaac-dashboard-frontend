@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 // components
 import HeaderActions from "./HeaderActions";
 import DataTable from "./DataTable";
+
+
 const StudentAttendance = () => {
   const { studentId: paramStudentId } = useParams();
 
