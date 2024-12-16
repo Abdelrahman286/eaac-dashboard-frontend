@@ -26,7 +26,7 @@ export const getAdminPermissions = (reqBody, token, config) => {
   );
 };
 // edit user permisssions  (json)
-export const editUserPermissions = (reqBody, token, config) => {
+export const editUserPermissions = ({ reqBody, token, config }) => {
   return makeRequest(
     `${URL}/permission/addUserPermission`,
     reqBody,

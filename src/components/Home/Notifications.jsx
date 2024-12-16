@@ -69,7 +69,27 @@ const Notifications = () => {
         </AccordionSummary>
 
         {/* Accordion Details */}
-        <AccordionDetails>
+        <AccordionDetails
+          sx={{
+            height: "40vh",
+            overflowY: "auto",
+            overflowX: "hidden",
+
+            "&::-webkit-scrollbar": {
+              width: "6px", // Width of the scrollbar
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0, 0, 0, 0.4)", // Color of the scrollbar thumb
+              borderRadius: "3px", // Rounded corners
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.6)", // Darker on hover
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "rgba(0, 0, 0, 0.1)", // Track color
+            },
+          }}
+        >
           <Card variant="outlined" sx={{ width: "100%" }}>
             {/* Notification List */}
             {notifications.map((note, index) => (
@@ -94,9 +114,15 @@ const Notifications = () => {
                     {note?.InstructorID?.Name} | {note?.numOfStudents} Student{" "}
                     <strong>Attendance</strong>
                   </Typography>
-                  <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                  <Box sx={{ display: "flex", gap: 1, mt: 1, mb: 1 }}>
                     {/* Buttons for Attendance */}
                     <Button
+                      sx={{
+                        fontSize: {
+                          xs: "10px",
+                          sm: "12px",
+                        },
+                      }}
                       variant="contained"
                       color="primary"
                       size="small"
@@ -110,6 +136,12 @@ const Notifications = () => {
                       Submit Students Attendance
                     </Button>
                     <Button
+                      sx={{
+                        fontSize: {
+                          xs: "10px",
+                          sm: "12px",
+                        },
+                      }}
                       variant="contained"
                       color="secondary"
                       size="small"
@@ -123,12 +155,12 @@ const Notifications = () => {
                       Submit Instructor Attendance
                     </Button>
                   </Box>
-                </Box>
 
-                {/* Time */}
-                <Typography variant="caption" color="text.secondary">
-                  {note?.created_at}
-                </Typography>
+                  {/* Time */}
+                  <Typography variant="caption" color="text.secondary">
+                    {note?.created_at}
+                  </Typography>
+                </Box>
               </Box>
             ))}
 
