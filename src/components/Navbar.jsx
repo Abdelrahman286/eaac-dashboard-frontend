@@ -42,7 +42,7 @@ import barndLogo from "../assets/eaac-logo-240.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { token, user, logout } = useContext(UserContext);
+  const { token, user, logout, hasPermission } = useContext(UserContext);
   const [closed, setClosed] = useState("closed");
   const { pathname } = useLocation();
 
@@ -76,48 +76,61 @@ const Navbar = () => {
 
   // each navlink can have multiple nested paths
   const routes = [
-    { paths: ["/"], icon: <HomeIcon></HomeIcon>, label: "Home" },
+    {
+      paths: ["/"],
+      icon: <HomeIcon></HomeIcon>,
+      label: "Home",
+      permission: "pass",
+    },
     {
       paths: ["/companies"],
       icon: <ApartmentIcon></ApartmentIcon>,
       label: "Companies",
+      permission: "View Companies List",
     },
     {
       paths: ["/rooms"],
       icon: <MeetingRoomIcon></MeetingRoomIcon>,
       label: "Rooms",
+      permission: "View Rooms List",
     },
     {
       paths: ["/courses"],
       icon: <LocalLibraryIcon></LocalLibraryIcon>,
       label: "Courses",
+      permission: "View Courses List",
     },
     {
       paths: ["/students"],
       icon: <PeopleAltIcon></PeopleAltIcon>,
       label: "Students",
+      permission: "View Clients List",
     },
     {
       paths: ["/instructors"],
       icon: <Groups2Icon></Groups2Icon>,
       label: "Instructors",
+      permission: "View Instructors List",
     },
     {
       paths: ["/rounds"],
       icon: <EventRepeatIcon></EventRepeatIcon>,
       label: "Rounds",
+      permission: "View Rounds List",
     },
 
     {
       paths: ["/attendance", "/attendance/students", "/attendance/instructors"],
       icon: <AssignmentIcon></AssignmentIcon>,
       label: "Attendance",
+      permission: "pass",
     },
 
     {
       paths: ["/membership"],
       icon: <AddCardIcon></AddCardIcon>,
       label: "Membership",
+      permission: "View Membership List",
     },
     // Accounting
     {
@@ -128,12 +141,14 @@ const Navbar = () => {
       ],
       icon: <PaidIcon></PaidIcon>,
       label: "Accounting",
+      permission: "pass",
     },
 
     {
       paths: ["/receipts"],
       icon: <ReceiptLongIcon></ReceiptLongIcon>,
       label: "Receipts",
+      permission: "View Receipts List",
     },
 
     // Financial Reports
@@ -149,23 +164,27 @@ const Navbar = () => {
       ],
       icon: <SummarizeIcon></SummarizeIcon>,
       label: "Financial Reports",
+      permission: "pass",
     },
 
     {
       paths: ["/admins"],
       icon: <AssignmentIndIcon></AssignmentIndIcon>,
       label: "Admins",
+      permission: "View Users",
     },
 
     {
       paths: ["/profiles"],
       icon: <PersonSearchIcon></PersonSearchIcon>,
       label: "Profiles",
+      permission: "pass",
     },
     {
       paths: ["/profile"],
       icon: <AccountCircleIcon></AccountCircleIcon>,
       label: "My Profile",
+      permission: "pass",
     },
 
     {
@@ -177,6 +196,7 @@ const Navbar = () => {
       ],
       icon: <SettingsIcon></SettingsIcon>,
       label: "Settings",
+      permission: "pass",
     },
   ];
 
@@ -223,28 +243,33 @@ const Navbar = () => {
         </div>
         <div className="links">
           {routes.map((route) => {
-            return (
-              <Link
-                key={route.paths[0]}
-                to={route.paths[0]}
-                className={`link ${
-                  route.paths.includes(pathname.replace(/\/\d+$/, ""))
-                    ? "active"
-                    : ""
-                }`}
-              >
-                {closed == "closed" ? (
-                  <>
-                    <Tooltip title={route.label} arrow placement="right">
-                      {route.icon}
-                    </Tooltip>
-                  </>
-                ) : (
-                  <>{route.icon}</>
-                )}
-                <span>{route.label}</span>
-              </Link>
-            );
+            if (
+              hasPermission(route?.permission) ||
+              route?.permission == "pass"
+            ) {
+              return (
+                <Link
+                  key={route.paths[0]}
+                  to={route.paths[0]}
+                  className={`link ${
+                    route.paths.includes(pathname.replace(/\/\d+$/, ""))
+                      ? "active"
+                      : ""
+                  }`}
+                >
+                  {closed == "closed" ? (
+                    <>
+                      <Tooltip title={route.label} arrow placement="right">
+                        {route.icon}
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <>{route.icon}</>
+                  )}
+                  <span>{route.label}</span>
+                </Link>
+              );
+            }
           })}
         </div>
       </div>

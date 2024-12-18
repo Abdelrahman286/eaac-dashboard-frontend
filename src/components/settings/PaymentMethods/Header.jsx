@@ -5,6 +5,7 @@ import "../../../styles/rooms.css";
 import { useNavigate } from "react-router-dom";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 // MUI
 import Paper from "@mui/material/Paper";
@@ -28,6 +29,7 @@ import FormButton from "../../FormButton";
 import ExportToExcel from "../../ExportToExcel";
 
 const Header = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
   const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
@@ -175,16 +177,18 @@ const Header = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Payment Method"}
-          className="add-room-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Payment Method") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Payment Method"}
+            className="add-room-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
       {showModal && (
         <Modal

@@ -31,7 +31,7 @@ import MutationForm from "./MutationForm";
 const CoursesTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -326,34 +326,42 @@ const CoursesTable = ({ onDataChange }) => {
 
         return (
           <div>
-            <Tooltip title="Extras">
-              <IconButton
-                // disabled={deleteLoading}
-                color="primary"
-                aria-label="extras"
-                onClick={() => handleExtras(params.row)}
-              >
-                <ListAltIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="edit"
-                onClick={() => handleEdit(params.row)}
-              >
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                // disabled={deleteLoading}
-                color="error"
-                aria-label="delete"
-                onClick={() => handleDelete(params.row)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            {hasPermission("Manage Extras") && (
+              <Tooltip title="Extras">
+                <IconButton
+                  // disabled={deleteLoading}
+                  color="primary"
+                  aria-label="extras"
+                  onClick={() => handleExtras(params.row)}
+                >
+                  <ListAltIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {hasPermission("Edit Course") && (
+              <Tooltip title="Edit">
+                <IconButton
+                  aria-label="edit"
+                  onClick={() => handleEdit(params.row)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {hasPermission("Edit Course") && (
+              <Tooltip title="Delete">
+                <IconButton
+                  // disabled={deleteLoading}
+                  color="error"
+                  aria-label="delete"
+                  onClick={() => handleDelete(params.row)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
         );
       },

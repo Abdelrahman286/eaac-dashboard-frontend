@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
 
 import "../../styles/rooms.css";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ import MutationForm from "./MutationForm";
 import ExportToExcel from "../ExportToExcel";
 
 const HeaderActions = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
   const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
@@ -192,16 +194,18 @@ const HeaderActions = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Room"}
-          className="add-room-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Room") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Room"}
+            className="add-room-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
       {showModal && (
         <Modal

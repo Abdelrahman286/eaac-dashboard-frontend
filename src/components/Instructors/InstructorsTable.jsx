@@ -34,7 +34,7 @@ import Modal from "../Modal";
 const InstructorsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -346,19 +346,23 @@ const InstructorsTable = ({ onDataChange }) => {
               onClick={() => handleViewInstructorData(params.row)}
             ></CustomIconButton>
 
-            <CustomIconButton
-              disabled={deleteLoading}
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
+            {hasPermission("Edit Instructor") && (
+              <CustomIconButton
+                disabled={deleteLoading}
+                icon={"edit"}
+                title="Edit"
+                onClick={() => handleEdit(params.row)}
+              ></CustomIconButton>
+            )}
 
-            <CustomIconButton
-              icon={"delete"}
-              title="Delete"
-              disabled={deleteLoading}
-              onClick={() => handleDelete(params.row)}
-            ></CustomIconButton>
+            {hasPermission("Edit Instructor") && (
+              <CustomIconButton
+                icon={"delete"}
+                title="Delete"
+                disabled={deleteLoading}
+                onClick={() => handleDelete(params.row)}
+              ></CustomIconButton>
+            )}
           </div>
         );
       },

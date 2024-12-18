@@ -29,7 +29,7 @@ import AddIcon from "@mui/icons-material/Add";
 const AddNewContact = ({ id }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [showAddContactForm, setShowAddContactForm] = useState(false);
 
@@ -89,16 +89,18 @@ const AddNewContact = ({ id }) => {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            variant="outlined"
-            color="success"
-            startIcon={<AddIcon />} // Optional: add the icon if needed
-            onClick={(e) => {
-              setShowAddContactForm(true);
-            }}
-          >
-            Add Contact
-          </Button>
+          {hasPermission("Add/Edit Contacts") && (
+            <Button
+              variant="outlined"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={(e) => {
+                setShowAddContactForm(true);
+              }}
+            >
+              Add Contact
+            </Button>
+          )}
         </Box>
       )}
       {showAddContactForm && (

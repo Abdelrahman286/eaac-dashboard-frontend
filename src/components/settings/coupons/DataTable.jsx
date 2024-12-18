@@ -28,7 +28,7 @@ import Modal from "../../Modal";
 const DataTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -136,7 +136,6 @@ const DataTable = ({ onDataChange }) => {
   const { mutate: deleteCoupon, isPending: deleteLoading } = useMutation({
     mutationFn: updatePromoCodeFn,
     onSuccess: () => {
-
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
         queryKey: ["promoCodes-pagination"],
@@ -279,24 +278,28 @@ const DataTable = ({ onDataChange }) => {
         }
         return (
           <div>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="edit"
-                onClick={() => handleEdit(params.row)}
-              >
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                disabled={deleteLoading}
-                color="error"
-                aria-label="delete"
-                onClick={() => handleDelete(params.row)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            {hasPermission("Edit Coupon") && (
+              <>
+                <Tooltip title="Edit">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleEdit(params.row)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton
+                    disabled={deleteLoading}
+                    color="error"
+                    aria-label="delete"
+                    onClick={() => handleDelete(params.row)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </div>
         );
       },

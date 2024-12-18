@@ -31,7 +31,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
   const { search, cardStatusId, clientId, membershipTypeId } = filterData;
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -436,16 +436,22 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
               }}
             ></CustomIconButton>
 
-            <CustomIconButton
-              icon={"renew"}
-              title="Renew"
-              onClick={() => handleRenew(params.row)}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
+            {hasPermission("Add/Renew Membership") && (
+              <CustomIconButton
+                icon={"renew"}
+                title="Renew"
+                onClick={() => handleRenew(params.row)}
+              ></CustomIconButton>
+            )}
+
+            {hasPermission("Edit Membership") && (
+              <CustomIconButton
+                icon={"edit"}
+                title="Edit"
+                onClick={() => handleEdit(params.row)}
+              ></CustomIconButton>
+            )}
+
             <CustomIconButton
               icon={"delete"}
               title="Delete"

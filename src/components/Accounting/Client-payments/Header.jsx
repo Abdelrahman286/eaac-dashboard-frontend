@@ -42,7 +42,7 @@ import CorrectMovement from "./CorrectMovement";
 const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [formData, setFormData] = useState({});
   const [showAddPayment, setShowAddPayment] = useState(false);
@@ -291,58 +291,64 @@ const Header = ({ excelData, onFilterChange }) => {
             headers={headers}
           ></ExportToExcel>
 
-          <Button
-            onClick={() => {
-              setShowRefund(true);
-            }}
-            size="small"
-            variant="contained"
-            color="error"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "100px",
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Refund
-          </Button>
+          {hasPermission("Client Refund") && (
+            <Button
+              onClick={() => {
+                setShowRefund(true);
+              }}
+              size="small"
+              variant="contained"
+              color="error"
+              startIcon={<AddIcon />}
+              sx={{
+                minWidth: "100px",
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Refund
+            </Button>
+          )}
 
-          <Button
-            onClick={() => setShowAddPayment(true)}
-            size="small"
-            variant="contained"
-            // color="warning"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "140px",
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Add Payment
-          </Button>
+          {hasPermission("Client Pay (Submit Payment)") && (
+            <Button
+              onClick={() => setShowAddPayment(true)}
+              size="small"
+              variant="contained"
+              // color="warning"
+              startIcon={<AddIcon />}
+              sx={{
+                minWidth: "140px",
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Add Payment
+            </Button>
+          )}
 
-          <Button
-            onClick={() => setShowCorrectMovement(true)}
-            size="small"
-            variant="contained"
-            // color="success"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "190px", // Constant width
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Correct Movement
-          </Button>
+          {hasPermission("Correct Movement") && (
+            <Button
+              onClick={() => setShowCorrectMovement(true)}
+              size="small"
+              variant="contained"
+              // color="success"
+              startIcon={<AddIcon />}
+              sx={{
+                minWidth: "190px", // Constant width
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Correct Movement
+            </Button>
+          )}
         </Box>
       </Box>
     </div>

@@ -1,16 +1,27 @@
-import React, { useState, lazy, Suspense } from "react";
-// import HeaderActions from "../components/rooms/HeaderActions";
-// import RoomsTable from "../components/rooms/RoomsTable";
+import React, { useState, lazy, Suspense, useContext, useEffect } from "react";
+
+import { UserContext } from "../contexts/UserContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 const HeaderActions = lazy(() => import("../components/rooms/HeaderActions"));
 const RoomsTable = lazy(() => import("../components/rooms/RoomsTable"));
 const RoomsPage = () => {
+  const { hasPermission } = useContext(UserContext);
+  const navigate = useNavigate();
+
   // for excel export
   const [data, setData] = useState([]);
   const handleDataChange = (coursesData) => {
     setData(coursesData);
   };
+
+  // redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Rooms List")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="rooms-page">

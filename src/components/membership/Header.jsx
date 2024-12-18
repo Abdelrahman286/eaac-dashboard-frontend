@@ -51,7 +51,7 @@ const membershipTypes = [
 const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({});
@@ -269,22 +269,24 @@ const Header = ({ excelData, onFilterChange }) => {
               justifyContent: { xs: "center", sm: "flex-start" },
             }}
           >
-            <Button
-              size="small"
-              variant="contained"
-              color="success"
-              startIcon={<AddIcon />}
-              sx={{
-                width: "180px",
-                paddingY: 0.1,
-                height: "40px",
-                padding: "16px 4px",
-                borderRadius: "20px",
-              }}
-              onClick={handleAddMembership}
-            >
-              Add Membership
-            </Button>
+            {hasPermission("Add/Renew Membership") && (
+              <Button
+                size="small"
+                variant="contained"
+                color="success"
+                startIcon={<AddIcon />}
+                sx={{
+                  width: "180px",
+                  paddingY: 0.1,
+                  height: "40px",
+                  padding: "16px 4px",
+                  borderRadius: "20px",
+                }}
+                onClick={handleAddMembership}
+              >
+                Add Membership
+              </Button>
+            )}
           </Box>
 
           {/* Export XLS Button */}

@@ -29,7 +29,7 @@ import AddIcon from "@mui/icons-material/Add";
 const AddNewBranch = ({ id }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -113,16 +113,18 @@ const AddNewBranch = ({ id }) => {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            variant="outlined"
-            color="success"
-            startIcon={<AddIcon />} // Optional: add the icon if needed
-            onClick={(e) => {
-              setShowAddForm(true);
-            }}
-          >
-            Add Branch
-          </Button>
+          {hasPermission("Add Branch") && (
+            <Button
+              variant="outlined"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={(e) => {
+                setShowAddForm(true);
+              }}
+            >
+              Add Branch
+            </Button>
+          )}
         </Box>
       )}
       {showAddForm && (

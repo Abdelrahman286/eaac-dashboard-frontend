@@ -24,7 +24,7 @@ import { getDataForTableRows } from "../../utils/tables";
 const GroupsModal = ({ closeFn, data }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   // State to manage active tab
   const [activeTab, setActiveTab] = useState(0);
@@ -35,7 +35,6 @@ const GroupsModal = ({ closeFn, data }) => {
   };
 
   // retrieve groups in which the student is enrolled
-
   const { data: groupsList, isLoading: groupsLoading } = useQuery({
     retry: 2,
     queryFn: () => {
@@ -242,20 +241,21 @@ const GroupsModal = ({ closeFn, data }) => {
         sx={{ marginBottom: 2, minHeight: "32px", marginTop: "20px" }}
       >
         <Tab label="Enroll to Group" sx={{ minHeight: "32px" }} />
+
         <Tab label="Transfer to Group" sx={{ minHeight: "32px" }} />
         <Tab label="UnEnroll/Cancel Enrollment" sx={{ minHeight: "32px" }} />
       </Tabs>
 
       {/* Conditional rendering based on active tab */}
-      {activeTab === 0 && <EnrollTab closeFn={closeFn} data={data}></EnrollTab>}
-      {activeTab === 1 && (
+      {activeTab == 0 && <EnrollTab closeFn={closeFn} data={data}></EnrollTab>}
+      {activeTab == 1 && (
         <TransferTab
           groups={groups}
           closeFn={closeFn}
           data={data}
         ></TransferTab>
       )}
-      {activeTab === 2 && (
+      {activeTab == 2 && (
         <UnenrollTab
           groups={groups}
           closeFn={closeFn}

@@ -17,7 +17,7 @@ import { getGeneralStats, getFinancialStats } from "../requests/home";
 // utils
 import { getDataForTableRows } from "../utils/tables";
 const HomePage = () => {
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   // general stats
   const { data: generalStatsList, isLoading: generalStatsLoading } = useQuery({
     queryFn: () => {
@@ -44,11 +44,20 @@ const HomePage = () => {
   )[0];
   return (
     <div className="home-page">
-      <Notifications></Notifications>
+      {hasPermission("Notifications (Today)") && (
+        <Notifications></Notifications>
+      )}
+
       <Shortcuts></Shortcuts>
-      <FinancialStats data={financialStats}></FinancialStats>
-      <BalanceStats></BalanceStats>
-      <GeneralStats data={generalStats}></GeneralStats>
+
+      {hasPermission("Stats") && (
+        <>
+          {" "}
+          <FinancialStats data={financialStats}></FinancialStats>
+          <BalanceStats></BalanceStats>
+          <GeneralStats data={generalStats}></GeneralStats>
+        </>
+      )}
     </div>
   );
 };

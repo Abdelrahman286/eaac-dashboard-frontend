@@ -1,8 +1,8 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useContext, useEffect } from "react";
 import "../styles/companies.css";
 
-// import HeaderActions from "../components/companies/HeaderActions";
-// import CompaniesTable from "../components/companies/CompaniesTable";
+import { UserContext } from "../contexts/UserContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 const HeaderActions = lazy(() =>
@@ -13,10 +13,19 @@ const CompaniesTable = lazy(() =>
 );
 
 const CompaniesPage = () => {
+  const { hasPermission } = useContext(UserContext);
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const handleDataChange = (companiesData) => {
     setData(companiesData);
   };
+
+  // redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Companies List")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="companies-page">

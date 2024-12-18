@@ -220,23 +220,23 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       minWidth: 100,
     },
 
-    {
-      field: "controls",
-      headerName: "Controls",
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params) => {
-        return (
-          <div>
-            <CustomIconButton
-              icon={"receipt"}
-              title="Receipt"
-              //   onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
-          </div>
-        );
-      },
-    },
+    // {
+    //   field: "controls",
+    //   headerName: "Controls",
+    //   flex: 1,
+    //   minWidth: 100,
+    //   renderCell: (params) => {
+    //     return (
+    //       <div>
+    //         <CustomIconButton
+    //           icon={"receipt"}
+    //           title="Receipt"
+    //           //   onClick={() => handleEdit(params.row)}
+    //         ></CustomIconButton>
+    //       </div>
+    //     );
+    //   },
+    // },
   ];
 
   // to update the table elements if user deleted the only search result appeared

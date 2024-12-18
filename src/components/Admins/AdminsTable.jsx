@@ -32,7 +32,7 @@ import Modal from "../Modal";
 const AdminsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -335,35 +335,34 @@ const AdminsTable = ({ onDataChange }) => {
         }
         return (
           <div>
-            {/* <CustomIconButton
-              icon={"view"}
-              title="view"
-              onClick={() => handleViewInstructorData(params.row)}
-            ></CustomIconButton> */}
+            {hasPermission("Edit User") && (
+              <>
+                <CustomIconButton
+                  disabled={deleteLoading}
+                  icon={"edit"}
+                  title="Edit"
+                  onClick={() => handleEdit(params.row)}
+                ></CustomIconButton>
 
-            <CustomIconButton
-              disabled={deleteLoading}
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
+                <CustomIconButton
+                  icon={"delete"}
+                  title="Delete"
+                  disabled={deleteLoading}
+                  onClick={() => handleDelete(params.row)}
+                ></CustomIconButton>
+              </>
+            )}
 
-            <CustomIconButton
-              icon={"delete"}
-              title="Delete"
-              disabled={deleteLoading}
-              onClick={() => handleDelete(params.row)}
-            ></CustomIconButton>
-
-            <Tooltip title="Permissions">
-              <IconButton
-                // color="primary"
-                aria-label="permissions"
-                onClick={() => handlePermissions(params.row)}
-              >
-                <AddModeratorIcon />
-              </IconButton>
-            </Tooltip>
+            {hasPermission("Edit Permissions") && (
+              <Tooltip title="Permissions">
+                <IconButton
+                  aria-label="permissions"
+                  onClick={() => handlePermissions(params.row)}
+                >
+                  <AddModeratorIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
         );
       },

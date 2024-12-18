@@ -2,6 +2,8 @@ import React, { useEffect, useState, useContext } from "react";
 
 import "../../styles/courses.css";
 
+import { UserContext } from "../../contexts/UserContext";
+
 import { AppContext } from "../../contexts/AppContext";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
@@ -21,6 +23,7 @@ import MutationForm from "./MutationForm";
 
 import ExportToExcel from "../ExportToExcel";
 const HeaderActions = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -175,16 +178,18 @@ const HeaderActions = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Course"}
-          className="add-course-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Course") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Course"}
+            className="add-course-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
 
       {showModal && (

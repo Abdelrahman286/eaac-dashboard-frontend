@@ -1,5 +1,10 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useContext, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import "../styles/Instructors.css";
+
+import { UserContext } from "../contexts/UserContext";
+
 import LoadingSpinner from "../components/LoadingSpinner";
 const HeaderActions = lazy(() =>
   import("../components/Instructors/HeaderActions")
@@ -7,12 +12,22 @@ const HeaderActions = lazy(() =>
 const InstructorsTable = lazy(() =>
   import("../components/Instructors/InstructorsTable")
 );
-const AdminsTable = () => {
+
+const InstructorsPage = () => {
+  const navigate = useNavigate();
+  const { hasPermission } = useContext(UserContext);
   // for excel export
   const [data, setData] = useState([]);
   const handleDataChange = (coursesData) => {
     setData(coursesData);
   };
+
+  // redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Instructors List")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="instructors-page">
@@ -24,4 +39,4 @@ const AdminsTable = () => {
   );
 };
 
-export default AdminsTable;
+export default InstructorsPage;

@@ -3,6 +3,8 @@ import React, { useState, useContext, useEffect } from "react";
 import "../../styles/students.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
+import { UserContext } from "../../contexts/UserContext";
+
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -26,6 +28,8 @@ import ExportToExcel from "../ExportToExcel";
 // hooks
 import useQueryParam from "../../hooks/useQueryParams";
 const HeaderActions = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
+  const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -183,16 +187,18 @@ const HeaderActions = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Student"}
-          className="add-student-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Student/Client") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Student"}
+            className="add-student-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
       {showModal && (
         <Modal

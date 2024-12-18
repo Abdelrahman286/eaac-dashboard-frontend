@@ -26,7 +26,7 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   const { studentId } = filterData;
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   // show receipt
@@ -201,16 +201,21 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
       renderCell: (params) => {
         return (
           <div>
-            <CustomIconButton
-              icon={"receipt"}
-              title="Receipt"
-              onClick={() => handleShow(params.row)}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
+            {hasPermission("View Receipt (Print)") && (
+              <CustomIconButton
+                icon={"receipt"}
+                title="Receipt"
+                onClick={() => handleShow(params.row)}
+              ></CustomIconButton>
+            )}
+
+            {hasPermission("Edit Receipt (Notes)") && (
+              <CustomIconButton
+                icon={"edit"}
+                title="Edit"
+                onClick={() => handleEdit(params.row)}
+              ></CustomIconButton>
+            )}
           </div>
         );
       },

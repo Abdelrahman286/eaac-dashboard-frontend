@@ -35,7 +35,7 @@ dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 const RoundsTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -409,11 +409,14 @@ const RoundsTable = ({ onDataChange }) => {
         }
         return (
           <div>
-            <CustomIconButton
-              icon={"view"}
-              title="view"
-              onClick={() => handleShowRound(params?.row)}
-            ></CustomIconButton>
+            {hasPermission("View/Print Round Details") && (
+              <CustomIconButton
+                icon={"view"}
+                title="view"
+                onClick={() => handleShowRound(params?.row)}
+              ></CustomIconButton>
+            )}
+
             {/* <CustomIconButton
               icon={"attendance"}
               title="Attendance"
@@ -424,16 +427,21 @@ const RoundsTable = ({ onDataChange }) => {
               title="Enroll Student"
               onClick={() => console.log("Enroll Student")}
             ></CustomIconButton> */}
-            <CustomIconButton
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"delete"}
-              title="Delete"
-              onClick={() => handleDelete(params.row)}
-            ></CustomIconButton>
+
+            {hasPermission("Edit Round") && (
+              <CustomIconButton
+                icon={"edit"}
+                title="Edit"
+                onClick={() => handleEdit(params.row)}
+              ></CustomIconButton>
+            )}
+            {hasPermission("Edit Round") && (
+              <CustomIconButton
+                icon={"delete"}
+                title="Delete"
+                onClick={() => handleDelete(params.row)}
+              ></CustomIconButton>
+            )}
           </div>
         );
       },

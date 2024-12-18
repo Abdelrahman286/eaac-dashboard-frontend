@@ -39,7 +39,7 @@ const StudentsTable = ({ onDataChange }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const {
     showSnackbar,
     searchResults,
@@ -476,11 +476,15 @@ const StudentsTable = ({ onDataChange }) => {
               title="Groups"
               onClick={() => handleGroupsPopup(params.row)}
             ></CustomIconButton>
-            <CustomIconButton
-              icon={"view"}
-              title="view"
-              onClick={() => handleViewStudentData(params.row)}
-            ></CustomIconButton>
+
+            {hasPermission("View Client/Student Info") && (
+              <CustomIconButton
+                icon={"view"}
+                title="view"
+                onClick={() => handleViewStudentData(params.row)}
+              ></CustomIconButton>
+            )}
+
             <CustomIconButton
               icon={"attendance"}
               title="Attendance"
@@ -497,22 +501,30 @@ const StudentsTable = ({ onDataChange }) => {
               //   onClick={() => setStudentReceipt({ name: "test" })}
               onClick={() => navigate(`/accounting/client-payments`)}
             ></CustomIconButton>
-            <CustomIconButton
-              icon={"blockUser"}
-              title={params?.row?.StatusID?.id == 1 ? "Block" : "unblock"}
-              onClick={() => handleBlock(params.row)}
-            ></CustomIconButton>
 
-            <CustomIconButton
-              icon={"edit"}
-              title="Edit"
-              onClick={() => handleEdit(params.row)}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"delete"}
-              title="Delete"
-              onClick={() => handleDelete(params.row)}
-            ></CustomIconButton>
+            {hasPermission("Block Client") && (
+              <CustomIconButton
+                icon={"blockUser"}
+                title={params?.row?.StatusID?.id == 1 ? "Block" : "unblock"}
+                onClick={() => handleBlock(params.row)}
+              ></CustomIconButton>
+            )}
+
+            {hasPermission("Edit Student/Client") && (
+              <CustomIconButton
+                icon={"edit"}
+                title="Edit"
+                onClick={() => handleEdit(params.row)}
+              ></CustomIconButton>
+            )}
+
+            {hasPermission("Edit Student/Client") && (
+              <CustomIconButton
+                icon={"delete"}
+                title="Delete"
+                onClick={() => handleDelete(params.row)}
+              ></CustomIconButton>
+            )}
           </div>
         );
       },

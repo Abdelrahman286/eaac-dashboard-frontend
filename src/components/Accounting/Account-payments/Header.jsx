@@ -41,7 +41,7 @@ import Reconcile from "./Reconcile";
 const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [formData, setFormData] = useState({});
   const [showAddPayment, setShowAddPayment] = useState(false);
@@ -220,39 +220,43 @@ const Header = ({ excelData, onFilterChange }) => {
             headers={headers}
           ></ExportToExcel>
 
-          <Button
-            onClick={() => setShowReconcile(true)}
-            size="small"
-            variant="contained"
-            color="warning"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "130px", // Constant width
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Reconcile
-          </Button>
+          {hasPermission("Reconcile") && (
+            <Button
+              onClick={() => setShowReconcile(true)}
+              size="small"
+              variant="contained"
+              color="warning"
+              startIcon={<AddIcon />}
+              sx={{
+                minWidth: "130px", // Constant width
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Reconcile
+            </Button>
+          )}
 
-          <Button
-            onClick={() => setShowAddPayment(true)}
-            size="small"
-            variant="contained"
-            // color="warning"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "140px",
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Add Expenses
-          </Button>
+          {hasPermission("Add Expenses (Payments)") && (
+            <Button
+              onClick={() => setShowAddPayment(true)}
+              size="small"
+              variant="contained"
+              // color="warning"
+              startIcon={<AddIcon />}
+              sx={{
+                minWidth: "140px",
+                paddingY: 0.1,
+                height: "40px",
+                padding: "16px 4px",
+                borderRadius: "20px",
+              }}
+            >
+              Add Expenses
+            </Button>
+          )}
         </Box>
       </Box>
     </div>

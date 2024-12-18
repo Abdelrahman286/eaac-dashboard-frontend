@@ -36,7 +36,7 @@ const ViewCompany = lazy(() => import("./ViewCompany"));
 const CompaniesTable = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -374,51 +374,57 @@ const CompaniesTable = ({ onDataChange }) => {
         if (params?.row?.DeginoviaClient?.code == "1") {
           return (
             <div>
-              <Tooltip title="Attachments">
-                <IconButton
-                  aria-label="view"
-                  onClick={(e) => {
-                    setShowAttachments(true);
-                    setAttachmentsToShow(params.row);
-                  }}
-                >
-                  <FilePresentIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Branches">
-                <IconButton
-                  color="success"
-                  aria-label="view"
-                  onClick={() => {
-                    setCompanyIdToShow(params.row?.id);
-                    setShowBranches(true);
-                  }}
-                >
-                  <FmdGoodIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Contacts">
-                <IconButton
-                  color="primary"
-                  aria-label="view"
-                  onClick={() => {
-                    setCompanyIdToShow(params.row?.id);
-                    setShowContacts(true);
-                  }}
-                >
-                  <PhoneIcon />
-                </IconButton>
-              </Tooltip>
+              {hasPermission("Edit Company Info") && (
+                <>
+                  <Tooltip title="Attachments">
+                    <IconButton
+                      aria-label="view"
+                      onClick={(e) => {
+                        setShowAttachments(true);
+                        setAttachmentsToShow(params.row);
+                      }}
+                    >
+                      <FilePresentIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Branches">
+                    <IconButton
+                      color="success"
+                      aria-label="view"
+                      onClick={() => {
+                        setCompanyIdToShow(params.row?.id);
+                        setShowBranches(true);
+                      }}
+                    >
+                      <FmdGoodIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Contacts">
+                    <IconButton
+                      color="primary"
+                      aria-label="view"
+                      onClick={() => {
+                        setCompanyIdToShow(params.row?.id);
+                        setShowContacts(true);
+                      }}
+                    >
+                      <PhoneIcon />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              )}
 
-              <Tooltip title="View">
-                <IconButton
-                  color="primary"
-                  aria-label="view"
-                  onClick={() => handleShowCompany(params.row)}
-                >
-                  <VisibilityIcon />
-                </IconButton>
-              </Tooltip>
+              {hasPermission("View Company Info") && (
+                <Tooltip title="View">
+                  <IconButton
+                    color="primary"
+                    aria-label="view"
+                    onClick={() => handleShowCompany(params.row)}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </div>
           );
         } else {
@@ -435,57 +441,72 @@ const CompaniesTable = ({ onDataChange }) => {
                   <FilePresentIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Branches">
-                <IconButton
-                  color="success"
-                  aria-label="view"
-                  onClick={() => {
-                    setCompanyIdToShow(params.row?.id);
-                    setShowBranches(true);
-                  }}
-                >
-                  <FmdGoodIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Contacts">
-                <IconButton
-                  color="primary"
-                  aria-label="view"
-                  onClick={() => {
-                    setCompanyIdToShow(params.row?.id);
-                    setShowContacts(true);
-                  }}
-                >
-                  <PhoneIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Edit">
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => handleEdit(params.row)}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton
-                  disabled={deleteLoading}
-                  color="error"
-                  aria-label="delete"
-                  onClick={() => handleDeleteCompany(params.row)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="View">
-                <IconButton
-                  color="primary"
-                  aria-label="view"
-                  onClick={() => handleShowCompany(params.row)}
-                >
-                  <VisibilityIcon />
-                </IconButton>
-              </Tooltip>
+
+              {hasPermission("View Branches List") && (
+                <Tooltip title="Branches">
+                  <IconButton
+                    color="success"
+                    aria-label="view"
+                    onClick={() => {
+                      setCompanyIdToShow(params.row?.id);
+                      setShowBranches(true);
+                    }}
+                  >
+                    <FmdGoodIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              {hasPermission("View Contacts List") && (
+                <Tooltip title="Contacts">
+                  <IconButton
+                    color="primary"
+                    aria-label="view"
+                    onClick={() => {
+                      setCompanyIdToShow(params.row?.id);
+                      setShowContacts(true);
+                    }}
+                  >
+                    <PhoneIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              {hasPermission("Edit Company") && (
+                <Tooltip title="Edit">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleEdit(params.row)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              {hasPermission("Edit Company") && (
+                <Tooltip title="Delete">
+                  <IconButton
+                    disabled={deleteLoading}
+                    color="error"
+                    aria-label="delete"
+                    onClick={() => handleDeleteCompany(params.row)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              {hasPermission("View/Print Company") && (
+                <Tooltip title="View">
+                  <IconButton
+                    color="primary"
+                    aria-label="view"
+                    onClick={() => handleShowCompany(params.row)}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </div>
           );
         }

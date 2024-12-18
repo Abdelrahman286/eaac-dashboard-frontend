@@ -1,14 +1,28 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useContext, useEffect } from "react";
 import "../styles/rounds.css";
+
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { UserContext } from "../contexts/UserContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 const HeaderActions = lazy(() => import("../components/rounds/HeaderActions"));
 const RoundsTable = lazy(() => import("../components/rounds/RoundsTable"));
 const RoundsPage = () => {
+  const navigate = useNavigate();
+  const { hasPermission } = useContext(UserContext);
+
   // for excel export
   const [data, setData] = useState([]);
   const handleDataChange = (roundsData) => {
     setData(roundsData);
   };
+
+  // redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Rounds List")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="rounds-page">

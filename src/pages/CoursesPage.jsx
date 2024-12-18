@@ -1,7 +1,5 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense, useContext } from "react";
 import { Tabs, Tab, CircularProgress, Box } from "@mui/material";
-// import CoursesList from "../components/courses/CoursesList";
-// import CategoriesList from "../components/courseCategories/CategoriesList";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 const CoursesList = lazy(() => import("../components/courses/CoursesList"));
@@ -9,7 +7,13 @@ const CategoriesList = lazy(() =>
   import("../components/courseCategories/CategoriesList")
 );
 
+import { UserContext } from "../contexts/UserContext";
+
+import { useLocation, useNavigate } from "react-router-dom";
+
 const CoursesPage = () => {
+  const { hasPermission } = useContext(UserContext);
+  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +27,13 @@ const CoursesPage = () => {
       setLoading(false); // Stop loading after a short delay
     }, 400);
   };
+
+  // redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Courses List")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="courses-page">

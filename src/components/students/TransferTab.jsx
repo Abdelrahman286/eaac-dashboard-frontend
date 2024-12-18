@@ -42,7 +42,7 @@ import { validateTransfer } from "../../utils/validateStudents";
 const TransferTab = ({ data, groups, closeFn }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [formErrors, setFormErrors] = useState({});
   const [selectedPromoCode, setSelectedPromoCode] = useState({});
@@ -166,502 +166,509 @@ const TransferTab = ({ data, groups, closeFn }) => {
   };
 
   return (
-    <Box>
-      {/* current group */}
+    <>
+      {hasPermission("Transfer Client") && (
+        <Box>
+          {/* current group */}
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{ textAlign: "center", paddingTop: "10px" }}
-          color="primary"
-        >
-          Current Group
-        </Typography>
-
-        <Autocomplete
-          //   loading={promoCodesLoading}
-          value={
-            groups.find((item) => item.id == selectedCurrentGroup?.id) || null
-          }
-          onChange={(e, value) => setCurrentGroup(value)}
-          options={groups}
-          getOptionLabel={(option) => option.Name_en || ""}
-          //------
-          size="small"
-          renderInput={(params) => (
-            <TextField
-              error={Boolean(formErrors?.currentGroup)}
-              helperText={formErrors?.currentGroup}
-              {...params}
-              label="Current Groups"
-              margin="normal"
-              fullWidth
-            />
-          )}
-        />
-
-        {/* round data card  */}
-
-        {selectedCurrentGroup?.id ? (
           <Box
             sx={{
-              // flex: 1,
-              padding: 2,
-              // maxWidth: 400,
-              // width: "48%",
-              border: "1px solid #ddd",
-              borderRadius: 2,
-              backgroundColor: "#fafafa",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Round Data
-            </Typography>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Group Capacity
-              </Typography>
-              <Typography variant="body1">
-                {" "}
-                ??/{`${selectedCurrentGroup?.RoomID?.Capacity || ""}`}
-              </Typography>
-            </Box>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Group Name
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedCurrentGroup?.Name_en || ""}`}
-              </Typography>
-            </Box>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Course Name
-              </Typography>
-              <Typography variant="body1">
-                {" "}
-                {`${selectedCurrentGroup?.CourseID?.Name_en || ""} `}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Course Code
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedCurrentGroup?.CourseID?.CourseCode || ""} `}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Room
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedCurrentGroup?.RoomID?.RoomCode || ""} `}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Start Date
-              </Typography>
-              <Typography variant="body1">
-                {selectedCurrentGroup?.StartDate?.split(" ")[0] || ""}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                End Date
-              </Typography>
-              <Typography variant="body1">
-                {selectedCurrentGroup?.EndDate?.split(" ")[0] || ""}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Non Members Price
-              </Typography>
-              <Typography variant="body1">
-                {selectedCurrentGroup?.CourseID?.NonMemberPrice || ""}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Members Price
-              </Typography>
-              <Typography variant="body1">
-                {selectedCurrentGroup?.CourseID?.MemberPrice || ""}
-              </Typography>
-            </Box>
-          </Box>
-        ) : (
-          ""
-        )}
-      </Box>
-
-      {/* Transfer To */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{ textAlign: "center", marginTop: "10px" }}
-          color="primary"
-        >
-          Transfer To
-        </Typography>
-        <SearchableDropdown
-          styles={{
-            marginTop: 1,
-          }}
-          //   styles={{ width: "48%" }}
-          isError={Boolean(formErrors?.targetGroup)}
-          helperText={formErrors?.targetGroup}
-          isFromData={false}
-          //   requestParams={{ studentId: 1 }
-
-          label="Target Round"
-          fetchData={getRoundsFn}
-          queryKey="rounds"
-          getOptionLabel={(option) => `${option?.Name_en}`}
-          getOptionId={(option) => option?.id} // Custom ID field
-          onSelect={handleSelectTarget}
-        ></SearchableDropdown>
-
-        {/* round data card  */}
-        {selectedTargetGroup?.id ? (
-          <Box
-            sx={{
-              // flex: 1,
-              padding: 2,
-              // maxWidth: 400,
-              // width: "48%",
-              border: "1px solid #ddd",
-              borderRadius: 2,
-              backgroundColor: "#fafafa",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Round Data
-            </Typography>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Group Capacity
-              </Typography>
-              <Typography variant="body1">
-                {" "}
-                ??/{`${selectedTargetGroup?.RoomID?.Capacity || ""}`}
-              </Typography>
-            </Box>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Group Name
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedTargetGroup?.Name_en || ""}`}
-              </Typography>
-            </Box>
-
-            <Box sx={{ marginBottom: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Course Name
-              </Typography>
-              <Typography variant="body1">
-                {" "}
-                {`${selectedTargetGroup?.CourseID?.Name_en || ""} `}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Course Code
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedTargetGroup?.CourseID?.CourseCode || ""} `}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Room
-              </Typography>
-              <Typography variant="body1">
-                {`${selectedTargetGroup?.RoomID?.RoomCode || ""} `}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Start Date
-              </Typography>
-              <Typography variant="body1">
-                {selectedTargetGroup?.StartDate?.split(" ")[0] || ""}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                End Date
-              </Typography>
-              <Typography variant="body1">
-                {selectedTargetGroup?.EndDate?.split(" ")[0] || ""}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Non Members Price
-              </Typography>
-              <Typography variant="body1">
-                {selectedTargetGroup?.CourseID?.NonMemberPrice || ""}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontWeight="bold"
-              >
-                Members Price
-              </Typography>
-              <Typography variant="body1">
-                {selectedTargetGroup?.CourseID?.MemberPrice || ""}
-              </Typography>
-            </Box>
-          </Box>
-        ) : (
-          ""
-        )}
-      </Box>
-
-      {/* Transfer Actions  */}
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <Box sx={{ flex: 1, padding: 2 }}>
-          <Box
-            sx={{
-              paddingLeft: "10px",
-              marginBottom: 1,
               display: "flex",
-              gap: 2,
+              flexDirection: "column",
+              width: "100%",
+              justifyContent: "space-between",
             }}
           >
             <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
+              variant="h6"
+              sx={{ textAlign: "center", paddingTop: "10px" }}
+              color="primary"
             >
               Current Group
             </Typography>
-            <Typography variant="body1">
-              {selectedCurrentGroup?.Name_en || ""}
-            </Typography>
+
+            <Autocomplete
+              //   loading={promoCodesLoading}
+              value={
+                groups.find((item) => item.id == selectedCurrentGroup?.id) ||
+                null
+              }
+              onChange={(e, value) => setCurrentGroup(value)}
+              options={groups}
+              getOptionLabel={(option) => option.Name_en || ""}
+              //------
+              size="small"
+              renderInput={(params) => (
+                <TextField
+                  error={Boolean(formErrors?.currentGroup)}
+                  helperText={formErrors?.currentGroup}
+                  {...params}
+                  label="Current Groups"
+                  margin="normal"
+                  fullWidth
+                />
+              )}
+            />
+
+            {/* round data card  */}
+
+            {selectedCurrentGroup?.id ? (
+              <Box
+                sx={{
+                  // flex: 1,
+                  padding: 2,
+                  // maxWidth: 400,
+                  // width: "48%",
+                  border: "1px solid #ddd",
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Round Data
+                </Typography>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Group Capacity
+                  </Typography>
+                  <Typography variant="body1">
+                    {" "}
+                    ??/{`${selectedCurrentGroup?.RoomID?.Capacity || ""}`}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Group Name
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedCurrentGroup?.Name_en || ""}`}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Course Name
+                  </Typography>
+                  <Typography variant="body1">
+                    {" "}
+                    {`${selectedCurrentGroup?.CourseID?.Name_en || ""} `}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Course Code
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedCurrentGroup?.CourseID?.CourseCode || ""} `}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Room
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedCurrentGroup?.RoomID?.RoomCode || ""} `}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Start Date
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedCurrentGroup?.StartDate?.split(" ")[0] || ""}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    End Date
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedCurrentGroup?.EndDate?.split(" ")[0] || ""}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Non Members Price
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedCurrentGroup?.CourseID?.NonMemberPrice || ""}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Members Price
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedCurrentGroup?.CourseID?.MemberPrice || ""}
+                  </Typography>
+                </Box>
+              </Box>
+            ) : (
+              ""
+            )}
           </Box>
 
+          {/* Transfer To */}
           <Box
             sx={{
-              paddingLeft: "10px",
-              marginBottom: 1,
               display: "flex",
-              gap: 2,
+              flexDirection: "column",
+              width: "100%",
+              justifyContent: "space-between",
             }}
           >
             <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight="bold"
+              variant="h6"
+              sx={{ textAlign: "center", marginTop: "10px" }}
+              color="primary"
             >
-              Target Group/Round
+              Transfer To
             </Typography>
-            <Typography variant="body1">
-              {" "}
-              {selectedTargetGroup?.Name_en || ""}
-            </Typography>
-          </Box>
-          <Autocomplete
-            loading={promoCodesLoading}
-            value={
-              promoCodes.find((item) => item.id == selectedPromoCode?.id) ||
-              null
-            }
-            onChange={(e, value) => setSelectedPromoCode(value)}
-            options={promoCodes}
-            getOptionLabel={(option) => option.VoucherCode || ""}
-            //------
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Discount/Promo Code"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            padding: "16px 10px",
-          }}
-        >
-          <TextField
-            InputProps={{ readOnly: true }}
-            sx={{ marginTop: "8x" }}
-            id="difference"
-            readOnly
-            value={differenceLoading ? "Loading..." : differenceAmount || "-"}
-            InputLabelProps={{ shrink: true }}
-            label="Difference"
-            name="difference"
-            size="small"
-          />
-          <TextField
-            sx={{ marginTop: "12px" }}
-            id="paidNow"
-            onChange={(e) => setPaidNow(e.target.value)}
-            error={Boolean(formErrors?.paidNow)}
-            helperText={formErrors?.paidNow}
-            value={paidNow}
-            type="number"
-            InputLabelProps={{ shrink: true }}
-            label="Paid Now"
-            name="paidNow"
-            size="small"
-          />
+            <SearchableDropdown
+              styles={{
+                marginTop: 1,
+              }}
+              //   styles={{ width: "48%" }}
+              isError={Boolean(formErrors?.targetGroup)}
+              helperText={formErrors?.targetGroup}
+              isFromData={false}
+              //   requestParams={{ studentId: 1 }
 
-          <Autocomplete
-            loading={paymentMethodLoading}
-            value={
-              paymentMethods.find(
-                (item) => item.id == selectedPaymentMethod?.id
-              ) || null
-            }
-            onChange={(e, value) => setSelectedPaymentMethod(value)}
-            options={paymentMethods}
-            getOptionLabel={(option) => option.Method_en || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                id="paymentMethod"
-                error={Boolean(formErrors?.paymentMethod)}
-                helperText={formErrors?.paymentMethod}
-                {...params}
-                label="Payment Method"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          />
-        </Box>
-        <Box sx={{ flex: 1 }}>
-          <Button
-            sx={{ margin: 2 }}
-            variant="contained"
-            color="success"
-            onClick={handleTransfer}
-          >
-            {transferLoading ? (
-              <CircularProgress size={24} color="inherit" />
+              label="Target Round"
+              fetchData={getRoundsFn}
+              queryKey="rounds"
+              getOptionLabel={(option) => `${option?.Name_en}`}
+              getOptionId={(option) => option?.id} // Custom ID field
+              onSelect={handleSelectTarget}
+            ></SearchableDropdown>
+
+            {/* round data card  */}
+            {selectedTargetGroup?.id ? (
+              <Box
+                sx={{
+                  // flex: 1,
+                  padding: 2,
+                  // maxWidth: 400,
+                  // width: "48%",
+                  border: "1px solid #ddd",
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Round Data
+                </Typography>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Group Capacity
+                  </Typography>
+                  <Typography variant="body1">
+                    {" "}
+                    ??/{`${selectedTargetGroup?.RoomID?.Capacity || ""}`}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Group Name
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedTargetGroup?.Name_en || ""}`}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Course Name
+                  </Typography>
+                  <Typography variant="body1">
+                    {" "}
+                    {`${selectedTargetGroup?.CourseID?.Name_en || ""} `}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Course Code
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedTargetGroup?.CourseID?.CourseCode || ""} `}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Room
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${selectedTargetGroup?.RoomID?.RoomCode || ""} `}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Start Date
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedTargetGroup?.StartDate?.split(" ")[0] || ""}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    End Date
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedTargetGroup?.EndDate?.split(" ")[0] || ""}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Non Members Price
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedTargetGroup?.CourseID?.NonMemberPrice || ""}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Members Price
+                  </Typography>
+                  <Typography variant="body1">
+                    {selectedTargetGroup?.CourseID?.MemberPrice || ""}
+                  </Typography>
+                </Box>
+              </Box>
             ) : (
-              "  Pay & Transfer Student"
+              ""
             )}
-          </Button>
+          </Box>
+
+          {/* Transfer Actions  */}
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <Box sx={{ flex: 1, padding: 2 }}>
+              <Box
+                sx={{
+                  paddingLeft: "10px",
+                  marginBottom: 1,
+                  display: "flex",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Current Group
+                </Typography>
+                <Typography variant="body1">
+                  {selectedCurrentGroup?.Name_en || ""}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  paddingLeft: "10px",
+                  marginBottom: 1,
+                  display: "flex",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="bold"
+                >
+                  Target Group/Round
+                </Typography>
+                <Typography variant="body1">
+                  {" "}
+                  {selectedTargetGroup?.Name_en || ""}
+                </Typography>
+              </Box>
+              <Autocomplete
+                loading={promoCodesLoading}
+                value={
+                  promoCodes.find((item) => item.id == selectedPromoCode?.id) ||
+                  null
+                }
+                onChange={(e, value) => setSelectedPromoCode(value)}
+                options={promoCodes}
+                getOptionLabel={(option) => option.VoucherCode || ""}
+                //------
+                size="small"
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Discount/Promo Code"
+                    margin="normal"
+                    fullWidth
+                  />
+                )}
+              />
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                padding: "16px 10px",
+              }}
+            >
+              <TextField
+                InputProps={{ readOnly: true }}
+                sx={{ marginTop: "8x" }}
+                id="difference"
+                readOnly
+                value={
+                  differenceLoading ? "Loading..." : differenceAmount || "-"
+                }
+                InputLabelProps={{ shrink: true }}
+                label="Difference"
+                name="difference"
+                size="small"
+              />
+              <TextField
+                sx={{ marginTop: "12px" }}
+                id="paidNow"
+                onChange={(e) => setPaidNow(e.target.value)}
+                error={Boolean(formErrors?.paidNow)}
+                helperText={formErrors?.paidNow}
+                value={paidNow}
+                type="number"
+                InputLabelProps={{ shrink: true }}
+                label="Paid Now"
+                name="paidNow"
+                size="small"
+              />
+
+              <Autocomplete
+                loading={paymentMethodLoading}
+                value={
+                  paymentMethods.find(
+                    (item) => item.id == selectedPaymentMethod?.id
+                  ) || null
+                }
+                onChange={(e, value) => setSelectedPaymentMethod(value)}
+                options={paymentMethods}
+                getOptionLabel={(option) => option.Method_en || ""}
+                size="small"
+                renderInput={(params) => (
+                  <TextField
+                    id="paymentMethod"
+                    error={Boolean(formErrors?.paymentMethod)}
+                    helperText={formErrors?.paymentMethod}
+                    {...params}
+                    label="Payment Method"
+                    margin="normal"
+                    fullWidth
+                  />
+                )}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Button
+                sx={{ margin: 2 }}
+                variant="contained"
+                color="success"
+                onClick={handleTransfer}
+              >
+                {transferLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "  Pay & Transfer Student"
+                )}
+              </Button>
+            </Box>
+          </Box>
         </Box>
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 

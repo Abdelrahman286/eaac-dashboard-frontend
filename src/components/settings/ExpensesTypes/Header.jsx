@@ -5,6 +5,7 @@ import "../../../styles/rooms.css";
 import { useNavigate } from "react-router-dom";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 // MUI
 import Paper from "@mui/material/Paper";
@@ -31,6 +32,7 @@ import ExportToExcel from "../../ExportToExcel";
 import useQueryParam from "../../../hooks/useQueryParams";
 
 const Header = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
 
@@ -185,16 +187,18 @@ const Header = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Expenses Type"}
-          className="add-room-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Expense Type") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Expenses Type"}
+            className="add-room-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
       {showModal && (
         <Modal

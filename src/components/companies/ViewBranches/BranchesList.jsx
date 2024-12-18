@@ -18,7 +18,7 @@ import EditForm from "./EditForm";
 const BranchesList = ({ data, companyId }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const arrayWithIndex = data?.map((item, index) => ({
     ...item,
     rowIndex: index + 1, // Add the index to each object
@@ -82,22 +82,23 @@ const BranchesList = ({ data, companyId }) => {
                   <span>{ele?.MainPhone || "-"}</span>
                   <span>{ele?.BranchCode || "-"}</span>
                   <span>{ele?.AddressID?.Address || "-"}</span>
-
-                  <span>
-                    <CustomIconButton
-                      icon={"edit"}
-                      title="Edit"
-                      onClick={() => setIdToEdit(ele?.id)}
-                    ></CustomIconButton>
-                    <CustomIconButton
-                      sx={{ marginLeft: "10px" }}
-                      icon={"delete"}
-                      title="Delete"
-                      onClick={() => {
-                        setIdToDelete(ele?.id);
-                      }}
-                    ></CustomIconButton>
-                  </span>
+                  {hasPermission("Edit Branch") && (
+                    <span>
+                      <CustomIconButton
+                        icon={"edit"}
+                        title="Edit"
+                        onClick={() => setIdToEdit(ele?.id)}
+                      ></CustomIconButton>
+                      <CustomIconButton
+                        sx={{ marginLeft: "10px" }}
+                        icon={"delete"}
+                        title="Delete"
+                        onClick={() => {
+                          setIdToDelete(ele?.id);
+                        }}
+                      ></CustomIconButton>
+                    </span>
+                  )}
                 </div>
               )}
 

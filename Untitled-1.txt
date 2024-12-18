@@ -1,0 +1,18 @@
+|
+
+import { UserContext } from "../../../contexts/UserContext";
+
+import { useLocation, useNavigate } from "react-router-dom";
+
+
+ const { hasPermission } = useContext(UserContext);
+const navigate = useNavigate();
+
+
+-----------------------------------------------------------------------------------------
+// redirect if user does not have permission
+  useEffect(() => {
+    if (!hasPermission("View Membership List")) {
+      navigate("/");
+    }
+  }, []);

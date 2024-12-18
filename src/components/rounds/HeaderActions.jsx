@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import "../../styles/rounds.css";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
+import { UserContext } from "../../contexts/UserContext";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,6 +29,7 @@ import CustomIconButton from "../CustomIconButton";
 import useQueryParam from "../../hooks/useQueryParams";
 
 const HeaderActions = ({ data }) => {
+  const { hasPermission } = useContext(UserContext);
   const navigate = useNavigate();
   const { setSearchResults, disabledList, setDisabledList } =
     useContext(AppContext);
@@ -186,16 +188,18 @@ const HeaderActions = ({ data }) => {
           className="archive-btn dashboard-actions-btn"
         ></FormButton>
 
-        <FormButton
-          onClick={() => setShowModal(true)}
-          icon={
-            <AddCircleIcon
-              sx={{ verticalAlign: "middle", margin: "0px 3px" }}
-            ></AddCircleIcon>
-          }
-          buttonText={"Add Round"}
-          className="add-round-btn dashboard-actions-btn"
-        ></FormButton>
+        {hasPermission("Add Round") && (
+          <FormButton
+            onClick={() => setShowModal(true)}
+            icon={
+              <AddCircleIcon
+                sx={{ verticalAlign: "middle", margin: "0px 3px" }}
+              ></AddCircleIcon>
+            }
+            buttonText={"Add Round"}
+            className="add-round-btn dashboard-actions-btn"
+          ></FormButton>
+        )}
       </div>
       {showModal && (
         <Modal

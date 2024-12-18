@@ -28,7 +28,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     filterData;
 
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar, searchResults, disabledList } = useContext(AppContext);
 
   const [showCorrection, setShowCorrection] = useState(false);
@@ -229,14 +229,17 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       renderCell: (params) => {
         return (
           <div>
-            <CustomIconButton
-              icon={"receipt"}
-              title="Receipt"
-              onClick={() => {
-                setShowReceipt(true);
-                setReceiptId(params?.row?.id);
-              }}
-            ></CustomIconButton>
+            {hasPermission("View Client Receipts") && (
+              <CustomIconButton
+                icon={"receipt"}
+                title="Receipt"
+                onClick={() => {
+                  setShowReceipt(true);
+                  setReceiptId(params?.row?.id);
+                }}
+              ></CustomIconButton>
+            )}
+
             <CustomIconButton
               icon={"edit"}
               title="Correct Movement"

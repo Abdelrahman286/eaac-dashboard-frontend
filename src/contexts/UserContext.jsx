@@ -103,9 +103,9 @@ export default function UserContextProvider({ children }) {
   const userPermissions = userPermissionsObjects?.map((ele) => ele?.Name_en);
 
   const hasPermission = (_permissionString) => {
-    if (!Array.isArray(userPermissions) || userPermissions?.length == 0) return;
-    // return userPermissions?.includes(_permissionString);
-    return true;
+    // if (!Array.isArray(userPermissions) || userPermissions?.length == 0) return;
+    return userPermissions?.includes(_permissionString);
+    // return true;
   };
 
   const value = { isLoggedIn, user, token, login, logout, hasPermission };
