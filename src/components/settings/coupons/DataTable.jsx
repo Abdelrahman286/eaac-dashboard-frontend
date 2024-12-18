@@ -136,7 +136,7 @@ const DataTable = ({ onDataChange }) => {
   const { mutate: deleteCoupon, isPending: deleteLoading } = useMutation({
     mutationFn: updatePromoCodeFn,
     onSuccess: () => {
-      console.log("Coupon deleted successfully");
+
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
         queryKey: ["promoCodes-pagination"],

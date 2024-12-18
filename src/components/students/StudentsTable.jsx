@@ -299,7 +299,7 @@ const StudentsTable = ({ onDataChange }) => {
     {
       field: "rowIndex",
       headerName: "#",
-      flex: 0.5, // Makes the column responsive, taking up half a unit of space
+      flex: 0.5,
     },
 
     {
@@ -344,6 +344,18 @@ const StudentsTable = ({ onDataChange }) => {
       headerName: "Company Name",
       valueGetter: (value, row) => {
         return `${row?.companyName || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "MembershipCode",
+      headerName: "MembershipCode",
+
+      //   editable: true,
+      valueGetter: (value, row) => {
+        return `${row?.membership?.MembershipCode || ""}`;
       },
       flex: 1.2,
       minWidth: 100,

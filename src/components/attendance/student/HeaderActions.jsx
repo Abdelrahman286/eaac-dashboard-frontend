@@ -32,7 +32,7 @@ import useQueryParam from "../../../hooks/useQueryParams";
 const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   const [clientId, setClientId] = useState("");
   const [roundId, setRoundId] = useState("");
@@ -127,7 +127,6 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const roundParamsId = useQueryParam("paramsRound");
   useEffect(() => {
     if (roundParamsId) {
-      console.log(roundParamsId);
       setRoundId(roundParamsId);
     }
   }, [roundParamsId]);
@@ -164,7 +163,6 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <SearchableDropdown
               onSelect={(_client) => {
-                // console.log(_client);
                 handleStudentSelect(_client);
               }}
               fetchData={getStudentFn}
@@ -254,22 +252,24 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
               justifyContent: { xs: "center", sm: "flex-start" },
             }}
           >
-            <Button
-              onClick={() => setShowReport(true)}
-              size="small"
-              variant="contained"
-              color="primary"
-              startIcon={<DownloadIcon />}
-              sx={{
-                width: "280px", // Constant width
-                paddingY: 0.1,
-                height: "40px",
-                padding: "16px 4px",
-                borderRadius: "20px",
-              }}
-            >
-              Show Attendance Report
-            </Button>
+            {hasPermission("Show/Print Student Attendance Report") && (
+              <Button
+                onClick={() => setShowReport(true)}
+                size="small"
+                variant="contained"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                sx={{
+                  width: "280px", // Constant width
+                  paddingY: 0.1,
+                  height: "40px",
+                  padding: "16px 4px",
+                  borderRadius: "20px",
+                }}
+              >
+                Show Attendance Report
+              </Button>
+            )}
           </Box>
 
           <ExportToExcel

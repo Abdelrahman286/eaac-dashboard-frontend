@@ -8,7 +8,6 @@ import {
   getConflictString,
 } from "../../utils/functions";
 const ViewRoundsWithConflict = ({ data, mainFormData }) => {
-  console.log(data);
   // Add index for array objects
   const arrayWithIndex = data.map((item, index) => ({
     ...item,

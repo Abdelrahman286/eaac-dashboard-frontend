@@ -103,7 +103,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
-    console.log(data);
     // Handle edit data initialization
 
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
@@ -161,11 +160,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       });
     }
   };
-
-  //   for DEBUG
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   return (
     <div className="admin-form-page">
@@ -232,7 +226,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 type="date"
                 value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
-                  console.log(e.target.value);
                   const inputDate = e.target.value; // YYYY-MM-DD
                   setFormData({ ...formData, birthDate: inputDate });
                 }}

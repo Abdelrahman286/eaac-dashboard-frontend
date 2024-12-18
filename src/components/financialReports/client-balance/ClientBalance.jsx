@@ -8,7 +8,6 @@ import DataTable from "./DataTable";
 const ClientBalance = () => {
   const [filterData, setFilterData] = useState({});
   const handleFilterChange = (_filterData) => {
-    console.log(_filterData);
     setFilterData(_filterData);
   };
 

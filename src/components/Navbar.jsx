@@ -26,6 +26,8 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaidIcon from "@mui/icons-material/Paid";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+
 //requests
 import { getProfileData } from "../requests/profile";
 
@@ -37,13 +39,12 @@ import Tooltip from "@mui/material/Tooltip";
 
 // images
 import barndLogo from "../assets/eaac-logo-240.png";
-import fallbackImageUrl from "../assets/profileImg.webp";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const { token, user, logout } = useContext(UserContext);
   const [closed, setClosed] = useState("closed");
   const { pathname } = useLocation();
-  const isMounted = useRef(false);
 
   // fetch user profile data
   const { data: userDataObj, isLoading: getUserLoading } = useQuery({
@@ -155,10 +156,16 @@ const Navbar = () => {
       icon: <AssignmentIndIcon></AssignmentIndIcon>,
       label: "Admins",
     },
+
+    {
+      paths: ["/profiles"],
+      icon: <PersonSearchIcon></PersonSearchIcon>,
+      label: "Profiles",
+    },
     {
       paths: ["/profile"],
       icon: <AccountCircleIcon></AccountCircleIcon>,
-      label: "Profile",
+      label: "My Profile",
     },
 
     {

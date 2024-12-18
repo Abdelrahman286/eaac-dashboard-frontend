@@ -30,7 +30,7 @@ import useQueryParam from "../../../hooks/useQueryParams";
 const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
 
   // attendance report
   const [showReport, setShowReport] = useState(false);
@@ -41,6 +41,9 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // filter data view for report
+  const [filterDataView, setFilterDataView] = useState({});
 
   // handle redirect
   useEffect(() => {
@@ -151,7 +154,9 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
           >
             <InstructorAttendanceReport
               onClose={() => setShowReport(false)}
+              roundId={roundId}
               instructorId={instructorId}
+              filterDataView={filterDataView}
             ></InstructorAttendanceReport>
           </Modal>
         )}
@@ -172,6 +177,10 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               }
               onChange={(e, value) => {
                 handleInstructorSelect(value);
+                setFilterDataView({
+                  ...filterDataView,
+                  instructorId: value?.Name,
+                });
               }}
               loading={instructorLoading}
               options={instructors || []}
@@ -190,6 +199,10 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               value={groups.find((item) => item.id == roundId) || null}
               onChange={(e, value) => {
                 setRoundId(value?.id);
+                setFilterDataView({
+                  ...filterDataView,
+                  roundId: value?.Name_en,
+                });
               }}
               loading={groupsLoading}
               options={groups || []}
@@ -229,8 +242,6 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
           }}
         >
           <TextField
-            //   error={Boolean(formErrors?.startDate)}
-            //   helperText={formErrors?.startDate}
             value={startDate || ""}
             onChange={(e) => setStartDate(e.target.value)}
             size="small"
@@ -243,8 +254,6 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
             }}
           />
           <TextField
-            //   error={Boolean(formErrors?.endDate)}
-            //   helperText={formErrors?.endDate}
             value={endDate || ""}
             onChange={(e) => setEndDate(e.target.value)}
             size="small"
@@ -294,22 +303,24 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
               justifyContent: { xs: "center", sm: "flex-start" },
             }}
           >
-            <Button
-              size="small"
-              variant="contained"
-              color="primary"
-              startIcon={<DownloadIcon />}
-              sx={{
-                width: "280px", // Constant width
-                paddingY: 0.1,
-                height: "40px",
-                padding: "16px 4px",
-                borderRadius: "20px",
-              }}
-              onClick={() => setShowReport(true)}
-            >
-              Show Attendance Report
-            </Button>
+            {hasPermission("Show/Print Instructor Attendance Report") && (
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                sx={{
+                  width: "280px", // Constant width
+                  paddingY: 0.1,
+                  height: "40px",
+                  padding: "16px 4px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => setShowReport(true)}
+              >
+                Show Attendance Report
+              </Button>
+            )}
           </Box>
 
           {/* Export XLS Button */}

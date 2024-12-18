@@ -1,11 +1,11 @@
 @import url(variables.css);
 
 .nav-page {
-  overflow: hidden; /* Prevent horizontal scrolling */
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   width: 100vw;
-  height: 100vh; /* Ensure the full viewport height */
+  height: 100vh;
 
   .side-menu {
     position: fixed;
@@ -16,14 +16,12 @@
 
     height: 100vh;
 
-    overflow-y: auto; /* Allow vertical scrolling for side menu */
+    overflow-y: auto;
 
     .side-menu-bg {
       position: absolute;
       top: 0;
       left: 0;
-      /* background: url("../assets/sidebar-bg-0fnU7Fm6.jpg");
-      background-size: cover; */
       opacity: 0.1;
       z-index: -2;
       width: 100%;
@@ -72,7 +70,7 @@
         svg {
           font-size: 26px;
           /* background: red; */
-          margin-right: 4px;
+          /* margin-right: 4px; */
         }
       }
     }
@@ -97,15 +95,12 @@
 }
 
 .side-menu::-webkit-scrollbar-thumb {
-  /* background-color: var(--gray-bg1);
-  border-radius: 10px; */
-  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners for the thumb */
+  background: #b0b0b0;
+  border-radius: 10px;
 }
 
 .side-menu::-webkit-scrollbar-track {
-  /* background: transparent; */
-  background: #f0f0f0; /* Grayish background color for the track */
+  background: #f0f0f0;
 }
 
 /* ------------------Scrollbar for content area-------------- */
@@ -115,16 +110,13 @@
 }
 
 .nav-content::-webkit-scrollbar-thumb {
-  /* background-color: var(--secondary-color);
-  border-radius: 10px; */
-
-  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners for the thumb */
+  background: #b0b0b0;
+  border-radius: 10px;
 }
 
 .nav-content::-webkit-scrollbar-track {
   background: transparent;
-  background: #f0f0f0; /* Grayish background color for the track */
+  background: #f0f0f0;
 }
 
 /* For Firefox */
@@ -133,27 +125,22 @@
   scrollbar-color: var(--gray-bg1) transparent;
 }
 
-.nav-content {
-  /* scrollbar-width: thin; */
-  /* scrollbar-color: var(--secondary-color) transparent; */
-}
-
 .nav-content::-webkit-scrollbar {
-  width: 8px; /* Thin scrollbar width */
-  height: 8px; /* Thin scrollbar height */
+  width: 8px;
+  height: 8px;
 }
 
 .nav-content::-webkit-scrollbar-track {
-  background: #f0f0f0; /* Grayish background color for the track */
+  background: #f0f0f0;
 }
 
 .nav-content::-webkit-scrollbar-thumb {
-  background: #b0b0b0; /* Grayish color for the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners for the thumb */
+  background: #b0b0b0;
+  border-radius: 10px;
 }
 
 .nav-content::-webkit-scrollbar-thumb:hover {
-  background: #888888; /* Darker gray for the thumb on hover */
+  background: #888888;
 }
 
 /* handle collapse and expand of the .side-menu */
@@ -168,17 +155,20 @@
 .nav-page.closed .side-menu {
   width: 50px;
 }
+.nav-page:not(.closed) .side-menu .link svg {
+  margin-right: 10px;
+}
 
 .nav-page.closed .dashboard-header {
   width: calc(100% - 50px);
 }
 
 .nav-page.closed .side-menu .nav-collapse-icon {
-  font-size: 28px;
-  padding: 6px;
+  font-size: 22px;
   vertical-align: middle;
   margin: auto;
 }
+
 .nav-page.closed .nav-content {
   margin-left: 50px !important;
   width: calc(100vw - 50px);
@@ -242,18 +232,12 @@
     cursor: pointer;
     margin: 0px 10px;
 
-    svg {
-      font-size: 30px;
-      vertical-align: middle;
-    }
-
     .profile-data {
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: row;
       margin-right: 20px;
-
       padding: 1px 6px;
       border-radius: 10px;
 

@@ -196,10 +196,11 @@ const ReceiptModal = ({ data, onClose }) => {
           <div className="header">
             <div className="header-left">
               <p>
-                <strong>رقم#</strong> <span>{data?.number || "..."}</span>
+                <strong>رقم#</strong> <span>{data?.BillCode || "..."}</span>
               </p>
               <p>
-                <strong>التاريخ</strong> <span>{data?.date || "..."}</span>
+                <strong>التاريخ</strong>{" "}
+                <span>{data?.created_at?.split(" ")[0] || "..."}</span>
               </p>
             </div>
             <div className="header-right">
@@ -232,7 +233,7 @@ const ReceiptModal = ({ data, onClose }) => {
             </p>
             <p>
               <strong>كود العضويه</strong>{" "}
-              <span>{data?.membershipCode || "..."}</span>
+              <span>{data?.MembershipID?.MembershipCode || "..."}</span>
             </p>
             <p>
               <strong> البيان </strong>
@@ -265,7 +266,7 @@ const ReceiptModal = ({ data, onClose }) => {
                 <strong> المدفوع</strong> <span>{data?.Debit || "???"}</span>
               </p>
               <p>
-                <strong> المتبقي</strong> <span>{data?.Credit || "???"}</span>
+                <strong> المتبقي</strong> <span>{data?.rem || "???"}</span>
               </p>
             </div>
             <div className="summary-row">
@@ -273,7 +274,7 @@ const ReceiptModal = ({ data, onClose }) => {
                 <strong> مُسلم من</strong> <span>??</span>
               </p>
               <p>
-                <strong> كود الموظف:</strong> <span>??</span>
+                <strong> كود الموظف</strong> <span>??</span>
               </p>
             </div>
             <div className="summary-row">
@@ -281,7 +282,7 @@ const ReceiptModal = ({ data, onClose }) => {
                 <strong> التوقيع</strong>
               </p>
               <p>
-                <strong> فرع:</strong> <span>???</span>
+                <strong> فرع</strong> <span>???</span>
               </p>
             </div>
           </div>

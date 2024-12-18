@@ -94,9 +94,7 @@ const AddBulkSection = ({ mainFormData, onClose }) => {
     isPending: sessionsWithConflictLoading,
     data: sessionsWithConflicts,
   } = useMutation({
-    onSuccess: (res) => {
-      //   console.log(res);
-    },
+    onSuccess: (res) => {},
     mutationFn: async (reqObj) => {
       let requestOptions = {
         method: "POST",
@@ -130,7 +128,6 @@ const AddBulkSection = ({ mainFormData, onClose }) => {
     mutationFn: createRoundFn,
 
     onSuccess: () => {
-      console.log("new round added");
       queryClient.invalidateQueries(["round-pagination"]);
       queryClient.invalidateQueries(["round-list"]);
       onClose();
@@ -138,7 +135,6 @@ const AddBulkSection = ({ mainFormData, onClose }) => {
     },
     onError: (error) => {
       showSnackbar("Failed to Add New Round", "error");
-      console.log("Error at adding new Round", error);
     },
   });
 

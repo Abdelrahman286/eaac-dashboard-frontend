@@ -33,6 +33,7 @@ import Modal from "../../Modal";
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 import AddPayment from "./AddPayment";
+import Reconcile from "./Reconcile";
 
 // import Refund from "./Refund";
 // import CorrectMovement from "./CorrectMovement";
@@ -44,6 +45,8 @@ const Header = ({ excelData, onFilterChange }) => {
 
   const [formData, setFormData] = useState({});
   const [showAddPayment, setShowAddPayment] = useState(false);
+
+  const [showReconcile, setShowReconcile] = useState(false);
 
   const handleFilters = () => {
     onFilterChange(formData);
@@ -95,6 +98,16 @@ const Header = ({ excelData, onFilterChange }) => {
           onClose={() => setShowAddPayment(false)}
         >
           <AddPayment onClose={() => setShowAddPayment(false)}></AddPayment>
+        </Modal>
+      )}
+
+      {showReconcile && (
+        <Modal
+          classNames={"show-add-expenses-modal"}
+          title={"Reconcile"}
+          onClose={() => setShowReconcile(false)}
+        >
+          <Reconcile onClose={() => setShowReconcile(false)}></Reconcile>
         </Modal>
       )}
 
@@ -208,6 +221,23 @@ const Header = ({ excelData, onFilterChange }) => {
           ></ExportToExcel>
 
           <Button
+            onClick={() => setShowReconcile(true)}
+            size="small"
+            variant="contained"
+            color="warning"
+            startIcon={<AddIcon />}
+            sx={{
+              minWidth: "130px", // Constant width
+              paddingY: 0.1,
+              height: "40px",
+              padding: "16px 4px",
+              borderRadius: "20px",
+            }}
+          >
+            Reconcile
+          </Button>
+
+          <Button
             onClick={() => setShowAddPayment(true)}
             size="small"
             variant="contained"
@@ -222,23 +252,6 @@ const Header = ({ excelData, onFilterChange }) => {
             }}
           >
             Add Expenses
-          </Button>
-
-          <Button
-            // onClick={() => setShowCorrectMovement(true)}
-            size="small"
-            variant="contained"
-            // color="success"
-            startIcon={<AddIcon />}
-            sx={{
-              minWidth: "130px", // Constant width
-              paddingY: 0.1,
-              height: "40px",
-              padding: "16px 4px",
-              borderRadius: "20px",
-            }}
-          >
-            Reconcile
           </Button>
         </Box>
       </Box>

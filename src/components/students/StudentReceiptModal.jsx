@@ -273,7 +273,6 @@ const StudentReceiptModal = () => {
             fontWeight: "bold",
           }}
           onClick={() => {
-            console.log("Print clicked");
             printSpecificElement();
           }}
         >

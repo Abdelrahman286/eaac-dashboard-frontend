@@ -60,10 +60,8 @@ const AddNewContact = ({ id }) => {
     const errors = validateContacts(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      console.log(errors);
     } else {
       setFormErrors({});
-      console.log("send");
       const newObj = {
         ...formData,
         branchId: 1,

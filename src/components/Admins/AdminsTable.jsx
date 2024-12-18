@@ -147,7 +147,6 @@ const AdminsTable = ({ onDataChange }) => {
   const { mutate: deleteAdmin, isPending: deleteLoading } = useMutation({
     mutationFn: editAdminFn,
     onSuccess: () => {
-      console.log("Admin deleted successfully");
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
         queryKey: ["admin-pagination"],
@@ -166,9 +165,7 @@ const AdminsTable = ({ onDataChange }) => {
   // restore deleted admin
   const { mutate: restoreAdmin, isPending: restoreLoading } = useMutation({
     mutationFn: editAdminFn,
-
     onSuccess: () => {
-      console.log("admin restored");
       queryClient.invalidateQueries({
         queryKey: ["admin-pagination"],
       });
@@ -232,12 +229,6 @@ const AdminsTable = ({ onDataChange }) => {
     setShowPermissionsModal(true);
     setIdToShowPermissions(row.id);
   };
-
-  // handle view instructor data
-  //   const handleViewInstructorData = (row) => {
-  //     setShowInstructorModal(true);
-  //     setDataToShow(row);
-  //   };
 
   const columns = [
     {
@@ -318,7 +309,7 @@ const AdminsTable = ({ onDataChange }) => {
       field: "BranchID.Name_en",
       headerName: "BranchID",
       valueGetter: (value, row) => {
-        return `${row?.BranchID?.name_en || ""}`;
+        return `${row?.BranchID?.Name_en || ""}`;
       },
       flex: 1, // This column will take up more space compared to others
       minWidth: 100,

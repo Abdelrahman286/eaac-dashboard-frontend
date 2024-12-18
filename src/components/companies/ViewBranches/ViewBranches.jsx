@@ -22,8 +22,6 @@ import AddNewBranch from "./AddNewBranch.jsx";
 import LoadingSpinner from "../../LoadingSpinner";
 const ViewBranches = ({ id }) => {
   const { token } = useContext(UserContext);
-  const { showSnackbar } = useContext(AppContext);
-  const queryClient = useQueryClient();
 
   // Branches List
   const { data: branchesList, isLoading: branchesLoading } = useQuery({
@@ -43,8 +41,6 @@ const ViewBranches = ({ id }) => {
   const branches =
     getDataForTableRows(branchesList?.success?.response?.data) || {};
 
-  console.log(branches);
-  console.log(branches);
   return (
     <div
       style={{

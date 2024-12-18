@@ -350,7 +350,7 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
                     boxSizing: "border-box",
                   }}
                 >
-                  {userIndex + 1}- Student Name ?
+                  {userIndex + 1}- {user?.UserID?.Name}
                 </Typography>
 
                 {/* Attendance Cells */}

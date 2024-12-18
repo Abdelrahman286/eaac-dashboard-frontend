@@ -49,7 +49,7 @@ const DataTable = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
 
   const [showNotesModal, setShowNotesModal] = useState(false);
@@ -110,7 +110,6 @@ const DataTable = ({
       showSnackbar("Leave Time Must be after Attendance Time", "error");
       errors.startTime = row.id;
       errors.endTime = row.id;
-      console.log(startTime?.value);
     }
 
     if (Object.keys(errors).length > 0) {
@@ -410,61 +409,63 @@ const DataTable = ({
       renderCell: (params) => {
         return (
           <Box sx={{ margin: "0", padding: "10px 3px" }}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <TextField
-                error={Boolean(timeErrors?.startTime == params.row.id)}
-                label="Attendance Time"
-                type="time"
-                size="small"
-                InputLabelProps={{ shrink: true }}
-                sx={{ width: 150 }}
-                onChange={(e) =>
-                  setStartTime({
-                    id: params.row.id,
-                    value: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                error={Boolean(timeErrors?.endTime == params.row.id)}
-                label="Leave Time"
-                type="time"
-                size="small"
-                InputLabelProps={{ shrink: true }}
-                sx={{ width: 150 }}
-                onChange={(e) =>
-                  setEndTime({
-                    id: params.row.id,
-                    value: e.target.value,
-                  })
-                }
-              />
+            {hasPermission("Submit Instructor Attendance") && (
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  error={Boolean(timeErrors?.startTime == params.row.id)}
+                  label="Attendance Time"
+                  type="time"
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: 150 }}
+                  onChange={(e) =>
+                    setStartTime({
+                      id: params.row.id,
+                      value: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  error={Boolean(timeErrors?.endTime == params.row.id)}
+                  label="Leave Time"
+                  type="time"
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: 150 }}
+                  onChange={(e) =>
+                    setEndTime({
+                      id: params.row.id,
+                      value: e.target.value,
+                    })
+                  }
+                />
 
-              <Tooltip title="Calculate">
-                <IconButton
-                  size="large"
-                  color="primary"
-                  onClick={() => {
-                    handleCalculateTime(params.row);
-                  }}
-                >
-                  <CalculateIcon />
-                </IconButton>
-              </Tooltip>
+                <Tooltip title="Calculate">
+                  <IconButton
+                    size="large"
+                    color="primary"
+                    onClick={() => {
+                      handleCalculateTime(params.row);
+                    }}
+                  >
+                    <CalculateIcon />
+                  </IconButton>
+                </Tooltip>
 
-              <Tooltip title="Add Notes">
-                <IconButton
-                  size="large"
-                  color="secondary"
-                  onClick={() => {
-                    setNotesData(params?.row);
-                    setShowNotesModal(true);
-                  }}
-                >
-                  <EditNoteIcon />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+                <Tooltip title="Add Notes">
+                  <IconButton
+                    size="large"
+                    color="secondary"
+                    onClick={() => {
+                      setNotesData(params?.row);
+                      setShowNotesModal(true);
+                    }}
+                  >
+                    <EditNoteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            )}
           </Box>
         );
       },

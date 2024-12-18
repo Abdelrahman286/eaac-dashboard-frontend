@@ -37,7 +37,7 @@ import Modal from "../../Modal";
 const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
   const queryClient = useQueryClient();
 
-  const { token } = useContext(UserContext);
+  const { token, hasPermission } = useContext(UserContext);
   const { showSnackbar } = useContext(AppContext);
 
   // Mutate Attendance
@@ -313,19 +313,23 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
       minWidth: 140,
       renderCell: (params) => {
         return (
-          <Box sx={{ margin: "0" }}>
-            <CustomIconButton
-              onClick={() => handleAttendance(params.row, 1)}
-              icon={"attended"}
-              title={"Attended"}
-            ></CustomIconButton>
+          <>
+            {hasPermission("Submit Student Attendance") && (
+              <Box sx={{ margin: "0" }}>
+                <CustomIconButton
+                  onClick={() => handleAttendance(params.row, 1)}
+                  icon={"attended"}
+                  title={"Attended"}
+                ></CustomIconButton>
 
-            <CustomIconButton
-              onClick={() => handleAttendance(params.row, 0)}
-              icon={"absent"}
-              title={"Absent"}
-            ></CustomIconButton>
-          </Box>
+                <CustomIconButton
+                  onClick={() => handleAttendance(params.row, 0)}
+                  icon={"absent"}
+                  title={"Absent"}
+                ></CustomIconButton>
+              </Box>
+            )}
+          </>
         );
       },
     },

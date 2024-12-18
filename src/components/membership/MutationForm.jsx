@@ -262,10 +262,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     }
   };
 
-  //for debug
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+
 
   return (
     <div className="membership-form-page">

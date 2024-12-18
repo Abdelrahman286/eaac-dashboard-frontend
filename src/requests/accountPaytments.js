@@ -12,6 +12,11 @@ export const getPaymentMethodsFn = (reqBody, token, config) => {
   return makeRequest(`${URL}/payment/getPaymentMethod`, reqBody, token, config);
 };
 
+// reconcile
+export const reconcile = ({ reqBody, token, config }) => {
+  return makeRequest(`${URL}/payment/reconcile`, reqBody, token, config);
+};
+
 // get expenses types
 
 export const getExpensesTypesFn = (reqBody, token, config) => {

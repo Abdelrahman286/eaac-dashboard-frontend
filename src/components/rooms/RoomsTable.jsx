@@ -135,7 +135,6 @@ const RoomsTable = ({ onDataChange }) => {
   const { mutate: deleteRoom, isPending: deleteLoading } = useMutation({
     mutationFn: deleteRoomFn,
     onSuccess: () => {
-      console.log("Room deleted successfully");
       // Invalidate the query with key 'company-list'
       queryClient.invalidateQueries({
         queryKey: ["room-pagination"],
@@ -199,7 +198,6 @@ const RoomsTable = ({ onDataChange }) => {
     mutationFn: restoreRoomFn,
 
     onSuccess: () => {
-      console.log("room restored");
       queryClient.invalidateQueries({
         queryKey: ["room-pagination"],
       });
@@ -210,7 +208,6 @@ const RoomsTable = ({ onDataChange }) => {
       showSnackbar("Room Data Restored Successfully ", "success");
     },
     onError: (error) => {
-      console.log("error at restoring Room data", error);
       showSnackbar("Failed to Restore Room Data", "error");
     },
   });

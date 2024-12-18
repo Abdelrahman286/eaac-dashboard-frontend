@@ -84,7 +84,6 @@ const NotesModal = ({ data, onClose }) => {
 
   useEffect(() => {
     if (data?.Notes) {
-      console.log(data);
       setNoteText(data?.Notes);
     }
   }, []);

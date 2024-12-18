@@ -83,7 +83,6 @@ const ViewStudentData = ({ data }) => {
     }
   };
 
-  console.log(groups);
   return (
     <div style={{ width: "100%" }}>
       <div className="separator"></div>

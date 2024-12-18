@@ -72,6 +72,10 @@ const DailyMovements = lazy(() =>
   import("./components/financialReports/daily-movements/DailyMovements")
 );
 
+// Profiles page
+
+const Profiles = lazy(() => import("./pages/Profiles"));
+
 // context
 import { AppContext } from "./contexts/AppContext";
 import { UserContext } from "./contexts/UserContext";
@@ -133,6 +137,16 @@ function App() {
           <Route
             path="/students"
             element={<StudentsPage></StudentsPage>}
+          ></Route>
+
+          {/* ------------------ profiles page ------------ */}
+          <Route
+            path="/profiles"
+            element={
+              <Suspense fallback={<LoadingSpinner></LoadingSpinner>}>
+                <Profiles></Profiles>
+              </Suspense>
+            }
           ></Route>
 
           {/* //------------------- attendance-------------------------------------- */}

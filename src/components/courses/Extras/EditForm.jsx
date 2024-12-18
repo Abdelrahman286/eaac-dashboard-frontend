@@ -76,8 +76,6 @@ const EditForm = ({ extra, onCancel, courseId }) => {
   const handleSubmit = () => {
     const errors = validateEdit(formData);
 
-    console.log(formData);
-
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {

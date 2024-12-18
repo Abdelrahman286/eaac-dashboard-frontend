@@ -160,9 +160,6 @@ const CompaniesTable = ({ onDataChange }) => {
   const { mutate: deletCompany, isPending: deleteLoading } = useMutation({
     mutationFn: deleteCompanyFn,
     onSuccess: () => {
-      console.log("company deleted successfully");
-      // Invalidate the query with key 'company-list' , searchResults
-
       queryClient.invalidateQueries({
         queryKey: ["company-pagination"],
       });
@@ -209,7 +206,6 @@ const CompaniesTable = ({ onDataChange }) => {
     mutationFn: restoreCompanyFn,
 
     onSuccess: () => {
-      console.log("company restored");
       queryClient.invalidateQueries({
         queryKey: ["company-pagination"],
       });
@@ -220,7 +216,7 @@ const CompaniesTable = ({ onDataChange }) => {
       showSnackbar("Company Data Restored Successfully ", "success");
     },
     onError: (error) => {
-      console.log("error at restoring compay data", error);
+      showSnackbar("Can't Restore Company Data", "error");
     },
   });
 
@@ -315,7 +311,6 @@ const CompaniesTable = ({ onDataChange }) => {
       flex: 1,
       minWidth: 120,
       valueGetter: (value, row) => {
-        // console.log(params?.Address);
         return `${row?.HqAdressID?.Address || ""}`;
       },
     },

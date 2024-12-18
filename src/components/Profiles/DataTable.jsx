@@ -2,33 +2,32 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // MUI
-import { Box, Chip } from "@mui/material";
+import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
+
+import CustomIconButton from "../CustomIconButton";
 import Tooltip from "@mui/material/Tooltip";
 // contexts
-import { UserContext } from "../../../contexts/UserContext";
-import { AppContext } from "../../../contexts/AppContext";
+import { UserContext } from "../../contexts/UserContext";
+import { AppContext } from "../../contexts/AppContext";
 
 // utils
-import { getDataForTableRows } from "../../../utils/tables";
+import { getDataForTableRows } from "../../utils/tables";
 
 // requests
 
-import {
-  getExpensesTypesFn,
-  updateExpensesTypeFn,
-} from "../../../requests/settings";
+import { editProfileFn, getProfilesFn } from "../../requests/profiles";
 // components
-import DeleteConfirmation from "../../DeleteConfirmation";
-import RestoreConfirmation from "../../RestoreConfirmation";
+// import ViewInstructorData from "./ViewInstructorData";
+import DeleteConfirmation from "../DeleteConfirmation";
+import RestoreConfirmation from "../RestoreConfirmation";
 import MutationForm from "./MutationForm";
-import Modal from "../../Modal";
+import Modal from "../Modal";
 
-const DataTable = ({ onDataChange }) => {
+const Profiles = ({ onDataChange }) => {
   const queryClient = useQueryClient();
 
   const { token } = useContext(UserContext);
@@ -45,8 +44,8 @@ const DataTable = ({ onDataChange }) => {
 
   // State for pagination
   const [paginationModel, setPaginationModel] = useState({
-    page: 0, // MUI uses 0-based index
-    pageSize: 10, // Initial page size
+    page: 0,
+    pageSize: 10,
   });
 
   const paginationReqBody = {};
@@ -55,13 +54,14 @@ const DataTable = ({ onDataChange }) => {
   };
 
   // check if there's search term
-  if (searchResults?.key == "expensesTypes" && searchResults?.searchTerm) {
+  if (searchResults?.key == "profiles" && searchResults?.searchTerm) {
     paginationReqBody.search = searchResults?.searchTerm;
     dataListReqBody.search = searchResults?.searchTerm;
   }
 
   // check disabled key in request body
-  if (disabledList?.key == "expensesTypes") {
+
+  if (disabledList?.key == "profiles") {
     paginationReqBody.disabled = "1"; // get pagination data
     dataListReqBody.disabled = "1"; // get the list
   }
@@ -74,13 +74,13 @@ const DataTable = ({ onDataChange }) => {
   } = useQuery({
     queryFn: () => {
       // Remove hardcoded `page=1` and use the current page from paginationModel
-      return getExpensesTypesFn(paginationReqBody, token, {
+      return getProfilesFn(paginationReqBody, token, {
         isFormData: true,
         urlParams: `page=1`, // Use dynamic page number
       });
     },
     queryKey: [
-      "expensesTypes-pagination",
+      "profiles-pagination",
       paginationReqBody,
       dataListReqBody,
       disabledList?.key,
@@ -88,13 +88,14 @@ const DataTable = ({ onDataChange }) => {
     retry: 1,
   });
 
+  // Now, only trigger the list data fetching when paginationData is available
   const {
     data: listData,
     isLoading: isListLoading,
     isError: dataError,
   } = useQuery({
     queryKey: [
-      "expensesTypes-list",
+      "profiles-list",
       paginationModel.page,
       paginationModel.pageSize,
       paginationReqBody,
@@ -102,13 +103,14 @@ const DataTable = ({ onDataChange }) => {
       disabledList?.key,
     ],
     queryFn: () => {
-      return getExpensesTypesFn(dataListReqBody, token, {
+      return getProfilesFn(dataListReqBody, token, {
         isFormData: true,
-        urlParams: `page=${paginationModel.page + 1}`,
+        urlParams: `page=${paginationModel.page + 1}`, // Use the dynamic page number
       });
     },
-    enabled: !!paginationData,
-    keepPreviousData: true,
+
+    enabled: !!paginationData, // Enable this query only when paginationData is available
+    keepPreviousData: true, // Keep previous data while fetching new data
   });
 
   //------------------- Data transformation
@@ -127,26 +129,48 @@ const DataTable = ({ onDataChange }) => {
 
   // hoist the data for excel export
   useEffect(() => {
-    if (listData) {
+    if (dataObject) {
       onDataChange(dataList);
+    } else {
+      // to export empty excel if there's no data found
+      onDataChange([]);
     }
   }, [listData]);
 
-  //------------- delete course-------------------------
-  const { mutate: deleteRecord, isPending: deleteLoading } = useMutation({
-    mutationFn: updateExpensesTypeFn,
+  //------------- delete Profile-------------------------
+  const { mutate: deleteProfile, isPending: deleteLoading } = useMutation({
+    mutationFn: editProfileFn,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["expensesTypes-pagination"],
+        queryKey: ["profiles-pagination"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["expensesTypes-list"],
+        queryKey: ["profiles-list"],
       });
-      showSnackbar("Expenses Type Deleted Successfully ", "info");
+      showSnackbar("Profile Deleted Successfully ", "info");
       setShowDeleteModal(false);
     },
     onError: (error) => {
-      showSnackbar("Failed to Delete Expenses Type Data", "error");
+      showSnackbar("Failed to Delete Profile Data", "error");
+    },
+  });
+
+  // restore deleted Profile
+  const { mutate: restoreProfile, isPending: restoreLoading } = useMutation({
+    mutationFn: editProfileFn,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profiles-pagination"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profiles-list"],
+      });
+      setShowRestoreModal(false);
+      showSnackbar("Profile Data Restored Successfully ", "success");
+    },
+    onError: (error) => {
+      showSnackbar("Failed to Restore Profile Data", "error");
     },
   });
 
@@ -156,7 +180,7 @@ const DataTable = ({ onDataChange }) => {
     setIdToDelete(rowData?.id);
   };
   const confirmDelete = () => {
-    deleteRecord({
+    deleteProfile({
       reqBody: {
         id: [idToDelete],
         statusId: 4,
@@ -174,7 +198,7 @@ const DataTable = ({ onDataChange }) => {
     setIdToRestore(`${rowData?.id}`);
   };
   const confirmRestore = () => {
-    restoreRecord({
+    restoreProfile({
       reqBody: {
         id: [idToRestore],
         statusId: "1",
@@ -193,85 +217,145 @@ const DataTable = ({ onDataChange }) => {
     setDataToEdit(row);
   };
 
-  // restore deleted company
-  const { mutate: restoreRecord, isPending: restoreLoading } = useMutation({
-    mutationFn: updateExpensesTypeFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["expensesTypes-pagination"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["expensesTypes-list"],
-      });
-      setShowRestoreModal(false);
-      showSnackbar("Expenses Type Data Restored Successfully ", "success");
-    },
-    onError: (error) => {
-      showSnackbar("Failed to Restore Expenses Type Data", "error");
-    },
-  });
   const columns = [
     {
       field: "rowIndex",
       headerName: "#",
-      flex: 0.5,
+      flex: 0.5, // Makes the column responsive, taking up half a unit of space
     },
+
     {
-      field: "NameAr",
-      headerName: "Name (AR)",
+      field: "Name",
+      headerName: "Name",
       valueGetter: (value, row) => {
-        return `${row?.Name_ar || ""}`;
+        return `${row?.Name || ""}`;
       },
-      flex: 1.5,
+      flex: 1.2,
       minWidth: 100,
     },
 
     {
-      field: "NameEn",
-      headerName: "Name (EN)",
+      field: "Type",
+      headerName: "Type",
       valueGetter: (value, row) => {
-        return `${row?.Name_en || ""}`;
+        if (row?.RoleID == 1) {
+          return `Admin`;
+        } else if (row?.RoleID == 2) {
+          return `Student`;
+        } else if (row?.RoleID == 3) {
+          return `Instructor`;
+        }
       },
-      flex: 1.5,
+      flex: 1.2,
       minWidth: 100,
     },
 
     {
-      field: "Description_ar",
-      headerName: "Description (AR)",
+      field: "Email",
+      headerName: "Email",
       valueGetter: (value, row) => {
-        return `${row?.Description_ar || ""}`;
+        return `${row?.Email || ""}`;
       },
-      flex: 1.5,
+      flex: 1.2,
       minWidth: 100,
     },
 
     {
-      field: "Description_en",
-      headerName: "Description (EN)",
+      field: "JobTitle",
+      headerName: "Job Title",
       valueGetter: (value, row) => {
-        return `${row?.Description_en || ""}`;
+        return `${row?.JobTitle || ""}`;
       },
-      flex: 1.5,
-      minWidth: 100,
-    },
-    {
-      field: "BranchID.Name_en",
-      headerName: "BranchID",
-      valueGetter: (value, row) => {
-        return `${row?.BranchID?.Name_en || ""}`;
-      },
-      flex: 1.5, // This column will take up more space compared to others
+      flex: 1.2,
       minWidth: 100,
     },
 
+    // {
+    //   field: "address",
+    //   headerName: "Address",
+    //   valueGetter: (value, row) => {
+    //     return `${row?.address || ""}`;
+    //   },
+    //   flex: 1.2,
+    //   minWidth: 100,
+    // },
+
+    {
+      field: "nationality",
+      headerName: "Nationality",
+      valueGetter: (value, row) => {
+        return `${row?.Nationality || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "GovIssuedID",
+      headerName: "Government ID",
+      valueGetter: (value, row) => {
+        return `${row?.GovIssuedID || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "WhatsappNumber",
+      headerName: "WhatsApp Number",
+      valueGetter: (value, row) => {
+        return `${row?.WhatsappNumber || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "Facebook",
+      headerName: "Facebook",
+      valueGetter: (value, row) => {
+        return `${row?.FacebookUrl || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    {
+      field: "PhoneNumber",
+      headerName: "Phone Number",
+      valueGetter: (value, row) => {
+        return `${row?.PhoneNumber || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 100,
+    },
+
+    // {
+    //   field: "BranchID.Name_en",
+    //   headerName: "BranchID",
+    //   valueGetter: (value, row) => {
+    //     return `${row?.BranchID?.Name_en || ""}`;
+    //   },
+    //   flex: 1,
+    //   minWidth: 100,
+    // },
+
+    {
+      field: "Notes",
+      headerName: "Notes",
+      valueGetter: (value, row) => {
+        return `${row?.Notes || ""}`;
+      },
+      flex: 1,
+      minWidth: 100,
+    },
     {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 100,
+      minWidth: 180,
       renderCell: (params) => {
-        if (disabledList?.key == "expensesTypes") {
+        if (disabledList?.key == "profiles") {
           return (
             <Tooltip title="Restore">
               <IconButton
@@ -286,24 +370,19 @@ const DataTable = ({ onDataChange }) => {
         }
         return (
           <div>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="edit"
-                onClick={() => handleEdit(params.row)}
-              >
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                disabled={deleteLoading}
-                color="error"
-                aria-label="delete"
-                onClick={() => handleDelete(params.row)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <CustomIconButton
+              disabled={deleteLoading}
+              icon={"edit"}
+              title="Edit"
+              onClick={() => handleEdit(params.row)}
+            ></CustomIconButton>
+
+            <CustomIconButton
+              icon={"delete"}
+              title="Delete"
+              disabled={deleteLoading}
+              onClick={() => handleDelete(params.row)}
+            ></CustomIconButton>
           </div>
         );
       },
@@ -314,8 +393,9 @@ const DataTable = ({ onDataChange }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
+
   return (
-    <div className="rooms-table-wrapper">
+    <div className="admins-table-wrapper">
       {paginationErr && (
         <h2 className="invalid-message">
           No data available. Please try again.
@@ -325,7 +405,8 @@ const DataTable = ({ onDataChange }) => {
       {showEditModal && (
         <Modal
           //   classNames={"h-70per"}
-          title={"Edit Coupon"}
+          title={"Edit Profile"}
+          classNames={"admin-mutation-form"}
           onClose={() => setShowEditModal(false)}
         >
           <MutationForm
@@ -409,4 +490,4 @@ const DataTable = ({ onDataChange }) => {
   );
 };
 
-export default DataTable;
+export default Profiles;

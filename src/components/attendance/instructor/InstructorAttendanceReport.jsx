@@ -1,8 +1,21 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Typography, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  AppBar,
+  Toolbar,
+  Button,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid"; // Import MUI DataGrid
 
+// icons
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import html2pdf from "html2pdf.js";
+import "../../../styles/financial-reports.css";
+
+import companyLogo from "../../../assets/receipt-logo.png";
 // contexts
 import { UserContext } from "../../../contexts/UserContext";
 
@@ -16,7 +29,11 @@ import { getTimeDifference } from "../../../utils/functions";
 // excel
 import ExportToExcel from "../../ExportToExcel";
 
-const InstructorAttendanceReport = ({ instructorId }) => {
+const InstructorAttendanceReport = ({
+  instructorId,
+  roundId,
+  filterDataView,
+}) => {
   const { token } = useContext(UserContext);
 
   // Fix z-index issue for header inputs
@@ -43,26 +60,31 @@ const InstructorAttendanceReport = ({ instructorId }) => {
   }, []);
 
   // Fetch attendance data
-  const { data: dataList, isLoading: dataLoading } = useQuery({
+  const {
+    data: dataList,
+    isLoading,
+    isError,
+  } = useQuery({
     retry: 2,
     queryFn: () => {
       return getInstructorAttendanceReportFn(
         {
           ...(instructorId && { instructorId: instructorId }),
+          ...(roundId && { roundId: roundId }),
           numOfElements: 99999999999,
         },
         token,
         { isFormData: false }
       );
     },
-    queryKey: ["instructorAttendanceReport", instructorId],
+    queryKey: ["instructorAttendanceReport", instructorId, roundId],
   });
 
   const instructorAttendance = getDataForTableRows(
     dataList?.success?.response?.data
   );
 
-  if (dataLoading)
+  if (isLoading)
     return (
       <Box
         sx={{
@@ -90,60 +112,40 @@ const InstructorAttendanceReport = ({ instructorId }) => {
     return { ...item, sessionIndex: index + 1 };
   });
 
-  const columns = [
-    { field: "sessionIndex", headerName: "Session", width: 100 },
-    {
-      field: "AttendTime",
-      headerName: "Check In",
-      width: 150,
-      renderCell: (params) => {
-        return params?.row?.AttendTime || "-";
-      },
-    },
-    {
-      field: "LeaveTime",
-      headerName: "Check Out",
-      width: 150,
-      renderCell: (params) => {
-        return params?.row?.LeaveTime || "-";
-      },
-    },
-    {
-      field: "hours",
-      headerName: "Hours",
-      width: 100,
-      renderCell: (params) => {
-        return (
-          getTimeDifference(params?.row?.AttendTime, params?.row?.LeaveTime) ||
-          "-"
-        );
-      },
-    },
-    { field: "Notes", headerName: "Notes", width: 200 },
-    { field: "signature", headerName: "Signature", width: 150 },
-  ];
+  const handlePrintPdf = () => {
+    const documentClass = "report-content-page";
+    const element = document.querySelector(`.${documentClass}`);
 
-  //------------ excel ----------------
-  const excelHeader = [
-    { key: "sessionIndex", label: "Session" },
-    { key: "AttendTime", label: "Check In" },
-    { key: "LeaveTime", label: "Check Out" },
-    { key: "hours", label: "Hours" },
-    { key: "Notes", label: "Notes" },
-    { key: "signature", label: "signature" },
-  ];
+    if (element) {
+      const opt = {
+        margin: [0, 20, 0, 20], // [top, left, bottom, right] in px (adjusted for 1200px width)
+        filename: "document.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2, // Increase scale for better quality with larger width
+          logging: true,
+          width: 1200, // Set width to 1200px
+          windowWidth: 1200, // Ensure the capture area matches the div size
+          allowTaint: true, // Allow cross-origin images
+          useCORS: true, // Enable CORS for cross-origin image support
+        },
+        jsPDF: {
+          unit: "px", // Use pixels for precise size control
+          format: [1240, 1754], // Width 1200px + 40px margins, height in pixels
+          orientation: "portrait",
+          putTotalPages: true,
+        },
+        pagebreak: {
+          mode: ["avoid-all", "css", "legacy"], // Avoid breaking important elements
+        },
+      };
 
-  const excelData = rows?.map((ele) => {
-    return {
-      sessionIndex: ele.sessionIndex || "-",
-      AttendTime: ele?.AttendTime || "-",
-
-      LeaveTime: ele?.LeaveTime || "-",
-      hours: getTimeDifference(ele?.AttendTime, ele?.LeaveTime) || "",
-      Notes: ele?.Notes || "",
-      signature: "",
-    };
-  });
+      // Use html2pdf to convert the element to PDF
+      html2pdf().from(element).set(opt).save();
+    } else {
+      console.error(`Element with class ${documentClass} not found.`);
+    }
+  };
 
   return (
     <div
@@ -157,68 +159,143 @@ const InstructorAttendanceReport = ({ instructorId }) => {
           justifyContent: "flex-end",
         }}
       >
-        <ExportToExcel
-          data={excelData}
-          fileName={"instructor-attendance-report"}
-          headers={excelHeader}
-        ></ExportToExcel>
+        <Button
+          onClick={handlePrintPdf}
+          size="small"
+          variant="contained"
+          color="success"
+          startIcon={<PictureAsPdfIcon />}
+          sx={{
+            minWidth: "160px",
+            paddingY: 0.1,
+            height: "40px",
+            padding: "16px 4px",
+            borderRadius: "20px",
+            marginTop: "20px",
+          }}
+        >
+          Export PDF
+        </Button>
       </Box>
 
+      <div className="separator" style={{ margin: "10px 0px" }}></div>
       <div className="student-report-content">
         <Box
           style={{
             minHeight: "50vh",
           }}
         >
-          {/* Instructor Data */}
-          <Box>
-            <Box
-              sx={{
-                padding: 2,
-                margin: "8px 0px",
-                border: "1px solid #ddd",
-                backgroundColor: "#fafafa",
-              }}
+          <div className="report-content-page">
+            <AppBar
+              position="static"
+              sx={{ backgroundColor: "transparent", boxShadow: "none" }}
             >
-              {/* Instructor Details */}
-              <Typography variant="h6" gutterBottom>
-                {instructorAttendance[0]?.roundData?.RoundCode || ""}
-              </Typography>
-              <Box sx={{ mb: 1 }}>
+              <Toolbar sx={{ justifyContent: "center", position: "relative" }}>
+                {/* Logo on the left */}
+                <Box
+                  component="img"
+                  src={companyLogo}
+                  alt="Logo"
+                  sx={{
+                    height: 40,
+                    position: "absolute",
+                    left: 16,
+                    cursor: "pointer",
+                  }}
+                />
+                {/* Centered Header Text */}
                 <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  fontWeight="bold"
+                  variant="h6"
+                  component="div"
+                  sx={{ textAlign: "center", color: "black" }}
                 >
-                  Course
+                  Instructor Attendance Report
                 </Typography>
-                <Typography variant="body1">
-                  {instructorAttendance[0]?.roundData?.CourseID?.Name_en ||
-                    "N/A"}
-                </Typography>
+              </Toolbar>
+            </AppBar>
+            {/* header data */}
+            <Box>
+              <Box
+                sx={{
+                  padding: 2,
+                  margin: "8px 0px",
+                  border: "1px solid #ddd",
+                  backgroundColor: "#fafafa",
+                }}
+              >
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      fontWeight="bold"
+                    >
+                      Instructor Name
+                    </Typography>
+                    <Typography variant="body1">
+                      {filterDataView?.instructorId || "N/A"}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      fontWeight="bold"
+                    >
+                      Round
+                    </Typography>
+                    <Typography variant="body1">
+                      {filterDataView?.roundId || "N/A"}
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
-              <Divider sx={{ my: 1 }} />
-              {/* Add other instructor details */}
             </Box>
-          </Box>
 
-          {/* Instructor Table */}
-          <Box
-            sx={{
-              height: 400,
-              width: "100%",
-              marginTop: 2,
-            }}
-          >
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              disableColumnResize
-              autoHeight
-              pageSize={100}
-              rowsPerPageOptions={[5, 10, 20]}
-            />
-          </Box>
+            {/* table data */}
+            {isError && <p style={{ textAlign: "center" }}>No Rows Found</p>}
+            {isLoading && <p style={{ textAlign: "center" }}>Loading...</p>}
+            {rows?.length !== 0 && (
+              <div>
+                <div>
+                  <div className="report-table">
+                    <div className="header">
+                      <span>#</span>
+                      <span>Check In</span>
+                      <span>Check Out</span>
+                      <span>Hours</span>
+                      <span>Round Code</span>
+                      <span>Notes</span>
+                      <span>Signature</span>
+                    </div>
+
+                    <div className="data-list">
+                      {rows?.map((ele, index) => {
+                        return (
+                          <div className="row-wrapper" key={index}>
+                            <div className="data-row">
+                              <span>{index + 1 || "-"}</span>
+                              <span>{ele?.AttendTime || "-"}</span>
+                              <span>{ele?.LeaveTime || "-"}</span>
+                              <span>
+                                {getTimeDifference(
+                                  ele?.AttendTime,
+                                  ele?.LeaveTime
+                                ) || "-"}
+                              </span>
+                              <span>{ele?.RoundID?.RoundCode}</span>
+                              <span>{""}</span>
+                              <span>{""}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </Box>
       </div>
     </div>

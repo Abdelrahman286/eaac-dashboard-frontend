@@ -16,8 +16,6 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
       ? Math.max(...contacts.map((c) => c.id)) + 1
       : 1;
 
-    console.log("Adding new contact with ID:", newId);
-
     setContacts([
       ...contacts,
       { id: newId, fullName: "", title: "", phone: "", email: "", notes: "" },
@@ -26,8 +24,6 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
 
   // Handle change in any input field
   const handleProcessRowUpdate = (newRow) => {
-    console.log("Processing row update:", newRow);
-
     const updatedContacts = contacts.map((contact) =>
       contact.id == newRow.id ? newRow : contact
     );
@@ -44,8 +40,6 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
 
   // Handle delete contact row
   const handleDeleteRow = (id) => {
-    console.log("Deleting contact with ID:", id);
-
     setContacts(contacts.filter((contact) => contact.id !== id));
   };
 

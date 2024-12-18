@@ -183,7 +183,7 @@ const DataTable = ({ filterData }) => {
       field: "receiptNumber",
       headerName: "Receipt Serial NO.",
       valueGetter: (value, row) => {
-        return `${row?.receiptSerialNum || ""}`;
+        return `${row?.BillID?.BillCode || ""}`;
       },
       flex: 1.2,
       minWidth: 120,

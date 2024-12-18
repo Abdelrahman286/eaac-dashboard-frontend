@@ -6,15 +6,7 @@ import CustomIconButton from "../../CustomIconButton";
 // requests
 import { deletBranchFn } from "../../../requests/companies";
 // MUI
-import {
-  Tabs,
-  Tab,
-  Box,
-  TextField,
-  Autocomplete,
-  Button,
-  IconButton,
-} from "@mui/material";
+import { Button } from "@mui/material";
 
 // contexts
 import { AppContext } from "../../../contexts/AppContext";

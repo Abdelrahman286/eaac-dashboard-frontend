@@ -46,7 +46,6 @@ const ViewExtras = ({ data }) => {
     queryKey: ["courseExtras", data.id],
   });
   const extras = getDataForTableRows(dataList?.success?.response?.data) || {};
-  console.log(extras);
   return (
     <div
       style={{

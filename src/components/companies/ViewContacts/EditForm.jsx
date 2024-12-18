@@ -68,8 +68,6 @@ const EditForm = ({ contact, onCancel, companyId }) => {
     error,
   } = useMutation({
     onError: (error) => {
-      //   console.log(error.responseError?.failed?.response?.msg);
-      console.log("Error at editing Session data", error);
       showSnackbar("Faild to edit Session Data", "error");
     },
     mutationFn: editContactFn,

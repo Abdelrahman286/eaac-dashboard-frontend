@@ -20,23 +20,23 @@ import { UserContext } from "../../../contexts/UserContext";
 // utils
 import {
   getPaymentMethodsFn,
-  getExpensesTypesFn,
-  addExpensesFn,
-  getVendorsFn,
+  reconcile,
 } from "../../../requests/accountPaytments";
 
 // validation
-import { validateAddPayment } from "./validate";
+import { validateReconcile } from "./validate";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
 
-const AddPayment = ({ onClose }) => {
+const Reconcile = ({ onClose }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { token } = useContext(UserContext);
+  const { token, user } = useContext(UserContext);
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    accountantId: user?.id || "",
+  });
   const [formErrors, setFormErrors] = useState({});
 
   // fix z index issue for header inputs
@@ -65,23 +65,6 @@ const AddPayment = ({ onClose }) => {
     }
   }, []);
 
-  // expenses list
-  const { data: expensesList, isLoading: expensesLoading } = useQuery({
-    retry: 2,
-
-    queryFn: () => {
-      return getExpensesTypesFn(
-        {
-          //   numOfElements: "2000",
-        },
-        token,
-        { isFormData: true }
-      );
-    },
-    queryKey: ["expensesList"],
-  });
-  const expenses = getDataForTableRows(expensesList?.success?.response?.data);
-
   // payment methods (Method_en)
   const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
     useQuery({
@@ -101,30 +84,13 @@ const AddPayment = ({ onClose }) => {
     paymentMethodsList?.success?.response?.data
   );
 
-  // vendors list
-
-  const { data: vendorsList, isLoading: vendorsLoading } = useQuery({
-    queryFn: () => {
-      return getVendorsFn(
-        {
-          numOfElements: "100",
-        },
-        token,
-        { isFormData: true }
-      );
-    },
-
-    queryKey: ["vendors"],
-  });
-  const vendors = getDataForTableRows(vendorsList?.success?.response?.data);
-
   const {
     mutate: addPayment,
     isPending: addLoading,
     isError: isError,
     error: addError,
   } = useMutation({
-    mutationFn: addExpensesFn,
+    mutationFn: reconcile,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -141,8 +107,7 @@ const AddPayment = ({ onClose }) => {
     },
   });
   const handleSubmit = () => {
-    const errors = validateAddPayment(formData);
-
+    const errors = validateReconcile(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
@@ -152,6 +117,7 @@ const AddPayment = ({ onClose }) => {
           ([_, value]) => value !== null && value !== undefined && value !== ""
         )
       );
+
       addPayment({
         reqBody: cleanedFormData,
         token,
@@ -195,30 +161,6 @@ const AddPayment = ({ onClose }) => {
               />
             )}
           />
-          {/* expenses list */}
-          <Autocomplete
-            style={{ margin: "10px 0px" }}
-            loading={expensesLoading}
-            value={
-              expenses.find((item) => item.id == formData?.expenseId) || null
-            }
-            onChange={(e, value) => {
-              setFormData({ ...formData, expenseId: value?.id || "" });
-            }}
-            options={expenses}
-            getOptionLabel={(option) => option?.Name_en || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                id="expenseId"
-                error={Boolean(formErrors?.expenseId)}
-                helperText={formErrors?.expenseId}
-                {...params}
-                label="Expenses Type"
-                fullWidth
-              />
-            )}
-          />
 
           {/* payment amount */}
           <TextField
@@ -232,36 +174,14 @@ const AddPayment = ({ onClose }) => {
             type="number"
             fullWidth
             InputLabelProps={{ shrink: true }}
-            label="Paid Amount (EGP)"
+            label="Reconcile Value (EGP)"
             name="paymentAmount"
             size="small"
             style={{ margin: "10px 0px" }}
           />
-          {/* companies */}
-          <Autocomplete
-            loading={vendorsLoading}
-            value={
-              vendors.find((item) => item.id == formData?.companyId) || null
-            }
-            onChange={(e, value) => {
-              setFormData({ ...formData, companyId: value?.id || "" });
-            }}
-            options={vendors}
-            getOptionLabel={(option) => option.Name_en || ""}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                id="vendorId"
-                error={Boolean(formErrors?.companyId)}
-                helperText={formErrors?.companyId}
-                {...params}
-                label="Vendor"
-                fullWidth
-              />
-            )}
-          />
+
           <TextField
-            id="paymentAmount"
+            id="Notes"
             onChange={(e) => {
               setFormData({ ...formData, notes: e.target.value || "" });
             }}
@@ -271,7 +191,7 @@ const AddPayment = ({ onClose }) => {
             fullWidth
             InputLabelProps={{ shrink: true }}
             label="Notes"
-            name="paymentAmount"
+            name="Notes"
             size="small"
             rows={3}
             multiline
@@ -305,7 +225,7 @@ const AddPayment = ({ onClose }) => {
             {addLoading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Pay"
+              "Reconcile"
             )}
           </Button>
         </Box>
@@ -314,4 +234,4 @@ const AddPayment = ({ onClose }) => {
   );
 };
 
-export default AddPayment;
+export default Reconcile;

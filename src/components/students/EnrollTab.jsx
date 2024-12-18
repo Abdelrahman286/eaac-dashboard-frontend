@@ -4,17 +4,11 @@ import {
   Box,
   Typography,
   TextField,
-  InputAdornment,
-  IconButton,
-  Select,
-  MenuItem,
   Button,
   Autocomplete,
   Divider,
   CircularProgress,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 // contexts
 import { AppContext } from "../../contexts/AppContext";
@@ -39,9 +33,7 @@ import SearchableDropdown from "../SearchableDropdown";
 
 const EnrollTab = ({ data, closeFn }) => {
   const { showSnackbar } = useContext(AppContext);
-  const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
-
   const [formErrors, setFormErrors] = useState({});
   const [selectedGroup, setSelectedGroup] = useState({});
   const [selectedPromoCode, setSelectedPromoCode] = useState({});
@@ -92,7 +84,6 @@ const EnrollTab = ({ data, closeFn }) => {
   // Calculate Price
   const { data: finalPrice_, isLoading: priceLoading } = useQuery({
     enabled: !!selectedGroup?.id,
-
     queryFn: () => {
       const payload = {
         studentId: data?.id,
@@ -161,7 +152,7 @@ const EnrollTab = ({ data, closeFn }) => {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <SearchableDropdown
             styles={{
               width: "100%",
@@ -182,15 +173,10 @@ const EnrollTab = ({ data, closeFn }) => {
           ></SearchableDropdown>
 
           {/* round data card  */}
-
           {selectedGroup?.id ? (
             <Box
               sx={{
-                // flex: 1,
                 padding: 2,
-                margin: "0px 4px",
-                // maxWidth: 400,
-                width: "90%",
                 border: "1px solid #ddd",
                 borderRadius: 2,
                 backgroundColor: "#fafafa",
@@ -209,7 +195,8 @@ const EnrollTab = ({ data, closeFn }) => {
                   Group Capacity:
                 </Typography>
                 <Typography variant="body1">
-                  ??/{`${selectedGroup?.RoomID?.Capacity || ""}`}
+                  {`${selectedGroup?.Capacity?.numOfAttendees || ""}`}/
+                  {`${selectedGroup?.RoomID?.Capacity || ""}`}
                 </Typography>
               </Box>
 
@@ -250,7 +237,6 @@ const EnrollTab = ({ data, closeFn }) => {
                   Course Code
                 </Typography>
                 <Typography variant="body1">
-                  {" "}
                   {`${selectedGroup?.CourseID?.CourseCode || ""} `}
                 </Typography>
                 <Typography

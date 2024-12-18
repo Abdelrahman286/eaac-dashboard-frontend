@@ -140,6 +140,16 @@ const DataTable = ({ filterData }) => {
     },
 
     {
+      field: "totalCoursePrice",
+      headerName: "totalCoursePrice",
+      valueGetter: (value, row) => {
+        return `${row?.totalCoursePrice || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 120,
+    },
+
+    {
       field: "totalPaidByClient",
       headerName: "Total Paid By Client",
       valueGetter: (value, row) => {
@@ -157,7 +167,6 @@ const DataTable = ({ filterData }) => {
       flex: 1.2,
       minWidth: 120,
     },
-
     {
       field: "refundedValue",
       headerName: "Refunded Value",
@@ -167,12 +176,11 @@ const DataTable = ({ filterData }) => {
       flex: 1.2,
       minWidth: 120,
     },
-
     {
       field: "receiptNumber",
       headerName: "Receipt Serial NO.",
       valueGetter: (value, row) => {
-        return `${row?.receiptSerialNum || ""}`;
+        return `${row?.BillID?.BillCode || ""}`;
       },
       flex: 1.2,
       minWidth: 120,

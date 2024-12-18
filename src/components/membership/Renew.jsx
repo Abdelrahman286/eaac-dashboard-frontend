@@ -135,7 +135,6 @@ const Renew = ({ onClose, data }) => {
   useEffect(() => {
     if (!data) return;
     // Handle edit data initialization
-    console.log(data);
     const rawFormData = {
       clientId: data?.UserID?.id || "",
       membershipTypeId: data?.MembershipTypeID?.id || "",

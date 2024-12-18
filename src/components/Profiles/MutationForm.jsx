@@ -1,17 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import "../../styles/students.css";
+import "../../styles/Instructors.css";
 // MUI
-import {
-  Box,
-  TextField,
-  Autocomplete,
-  Checkbox,
-  FormControlLabel,
-  TextareaAutosize,
-  FormControl,
-  FormHelperText,
-} from "@mui/material";
+import { Box, TextField, Autocomplete } from "@mui/material";
 
 // contexts
 import { AppContext } from "../../contexts/AppContext";
@@ -20,25 +11,18 @@ import { UserContext } from "../../contexts/UserContext";
 import FormButton from "../FormButton";
 
 // Requests
-
-import {
-  editStudentFn,
-  createStudentFn,
-  getBranchesFn,
-} from "../../requests/students";
+import { getBranchesFn, editProfileFn } from "../../requests/profiles";
 
 // validations
-import {
-  validateAddStudent,
-  validateEditStudent,
-} from "../../utils/validateStudents";
+import { validateEdit } from "./validate";
 
 // utils
 import { getDataForTableRows } from "../../utils/tables";
-import {
-  convertDateFormat,
-  convertDateFormatStudent,
-} from "../../utils/functions";
+
+// dates
+import dayjs from "dayjs"; // To help with formatting
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
 const MutationForm = ({ onClose, isEditData, data }) => {
   const { showSnackbar } = useContext(AppContext);
@@ -55,7 +39,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: 1,
         },
         token
       );
@@ -69,65 +53,22 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // send course data
-  const {
-    mutate: sendStudentData,
-    isPending: addLoading,
-    isError: isAddError,
-    error: addError,
-  } = useMutation({
-    mutationFn: createStudentFn,
-    onSuccess: () => {
-      onClose();
-      queryClient.invalidateQueries(["student-pagination"]);
-      queryClient.invalidateQueries(["student-list"]);
-      showSnackbar("Student Added Successfully", "success");
-    },
-    onError: (error) => {
-      showSnackbar("Failed to Add New Student", "error");
-    },
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const errors = validateAddStudent(formData);
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-    } else {
-      setFormErrors({});
-      const uuid = crypto.randomUUID();
-      const newObj = {
-        password: uuid,
-        ...formData,
-        birthDate: convertDateFormat(formData.birthDate),
-      };
-
-      // modify request keys (password , date)
-      sendStudentData({
-        reqBody: newObj,
-        token,
-        config: { isFormData: true },
-      });
-    }
-  };
-
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
 
-    // Handle edit data initialization
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
     const rawFormData = {
       id: [data.id],
       branchId: data?.BranchID?.id || "",
       name: data?.Name || "",
+      jobTitle: data?.JobTitle || "",
       phone: data?.PhoneNumber || "",
       govIssuedId: data?.GovIssuedID || "",
       email: data?.Email || "",
       whatsappNum: data?.WhatsappNumber || "",
-      birthDate: convertDateFormatStudent(data?.BirthDate),
-      notes: data?.Notes,
+      courseId: data?.CourseID?.id || "",
+      birthDate: data?.BirthDate,
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -139,50 +80,43 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   }, [isEditData, data]);
 
   const {
-    mutate: editStudent,
+    mutate: editProfile,
     isPending: editLoading,
     isError: isEditError,
     error: editingError,
   } = useMutation({
-    mutationFn: editStudentFn,
+    mutationFn: editProfileFn,
     onSuccess: () => {
       onClose();
-      queryClient.invalidateQueries(["student-pagination"]);
-      queryClient.invalidateQueries(["student-list"]);
-      showSnackbar("Student Edited Successfully", "success");
+      queryClient.invalidateQueries(["profiles-pagination"]);
+      queryClient.invalidateQueries(["profiles-list"]);
+      showSnackbar("Profiles Edited Successfully", "success");
     },
     onError: (error) => {
-      showSnackbar("Faild to edit Student Data", "error");
+      showSnackbar("Faild to edit Profile Data", "error");
     },
   });
 
   const handleEdit = (e) => {
     e.preventDefault();
 
-    const errors = validateEditStudent(formData);
+    const errors = validateEdit(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
       setFormErrors({});
-
-      const newObj = {
-        ...formData,
-        birthDate: convertDateFormat(formData?.birthDate),
-      };
-      // modify request keys
-      editStudent({
-        reqBody: newObj,
+      editProfile({
+        reqBody: formData,
         token,
-        config: { isFormData: true },
       });
     }
   };
 
   return (
-    <div className="student-form-page">
+    <div className="admin-form-page">
       <form>
-        <div className="student-form">
+        <div className="admin-form">
           <Box
             sx={{
               display: "flex",
@@ -202,8 +136,18 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.name)}
                 helperText={formErrors?.name}
                 value={formData?.name || ""}
-                label="Student Name *"
+                label="Instructor Name *"
                 name="name"
+              />
+
+              <TextField
+                id="jobTitle"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.jobTitle)}
+                helperText={formErrors?.jobTitle}
+                value={formData?.jobTitle || ""}
+                label="Job Title"
+                name="jobTitle"
               />
 
               <TextField
@@ -226,7 +170,17 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 name="whatsappNum"
               />
 
-              {/* birthdate  dd/mm/yyyy */}
+              <TextField
+                id="facebookUrl"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.facebookUrl)}
+                helperText={formErrors?.facebookUrl}
+                value={formData?.facebookUrl || ""}
+                label="Facebook URL "
+                name="facebookUrl"
+              />
+
+              {/* birthdate */}
               <TextField
                 error={Boolean(formErrors?.birthDate)}
                 helperText={formErrors?.birthDate}
@@ -253,7 +207,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <Autocomplete
                 loading={branchesLoading}
                 value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
+                  branches.find((branch) => branch.id == formData.branchId) ||
                   null
                 }
                 options={branches}
@@ -277,8 +231,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 )}
               />
 
-              {/* Course Id */}
-
               <TextField
                 id="govIssuedId"
                 onChange={handleFormChange}
@@ -297,17 +249,35 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 label="Email *"
                 name="Email"
               />
+
               <TextField
-                // error={Boolean(formErrors?.notes)}
-                // helperText={formErrors?.notes}
-                value={formData?.notes || ""}
-                id="notes"
-                name="notes"
-                multiline
-                rows={2}
-                label="Notes"
-                sx={{ width: "100%" }}
+                id="nationality"
                 onChange={handleFormChange}
+                error={Boolean(formErrors?.nationality)}
+                helperText={formErrors?.nationality}
+                value={formData?.nationality || ""}
+                label="Nationality"
+                name="nationality"
+              />
+
+              <TextField
+                id="password"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.password)}
+                helperText={formErrors?.password}
+                value={formData?.password || ""}
+                label={isEditData ? "password" : "Password *"}
+                name="password"
+              />
+
+              <TextField
+                id="confirmPassword"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.confirmPassword)}
+                helperText={formErrors?.confirmPassword}
+                value={formData?.confirmPassword || ""}
+                label={isEditData ? "Confirm Password" : "Confirm Password *"}
+                name="confirmPassword"
               />
             </Box>
           </Box>
@@ -316,21 +286,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         <div className="form-actions">
           {isEditError && (
             <p className="invalid-message">
-              {`${editingError?.responseError?.failed?.response?.msg}  
-                 ${
-                   addError?.responseError?.failed?.response?.errors?.email ||
-                   ""
-                 }` || "An Error Ocurred"}
-            </p>
-          )}
-
-          {isAddError && (
-            <p className="invalid-message">
-              {`${addError?.responseError?.failed?.response?.msg || ""} 
-              
-              ${
-                addError?.responseError?.failed?.response?.errors?.email || ""
-              }` || "An Error Ocurred"}
+              {editingError?.responseError?.failed?.response?.msg ||
+                "An Error Occurred, please try Again"}
             </p>
           )}
 
@@ -340,16 +297,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               buttonText="Edit"
               className="main-btn form-add-btn"
               onClick={handleEdit}
-              type="submit"
-            />
-          )}
-
-          {!isEditData && (
-            <FormButton
-              isLoading={addLoading}
-              buttonText="Add"
-              className="main-btn form-add-btn"
-              onClick={handleSubmit}
               type="submit"
             />
           )}

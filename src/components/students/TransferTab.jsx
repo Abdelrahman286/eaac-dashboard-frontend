@@ -53,7 +53,6 @@ const TransferTab = ({ data, groups, closeFn }) => {
   const [selectedTargetGroup, setTargetGroup] = useState({});
 
   const handleSelectTarget = (selectedRound) => {
-    console.log(selectedRound);
     setTargetGroup(selectedRound);
   };
 
@@ -86,7 +85,6 @@ const TransferTab = ({ data, groups, closeFn }) => {
   const differenceAmount =
     differenceAmountObj?.success?.response?.priceDifference;
 
-  console.log(selectedCurrentGroup);
   // payment methods (Method_en)
   const { data: paymentMethodsList, isLoading: paymentMethodLoading } =
     useQuery({

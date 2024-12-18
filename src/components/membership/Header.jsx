@@ -49,7 +49,6 @@ const membershipTypes = [
 ];
 
 const Header = ({ excelData, onFilterChange }) => {
-  console.log(excelData);
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -200,7 +199,6 @@ const Header = ({ excelData, onFilterChange }) => {
           >
             <SearchableDropdown
               onSelect={(_client) => {
-                // console.log(_client);
                 setFormData({ ...formData, clientId: _client?.id || "" });
               }}
               fetchData={getStudentFn}

@@ -98,7 +98,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
-    console.log(data);
     const rawFormData = {
       id: [data.id],
       nameAr: data?.Method_ar || "",
@@ -150,11 +149,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       });
     }
   };
-
-  // for DEBUG
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   return (
     <div>

@@ -9,7 +9,6 @@ import DataTable from "./DataTable";
 const ClientPaymentsPage = () => {
   const [filterData, setFilterData] = useState({});
   const handleFilterChange = (filterData) => {
-    console.log(filterData);
     setFilterData(filterData);
   };
 

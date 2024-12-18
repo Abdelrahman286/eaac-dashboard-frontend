@@ -1,4 +1,9 @@
 import React, { useState, useEffect, createContext } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+
+import { getAdminPermissions } from "../requests/admins";
+// utils
+import { getDataForTableRows } from "../utils/tables";
 
 export const UserContext = createContext();
 
@@ -30,7 +35,7 @@ export default function UserContextProvider({ children }) {
           body: JSON.stringify({ token }),
         }
       );
-      if (response.status === 200) {
+      if (response.status == 200) {
         return true;
       }
     } catch (error) {
@@ -77,6 +82,32 @@ export default function UserContextProvider({ children }) {
     localStorage.removeItem("user");
   };
 
-  const value = { isLoggedIn, user, token, login, logout };
+  // Get user permissions
+  const { data: userPermissionsList, isLoading: userPermissionsLoading } =
+    useQuery({
+      queryFn: () =>
+        getAdminPermissions(
+          { numOfElements: "2000", userId: user?.id },
+          token,
+          {
+            isFormData: true,
+          }
+        ),
+      queryKey: ["userPermissionsList", user?.id],
+    });
+
+  const userPermissionsObjects = getDataForTableRows(
+    userPermissionsList?.success?.response?.data
+  )[0]?.Permissions;
+
+  const userPermissions = userPermissionsObjects?.map((ele) => ele?.Name_en);
+
+  const hasPermission = (_permissionString) => {
+    if (!Array.isArray(userPermissions) || userPermissions?.length == 0) return;
+    // return userPermissions?.includes(_permissionString);
+    return true;
+  };
+
+  const value = { isLoggedIn, user, token, login, logout, hasPermission };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

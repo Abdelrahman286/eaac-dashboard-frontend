@@ -179,7 +179,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "Date",
       headerName: "Date",
       valueGetter: (value, row) => {
-        return `${row?.date || ""}`;
+        return `${row?.created_at?.split(" ")[0] || ""}`;
       },
       flex: 1.2,
       minWidth: 100,
@@ -188,7 +188,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "time",
       headerName: "Time",
       valueGetter: (value, row) => {
-        return `${row?.time || ""}`;
+        return `${row?.created_at?.split(" ")[1] || ""}`;
       },
       flex: 1,
       minWidth: 100,

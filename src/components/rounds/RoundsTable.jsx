@@ -414,7 +414,7 @@ const RoundsTable = ({ onDataChange }) => {
               title="view"
               onClick={() => handleShowRound(params?.row)}
             ></CustomIconButton>
-            <CustomIconButton
+            {/* <CustomIconButton
               icon={"attendance"}
               title="Attendance"
               onClick={() => console.log("show attendance")}
@@ -423,7 +423,7 @@ const RoundsTable = ({ onDataChange }) => {
               icon={"enroll"}
               title="Enroll Student"
               onClick={() => console.log("Enroll Student")}
-            ></CustomIconButton>
+            ></CustomIconButton> */}
             <CustomIconButton
               icon={"edit"}
               title="Edit"

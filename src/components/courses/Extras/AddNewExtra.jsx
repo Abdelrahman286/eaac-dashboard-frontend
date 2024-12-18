@@ -60,10 +60,8 @@ const AddNewExtra = ({ id }) => {
     const errors = validateAdd(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      console.log(errors);
     } else {
       setFormErrors({});
-      console.log(id);
       const newObj = {
         ...formData,
         courseId: id,

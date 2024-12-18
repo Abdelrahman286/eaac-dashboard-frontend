@@ -8,7 +8,6 @@ export const deleteRoundsFn = ({ reqBody, token, config }) => {
 };
 
 export const createRoundFn = ({ reqBody, token, config }) => {
-  console.log(reqBody);
   return makeRequest(`${URL}/round/createRound1`, reqBody, token, config);
 };
 

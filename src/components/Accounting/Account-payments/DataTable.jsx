@@ -113,7 +113,6 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     }
   }, [listData]);
 
-  console.log(updatedDataList);
   const columns = [
     {
       field: "rowIndex",
@@ -152,7 +151,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "Round",
       headerName: "Round Code",
       valueGetter: (value, row) => {
-        return `${row?.RoundID?.RoundCode || ""}`;
+        return `${row?.RoundID?.RoundCode || "-"}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -170,7 +169,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "Date",
       headerName: "Date",
       valueGetter: (value, row) => {
-        return `${row?.date || ""}`;
+        return `${row?.created_at?.split(" ")[0] || ""}`;
       },
       flex: 1.2,
       minWidth: 100,
@@ -179,7 +178,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "time",
       headerName: "Time",
       valueGetter: (value, row) => {
-        return `${row?.time || ""}`;
+        return `${row?.created_at?.split(" ")[1] || ""}`;
       },
       flex: 1,
       minWidth: 100,

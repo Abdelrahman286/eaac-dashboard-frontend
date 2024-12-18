@@ -293,8 +293,6 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
     // BUG in the API where it's not needed
     // newObj.weekDays = ["monday", "Friday", "thursday"];
 
-    console.log(newObj);
-
     sendSessions({
       reqBody: newObj,
       token,

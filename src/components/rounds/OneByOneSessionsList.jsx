@@ -6,7 +6,6 @@ import { formatDate } from "../../utils/functions";
 
 import { convertTo12HourFormat } from "../../utils/functions";
 const OneByOneSessionsList = ({ data, handleDeleteRow, conflictArray }) => {
-  //   console.log(conflictArray);
   // Add index for array objects
   let arrayWithIndex = data.map((item, index) => ({
     ...item,

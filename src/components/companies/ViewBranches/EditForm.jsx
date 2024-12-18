@@ -75,7 +75,7 @@ const EditForm = ({ branch, onCancel, companyId }) => {
       mainPhone: MainPhone || "",
       branchCode: BranchCode || "",
       address: branch?.AddressID?.Address || "",
-      cityId: branch?.AddressID?.cityId || "",
+      cityId: branch?.AddressID?.CityID?.id || "",
     };
 
     setFormData(intialFill);
