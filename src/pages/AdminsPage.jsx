@@ -10,7 +10,7 @@ const HeaderActions = lazy(() => import("../components/Admins/HeaderActions"));
 const AdminsTable = lazy(() => import("../components/Admins/AdminsTable"));
 
 const AdminsPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
 
   // for excel export
@@ -21,7 +21,7 @@ const AdminsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Users")) {
+    if (!hasPermission("View Users") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

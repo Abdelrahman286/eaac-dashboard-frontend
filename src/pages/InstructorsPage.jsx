@@ -15,7 +15,7 @@ const InstructorsTable = lazy(() =>
 
 const InstructorsPage = () => {
   const navigate = useNavigate();
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   // for excel export
   const [data, setData] = useState([]);
   const handleDataChange = (coursesData) => {
@@ -24,7 +24,7 @@ const InstructorsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Instructors List")) {
+    if (!hasPermission("View Instructors List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

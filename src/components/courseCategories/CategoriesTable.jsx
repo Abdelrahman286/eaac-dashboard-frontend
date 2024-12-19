@@ -291,6 +291,16 @@ const CategoriesTable = ({ onDataChange }) => {
       flex: 1, // This column will take up more space compared to others
       minWidth: 100,
     },
+    // {
+    //   field: "Notes",
+    //   headerName: "Notes",
+    //   valueGetter: (value, row) => {
+
+    //     return `${row?.Notes || ""}`;
+    //   },
+    //   flex: 1,
+    //   minWidth: 100,
+    // },
 
     {
       field: "controls",

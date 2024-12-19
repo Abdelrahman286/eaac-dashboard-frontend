@@ -237,8 +237,8 @@ const TransferTab = ({ data, groups, closeFn }) => {
                     Group Capacity
                   </Typography>
                   <Typography variant="body1">
-                    {" "}
-                    ??/{`${selectedCurrentGroup?.RoomID?.Capacity || ""}`}
+                    {`${selectedCurrentGroup?.Capacity?.numOfAttendees || ""}`}/
+                    {`${selectedCurrentGroup?.RoomID?.Capacity || ""}`}
                   </Typography>
                 </Box>
 
@@ -366,6 +366,7 @@ const TransferTab = ({ data, groups, closeFn }) => {
               Transfer To
             </Typography>
             <SearchableDropdown
+              placeholderText="Please Start Typing to Show Results"
               styles={{
                 marginTop: 1,
               }}
@@ -409,8 +410,8 @@ const TransferTab = ({ data, groups, closeFn }) => {
                     Group Capacity
                   </Typography>
                   <Typography variant="body1">
-                    {" "}
-                    ??/{`${selectedTargetGroup?.RoomID?.Capacity || ""}`}
+                    {`${selectedTargetGroup?.Capacity?.numOfAttendees || ""}`}/
+                    {`${selectedTargetGroup?.RoomID?.Capacity || ""}`}
                   </Typography>
                 </Box>
 

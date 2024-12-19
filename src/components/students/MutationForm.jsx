@@ -25,6 +25,7 @@ import {
   editStudentFn,
   createStudentFn,
   getBranchesFn,
+  getCompaniesFn,
 } from "../../requests/students";
 
 // validations
@@ -55,7 +56,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: "1",
         },
         token
       );
@@ -68,6 +69,22 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   const handleFormChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
+
+  // companies
+  const { data: vendorsList, isLoading: vendorsLoading } = useQuery({
+    queryFn: () => {
+      return getCompaniesFn(
+        {
+          numOfElements: "9999",
+        },
+        token,
+        { isFormData: true }
+      );
+    },
+
+    queryKey: ["vendors"],
+  });
+  const companies = getDataForTableRows(vendorsList?.success?.response?.data);
 
   // send course data
   const {
@@ -128,6 +145,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       whatsappNum: data?.WhatsappNumber || "",
       birthDate: convertDateFormatStudent(data?.BirthDate),
       notes: data?.Notes,
+      companyId: data?.CompanyID?.id || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -244,6 +262,29 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 variant="outlined"
                 fullWidth
               />
+
+              {/* company id */}
+              <Autocomplete
+                loading={vendorsLoading}
+                value={
+                  companies.find((item) => item.id == formData?.companyId) ||
+                  null
+                }
+                onChange={(e, value) => {
+                  setFormData({ ...formData, companyId: value?.id || "" });
+                }}
+                options={companies}
+                getOptionLabel={(option) => option.Name_en || ""}
+                // size="small"
+                renderInput={(params) => (
+                  <TextField
+                    id="vendorId"
+                    {...params}
+                    label="Company"
+                    fullWidth
+                  />
+                )}
+              />
             </Box>
 
             {/* Right Side */}
@@ -298,8 +339,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 name="Email"
               />
               <TextField
-                // error={Boolean(formErrors?.notes)}
-                // helperText={formErrors?.notes}
                 value={formData?.notes || ""}
                 id="notes"
                 name="notes"

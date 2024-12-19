@@ -386,7 +386,9 @@ const RoundsTable = ({ onDataChange }) => {
       headerName: "Capacity",
 
       valueGetter: (value, row) => {
-        return `${row?.Capacity || ""}`;
+        return `${row?.Capacity?.numOfAttendees || ""}/${
+          row?.Capacity?.roomCapicity || ""
+        }`;
       },
       flex: 0.7,
       minWidth: 80,

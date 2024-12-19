@@ -44,7 +44,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: "1",
         },
         token
       );
@@ -156,11 +156,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       });
     }
   };
-
-  // for DEBUG
-  //   useEffect(() => {
-  //     // console.log(formData);
-  //   }, [formData]);
 
   return (
     <div className="course-form-page">

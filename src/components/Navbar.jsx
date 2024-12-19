@@ -42,7 +42,8 @@ import barndLogo from "../assets/eaac-logo-240.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { token, user, logout, hasPermission } = useContext(UserContext);
+  const { token, user, logout, hasPermission, userPermissionsLoading } =
+    useContext(UserContext);
   const [closed, setClosed] = useState("closed");
   const { pathname } = useLocation();
 
@@ -244,7 +245,7 @@ const Navbar = () => {
         <div className="links">
           {routes.map((route) => {
             if (
-              hasPermission(route?.permission) ||
+              (!userPermissionsLoading && hasPermission(route?.permission)) ||
               route?.permission == "pass"
             ) {
               return (

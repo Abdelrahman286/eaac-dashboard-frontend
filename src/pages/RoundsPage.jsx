@@ -9,7 +9,7 @@ const HeaderActions = lazy(() => import("../components/rounds/HeaderActions"));
 const RoundsTable = lazy(() => import("../components/rounds/RoundsTable"));
 const RoundsPage = () => {
   const navigate = useNavigate();
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
 
   // for excel export
   const [data, setData] = useState([]);
@@ -19,7 +19,7 @@ const RoundsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Rounds List")) {
+    if (!hasPermission("View Rounds List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

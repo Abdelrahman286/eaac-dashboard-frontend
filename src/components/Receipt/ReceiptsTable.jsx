@@ -170,7 +170,7 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
       field: "4",
       headerName: "Date",
       valueGetter: (value, row) => {
-        return `${row?.BillCode || "-"}`;
+        return `${row?.created_at?.split(" ")[0] || "-"}`;
       },
       flex: 1.2,
       minWidth: 160,

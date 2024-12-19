@@ -11,7 +11,7 @@ export default function UserContextProvider({ children }) {
   // states
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const storedStatus = localStorage.getItem("isLoggedIn");
-    return storedStatus === "true";
+    return storedStatus == "true";
   });
 
   const [token, setToken] = useState(() => {
@@ -108,6 +108,14 @@ export default function UserContextProvider({ children }) {
     // return true;
   };
 
-  const value = { isLoggedIn, user, token, login, logout, hasPermission };
+  const value = {
+    isLoggedIn,
+    user,
+    token,
+    login,
+    logout,
+    hasPermission,
+    userPermissionsLoading,
+  };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

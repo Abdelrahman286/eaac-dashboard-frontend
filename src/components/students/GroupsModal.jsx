@@ -111,7 +111,7 @@ const GroupsModal = ({ closeFn, data }) => {
             />
             <TextField
               label="Company"
-              value={data?.company || "-"}
+              value={data?.CompanyID?.Name_en || "-"}
               fullWidth
               size="small"
               InputProps={{ readOnly: true }}

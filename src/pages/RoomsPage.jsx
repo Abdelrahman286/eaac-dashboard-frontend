@@ -7,7 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 const HeaderActions = lazy(() => import("../components/rooms/HeaderActions"));
 const RoomsTable = lazy(() => import("../components/rooms/RoomsTable"));
 const RoomsPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
 
   // for excel export
@@ -18,7 +18,7 @@ const RoomsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Rooms List")) {
+    if (!hasPermission("View Rooms List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

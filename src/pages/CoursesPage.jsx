@@ -12,7 +12,7 @@ import { UserContext } from "../contexts/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const CoursesPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ const CoursesPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Courses List")) {
+    if (!hasPermission("View Courses List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

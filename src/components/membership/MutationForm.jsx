@@ -262,14 +262,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     }
   };
 
-
-
   return (
     <div className="membership-form-page">
       {/* student data section  */}
       {!isEditData && (
         <Box>
           <SearchableDropdown
+            placeholderText="Please Start Typing to Show Results"
             styles={{
               width: "600px",
               paddingTop: "10px",

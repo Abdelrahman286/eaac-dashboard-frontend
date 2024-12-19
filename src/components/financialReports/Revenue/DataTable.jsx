@@ -98,6 +98,8 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
+  console.log(updatedDataList);
+
   const columns = [
     {
       field: "rowIndex",
@@ -165,7 +167,7 @@ const DataTable = ({ filterData }) => {
       field: "totalCoursePrice",
       headerName: "Total Course Price",
       valueGetter: (value, row) => {
-        return `${row?.totalCoursePrice || ""}`;
+        return `${row?.CoursePrice || ""}`;
       },
       flex: 1.2,
       minWidth: 120,
@@ -174,7 +176,7 @@ const DataTable = ({ filterData }) => {
       field: "paid",
       headerName: "Paid (EGP)",
       valueGetter: (value, row) => {
-        return `${row?.paid || ""}`;
+        return `${row?.PaiedAmount || ""}`;
       },
       flex: 1.2,
       minWidth: 120,

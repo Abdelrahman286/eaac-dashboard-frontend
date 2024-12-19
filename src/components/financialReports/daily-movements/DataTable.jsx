@@ -90,6 +90,7 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
+  
   const columns = [
     {
       field: "rowIndex",
@@ -149,7 +150,7 @@ const DataTable = ({ filterData }) => {
       field: "type",
       headerName: "Type",
       valueGetter: (value, row) => {
-        return `${row?.type || ""}`;
+        return `${row?.Type || ""}`;
       },
       flex: 1.2,
       minWidth: 120,

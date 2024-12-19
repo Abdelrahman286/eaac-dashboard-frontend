@@ -54,7 +54,7 @@ const HomePage = () => {
         <>
           {" "}
           <FinancialStats data={financialStats}></FinancialStats>
-          <BalanceStats></BalanceStats>
+          <BalanceStats data={financialStats}></BalanceStats>
           <GeneralStats data={generalStats}></GeneralStats>
         </>
       )}

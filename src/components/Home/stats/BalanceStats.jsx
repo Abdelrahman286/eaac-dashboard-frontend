@@ -1,32 +1,25 @@
 import React from "react";
 import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
-import {
-  AttachMoney,
-  CalendarToday,
-  TrendingUp,
-  TrendingDown,
-  AccountBalanceWallet,
-  AccountBalance,
-} from "@mui/icons-material";
+import { TrendingUp } from "@mui/icons-material";
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-const Stats = () => {
+const Stats = ({ data }) => {
   const cardData = [
     {
       label: "Cash",
-      value: 0,
+      value: data?.paymentMethods[0].balance,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
     },
     {
       label: "Vodafone Cash",
-      value: 0,
+      value: data?.paymentMethods[1].balance,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
     },
     {
       label: "InstaPay",
-      value: 0,
+      value: data?.paymentMethods[2].balance,
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
     },

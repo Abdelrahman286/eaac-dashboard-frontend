@@ -190,7 +190,7 @@ const AddPayment = ({ onClose }) => {
                 error={Boolean(formErrors?.paymentMethodId)}
                 helperText={formErrors?.paymentMethodId}
                 {...params}
-                label="Payment Method"
+                label="Payment Method*"
                 fullWidth
               />
             )}
@@ -214,7 +214,7 @@ const AddPayment = ({ onClose }) => {
                 error={Boolean(formErrors?.expenseId)}
                 helperText={formErrors?.expenseId}
                 {...params}
-                label="Expenses Type"
+                label="Expenses Type*"
                 fullWidth
               />
             )}
@@ -232,7 +232,7 @@ const AddPayment = ({ onClose }) => {
             type="number"
             fullWidth
             InputLabelProps={{ shrink: true }}
-            label="Paid Amount (EGP)"
+            label="Paid Amount (EGP)*"
             name="paymentAmount"
             size="small"
             style={{ margin: "10px 0px" }}
@@ -261,7 +261,7 @@ const AddPayment = ({ onClose }) => {
             )}
           />
           <TextField
-            id="paymentAmount"
+            id="Notes"
             onChange={(e) => {
               setFormData({ ...formData, notes: e.target.value || "" });
             }}
@@ -271,7 +271,7 @@ const AddPayment = ({ onClose }) => {
             fullWidth
             InputLabelProps={{ shrink: true }}
             label="Notes"
-            name="paymentAmount"
+            name="Notes"
             size="small"
             rows={3}
             multiline

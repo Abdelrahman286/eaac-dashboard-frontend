@@ -220,8 +220,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "Name_en",
       headerName: "Student Name",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.UserID?.Name || ""}`;
       },
@@ -231,10 +229,8 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "Company",
       headerName: "Comapany Name",
-
-      //   editable: true,
       valueGetter: (value, row) => {
-        return `${row?.companyName || "?"}`;
+        return `${row?.UserCompanyID?.Name_en || ""}`;
       },
       flex: 1.2,
       minWidth: 160,
@@ -242,8 +238,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "Phone",
       headerName: "Phone",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.UserID?.PhoneNumber || ""}`;
       },
@@ -253,8 +247,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "memebershipCode",
       headerName: "Membership Code",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.MembershipCode || ""}`;
       },
@@ -264,8 +256,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "issueDate",
       headerName: "Issue Date",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.startAt || ""}`;
       },
@@ -275,8 +265,6 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "expireDate",
       headerName: "Expire Date",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.endAt || ""}`;
       },

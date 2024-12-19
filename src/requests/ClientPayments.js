@@ -20,6 +20,17 @@ export const addCorrectMovements = ({ reqBody, token, config }) => {
     config
   );
 };
+
+// get payment history
+export const getRoundPaymentHistory = (reqBody, token, config) => {
+  return makeRequest(
+    `${URL}/payment/getClientRoundPaied`,
+    reqBody,
+    token,
+    config
+  );
+};
+
 // correct certain movement
 export const correctCertainMovement = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/payment/correctMovement`, reqBody, token, config);

@@ -77,20 +77,20 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
 
     if (element) {
       const opt = {
-        margin: [0, 20, 0, 20], // [top, left, bottom, right] in px (adjusted for 1200px width)
+        margin: [0, 20, 0, 20], // [top, left, bottom, right] in px (adjusted for 1350px width)
         filename: "document.pdf",
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2, // Increase scale for better quality with larger width
           logging: true,
-          width: 1200, // Set width to 1200px
-          windowWidth: 1200, // Ensure the capture area matches the div size
+          width: 1350, // Set width to 1350px
+          windowWidth: 1350, // Ensure the capture area matches the div size
           allowTaint: true, // Allow cross-origin images
           useCORS: true, // Enable CORS for cross-origin image support
         },
         jsPDF: {
           unit: "px", // Use pixels for precise size control
-          format: [1240, 1754], // Width 1200px + 40px margins, height in pixels
+          format: [1390, 1754], // Width 1350px + 40px margins, height in pixels
           orientation: "portrait",
           putTotalPages: true,
         },
@@ -263,8 +263,8 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                             </span>
                             <span>{ele?.PaymentTypeID?.id || "-"}</span>
 
-                            <span>{ele?.totalCoursePrice || "-"}</span>
-                            <span>{ele?.paidAmount || "-"}</span>
+                            <span>{ele?.CoursePrice || "-"}</span>
+                            <span>{ele?.PaiedAmount || "-"}</span>
                             <span>{ele?.receiptSerialNum || "-"}</span>
                           </div>
                         </div>

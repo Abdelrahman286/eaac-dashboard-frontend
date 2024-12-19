@@ -42,7 +42,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: "1",
         },
         token
       );

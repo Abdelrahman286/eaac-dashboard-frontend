@@ -302,8 +302,6 @@ const InstructorsTable = ({ onDataChange }) => {
     {
       field: "GovIssuedID",
       headerName: "Government ID",
-
-      //   editable: true,
       valueGetter: (value, row) => {
         return `${row?.GovIssuedID || ""}`;
       },
@@ -316,7 +314,16 @@ const InstructorsTable = ({ onDataChange }) => {
       valueGetter: (value, row) => {
         return `${row?.BranchID?.name_en || ""}`;
       },
-      flex: 1, // This column will take up more space compared to others
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: "Notes",
+      headerName: "Notes",
+      valueGetter: (value, row) => {
+        return `${row?.Notes || ""}`;
+      },
+      flex: 1,
       minWidth: 100,
     },
     {
@@ -368,6 +375,8 @@ const InstructorsTable = ({ onDataChange }) => {
       },
     },
   ];
+
+  
 
   // to update the table elements if user deleted the only search result appeared
   if (paginationErr) {

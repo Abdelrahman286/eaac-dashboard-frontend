@@ -158,7 +158,8 @@ const StudentReceiptModal = () => {
                 <strong>رقم#</strong> 324325
               </p>
               <p>
-                <strong>التاريخ</strong> 2024-10-10
+                <strong>التاريخ</strong>
+                <span>{receiptData?.created_at || "..."}</span>
               </p>
             </div>
             <div className="header-right">

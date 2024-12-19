@@ -171,6 +171,7 @@ const EnrollTab = ({ data, closeFn }) => {
               getOptionId={(option) => option?.id} // Custom ID field
               onSelect={handleRoundSelect}
               error={true}
+              placeholderText="Please Start Typing to Show Results"
             ></SearchableDropdown>
 
             {/* round data card  */}

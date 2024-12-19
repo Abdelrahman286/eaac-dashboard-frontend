@@ -9,16 +9,14 @@ import {
 
 export const validateAddPayment = (formData) => {
   const errors = {};
-  
-  
-  
+
   if (isBlank(formData?.expenseId)) {
     errors.expenseId = "Please Select Expenses Type";
   }
 
-  if (isBlank(formData?.companyId)) {
-    errors.companyId = "Please Select Vendor";
-  }
+  //   if (isBlank(formData?.companyId)) {
+  //     errors.companyId = "Please Select Vendor";
+  //   }
 
   if (isBlank(formData?.paymentMethodId)) {
     errors.paymentMethodId = "Please Select Payment Method";

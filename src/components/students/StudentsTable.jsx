@@ -343,7 +343,7 @@ const StudentsTable = ({ onDataChange }) => {
       field: "companyName",
       headerName: "Company Name",
       valueGetter: (value, row) => {
-        return `${row?.companyName || ""}`;
+        return `${row?.CompanyID?.Name_en || ""}`;
       },
       flex: 1.2,
       minWidth: 100,

@@ -13,7 +13,7 @@ const CompaniesTable = lazy(() =>
 );
 
 const CompaniesPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const handleDataChange = (companiesData) => {
@@ -22,7 +22,7 @@ const CompaniesPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Companies List")) {
+    if (!hasPermission("View Companies List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

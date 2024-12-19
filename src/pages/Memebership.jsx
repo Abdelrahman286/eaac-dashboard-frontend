@@ -11,7 +11,7 @@ import MemebershipTable from "../components/membership/MemebershipTable";
 
 const Memebership = () => {
   const navigate = useNavigate();
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const [filterData, setFilterData] = useState({});
   const handleFilterChange = (filterData) => {
     setFilterData(filterData);
@@ -25,7 +25,7 @@ const Memebership = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Membership List")) {
+    if (!hasPermission("View Membership List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

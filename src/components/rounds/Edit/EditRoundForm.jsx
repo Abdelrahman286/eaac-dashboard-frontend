@@ -51,6 +51,7 @@ const EditRoundForm = ({ data, onClose }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
+          companyId: "1",
         },
         token
       );

@@ -71,11 +71,12 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
           studentId: data?.id,
           roundId: selectedGroup?.id,
         },
+
         token,
         { isFormData: false }
       );
     },
-
+    enabled: !!data?.id && !!selectedGroup?.id,
     queryKey: ["paidAmount", data?.id, selectedGroup?.id],
   });
   const paidAmount = paidAmountObj?.success?.response?.Balance;
@@ -197,8 +198,8 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
                     Group Capacity
                   </Typography>
                   <Typography variant="body1">
-                    {" "}
-                    ??/{`${selectedGroup?.RoomID?.Capacity || ""}`}
+                    {`${selectedGroup?.Capacity?.numOfAttendees || ""}`}/
+                    {`${selectedGroup?.RoomID?.Capacity || ""}`}
                   </Typography>
                 </Box>
 

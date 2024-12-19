@@ -101,3 +101,8 @@ export const getTransferAmount = (reqBody, token, config) => {
     config
   );
 };
+
+// get vendors
+export const getCompaniesFn = (reqBody, token, config) => {
+  return makeRequest(`${URL}/company/getCompany`, reqBody, token, config);
+};

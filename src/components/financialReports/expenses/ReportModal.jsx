@@ -271,7 +271,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                               {ele?.PaymentMethodID?.Method_en || "-"}
                             </span>
                             <span>{ele?.Notes || "-"}</span>
-                            <span>{ele?.paidAmount || "-"}</span>
+                            <span>{ele?.Debit || "-"}</span>
                           </div>
                         </div>
                       );

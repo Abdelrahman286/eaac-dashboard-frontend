@@ -11,7 +11,7 @@ const StudentsTable = lazy(() =>
   import("../components/students/StudentsTable")
 );
 const StudentsPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
 
   // for excel export
@@ -22,7 +22,7 @@ const StudentsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Clients List")) {
+    if (!hasPermission("View Clients List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

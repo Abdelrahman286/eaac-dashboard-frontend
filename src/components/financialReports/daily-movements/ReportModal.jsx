@@ -248,7 +248,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                             <span>{ele?.Notes || "-"}</span>
                             <span>{ele?.RoundID?.Name_en || "-"}</span>
                             <span>{ele?.Payor?.Name || "-"}</span>
-                            <span>{ele?.type || "-"}</span>
+                            <span>{ele?.Type || "-"}</span>
                             <span>{ele?.Debit || "-"}</span>
                             <span>{ele?.Credit || "-"}</span>
                             <span>{ele?.Balance || "-"}</span>

@@ -9,7 +9,7 @@ import Header from "../components/Receipt/Header";
 import ReceiptsTable from "../components/Receipt/ReceiptsTable";
 
 const ReceiptsPage = () => {
-  const { hasPermission } = useContext(UserContext);
+  const { hasPermission, userPermissionsLoading } = useContext(UserContext);
   const navigate = useNavigate();
   const [filterData, setFilterData] = useState({});
   const handleFilterChange = (filterData) => {
@@ -24,7 +24,7 @@ const ReceiptsPage = () => {
 
   // redirect if user does not have permission
   useEffect(() => {
-    if (!hasPermission("View Receipts List")) {
+    if (!hasPermission("View Receipts List") && !userPermissionsLoading) {
       navigate("/");
     }
   }, []);

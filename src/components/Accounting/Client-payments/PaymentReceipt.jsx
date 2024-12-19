@@ -118,11 +118,11 @@ const ReceiptModal = ({ id, onClose }) => {
             <div className="header-left">
               <p>
                 <strong>رقم#</strong>{" "}
-                <span>{receiptData?.number || "..."}</span>
+                <span>{receiptData?.BillCode || "..."}</span>
               </p>
               <p>
                 <strong>التاريخ</strong>{" "}
-                <span>{receiptData?.date || "..."}</span>
+                <span>{receiptData?.created_at || "..."}</span>
               </p>
             </div>
             <div className="header-right">
@@ -202,7 +202,7 @@ const ReceiptModal = ({ id, onClose }) => {
             </div>
             <div className="summary-row">
               <p>
-                <strong> مُسلم من</strong> <span>??</span>
+                <strong>اسم الموظف</strong> <span>??</span>
               </p>
               <p>
                 <strong> كود الموظف:</strong> <span>??</span>

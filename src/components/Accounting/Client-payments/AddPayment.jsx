@@ -24,6 +24,7 @@ import {
   getPaymentMethodsFn,
   getExtrasFn,
   addPayemntFn,
+  getRoundPaymentHistory,
 } from "../../../requests/ClientPayments";
 
 // components
@@ -131,6 +132,28 @@ const AddPayment = ({ onClose }) => {
   const courseExtras = getDataForTableRows(
     courseExtrasList?.success?.response?.data
   );
+
+  // get round payment history
+  const { data: paymentHistoryObj, isLoading: paymentHistoryLoading } =
+    useQuery({
+      queryFn: () => {
+        return getRoundPaymentHistory(
+          {
+            studentId: formData?.clientId,
+            roundId: formData?.roundId,
+            // studentId: 1,
+            // roundId: 33,
+          },
+          token,
+          { isFormData: false }
+        );
+      },
+      enabled: !!formData?.roundId && !!formData?.clientId,
+      queryKey: ["paymentHistory", formData?.clientId, formData?.roundId],
+    });
+  const paymentHistory = getDataForTableRows(
+    paymentHistoryObj?.success?.response?.data
+  )[0];
 
   const {
     mutate: addPayment,
@@ -386,7 +409,7 @@ const AddPayment = ({ onClose }) => {
                     Total (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {selectedStudent?.StartDate?.split(" ")[0] || "N/A"}
+                    {paymentHistory?.CoursePrice || "N/A"}
                   </Typography>
                 </Box>
                 <Box>
@@ -398,7 +421,7 @@ const AddPayment = ({ onClose }) => {
                     Paid (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {selectedStudent?.EndDate?.split(" ")[0] || "N/A"}
+                    {paymentHistory?.paiedAmount || "N/A"}
                   </Typography>
                 </Box>
                 <Box>
@@ -410,7 +433,7 @@ const AddPayment = ({ onClose }) => {
                     Remaining (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {selectedStudent?.EndDate?.split(" ")[0] || "N/A"}
+                    {paymentHistory?.remainingAmount || "N/A"}
                   </Typography>
                 </Box>
               </Box>

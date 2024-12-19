@@ -56,7 +56,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getBranchesFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          companyId: "1",
         },
         token
       );
@@ -337,6 +337,22 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 value={formData?.email || ""}
                 label="Email *"
                 name="Email"
+              />
+
+              <TextField
+                label="Notes"
+                placeholder="notes"
+                id="notes"
+                onChange={handleFormChange}
+                value={formData?.notes || ""}
+                multiline
+                minRows={4}
+                fullWidth
+                variant="outlined"
+                style={{
+                  padding: 1,
+                  borderRadius: 4,
+                }}
               />
             </Box>
           </Box>

@@ -93,6 +93,8 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
+
+
   const columns = [
     {
       field: "rowIndex",
@@ -143,7 +145,7 @@ const DataTable = ({ filterData }) => {
       field: "totalCoursePrice",
       headerName: "totalCoursePrice",
       valueGetter: (value, row) => {
-        return `${row?.totalCoursePrice || ""}`;
+        return `${row?.CoursePrice || ""}`;
       },
       flex: 1.2,
       minWidth: 120,
@@ -153,7 +155,7 @@ const DataTable = ({ filterData }) => {
       field: "totalPaidByClient",
       headerName: "Total Paid By Client",
       valueGetter: (value, row) => {
-        return `${row?.totalPaidByClient || ""}`;
+        return `${row?.PaiedAmount || ""}`;
       },
       flex: 1.2,
       minWidth: 120,
@@ -171,7 +173,7 @@ const DataTable = ({ filterData }) => {
       field: "refundedValue",
       headerName: "Refunded Value",
       valueGetter: (value, row) => {
-        return `${row?.refundedValue || ""}`;
+        return `${row?.Debit || ""}`;
       },
       flex: 1.2,
       minWidth: 120,

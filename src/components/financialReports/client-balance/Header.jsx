@@ -137,8 +137,9 @@ const Header = ({ onFilterChange }) => {
               label="Student"
               queryKey="studentForMemebership"
               getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
-              getOptionId={(option) => option?.id} // Custom ID field
+              getOptionId={(option) => option?.id}
               requestParams={{ numOfElements: 50 }}
+              placeholderText="Please Start Typing to Show Results"
             ></SearchableDropdown>
           </Box>
 

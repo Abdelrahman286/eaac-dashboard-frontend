@@ -198,6 +198,7 @@ const Header = ({ excelData, onFilterChange }) => {
             }}
           >
             <SearchableDropdown
+              placeholderText="Please Start Typing to Show Results"
               onSelect={(_client) => {
                 setFormData({ ...formData, clientId: _client?.id || "" });
               }}

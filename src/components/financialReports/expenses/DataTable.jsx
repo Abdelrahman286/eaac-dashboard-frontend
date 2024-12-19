@@ -152,7 +152,7 @@ const DataTable = ({ filterData }) => {
       field: "paid",
       headerName: "Paid (EGP)",
       valueGetter: (value, row) => {
-        return `${row?.paidAmount || ""}`;
+        return `${row?.Debit || ""}`;
       },
       flex: 1.2,
       minWidth: 160,

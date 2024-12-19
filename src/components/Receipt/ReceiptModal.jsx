@@ -37,121 +37,6 @@ const ReceiptModal = ({ data, onClose }) => {
     }
   }, []);
 
-  const printSpecificElement = () => {
-    const elementToPrint = document.querySelector(".receipt-section");
-    if (!elementToPrint) return;
-
-    // Open a new window to print the content
-    const printWindow = window.open("", "", "height=600,width=800");
-
-    // Write the basic HTML structure to the new window
-    printWindow.document.write("<html><head><title>Print</title>");
-
-    // Copy styles from the main document to the print window
-    const styles = document.querySelectorAll("link[rel='stylesheet'], style");
-
-    // Add the stylesheets to the print window
-    styles.forEach((style) => {
-      printWindow.document.write(style.outerHTML);
-    });
-
-    // Add a small CSS to ensure the printed content fits well
-    printWindow.document.write(`
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-        }
-        .receipt-section {
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          background-color: #f9f9f9;
-          direction: rtl;
-          width: 650px;
-          margin: auto;
-        }
-           .receipt-box {
-    padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    direction: rtl;
-  }
-
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .header-left p {
-    margin: 0;
-  }
-
-  .header-right {
-    width: 25%;
-  }
-
-  .receipt-logo {
-    width: 100%;
-    border-radius: 4px;
-  }
-
-  /* Divider */
-  .divider {
-    margin: 16px 0;
-    border: none;
-    border-top: 1px solid #ddd;
-  }
-
-  /* Content */
-  .content {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-
-  .content p {
-    margin-bottom: 8px;
-  }
-
-  .content-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  /* Summary */
-  .summary {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-      </style>
-    `);
-
-    printWindow.document.write("</head><body>");
-
-    // Write the content of the receipt-section element to the new window
-    printWindow.document.write(elementToPrint.outerHTML);
-
-    printWindow.document.write("</body></html>");
-    printWindow.document.close();
-
-    // Wait for the window to load, then trigger the print dialog
-    printWindow.onload = () => {
-      printWindow.print(); // Open the print dialog
-    };
-  };
-
   const handlePrintPdf = () => {
     const documentClass = "receipt-box";
     const element = document.querySelector(`.${documentClass}`);
@@ -200,7 +85,7 @@ const ReceiptModal = ({ data, onClose }) => {
               </p>
               <p>
                 <strong>التاريخ</strong>{" "}
-                <span>{data?.created_at?.split(" ")[0] || "..."}</span>
+                <span>{data?.created_at || "..."}</span>
               </p>
             </div>
             <div className="header-right">
@@ -271,7 +156,7 @@ const ReceiptModal = ({ data, onClose }) => {
             </div>
             <div className="summary-row">
               <p>
-                <strong> مُسلم من</strong> <span>??</span>
+                <strong>اسم الموظف</strong> <span>??</span>
               </p>
               <p>
                 <strong> كود الموظف</strong> <span>??</span>
@@ -304,22 +189,6 @@ const ReceiptModal = ({ data, onClose }) => {
           marginTop: "20px",
         }}
       >
-        {/* <Button
-          variant="outlined"
-          color="secondary"
-          startIcon={<PrintIcon />}
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-          }}
-          onClick={() => {
-            console.log("Print clicked");
-            printSpecificElement();
-          }}
-        >
-          Print
-        </Button> */}
-
         <Button
           variant="outlined"
           color="secondary"
