@@ -26,9 +26,6 @@ import { getInstructorAttendanceReportFn } from "../../../requests/attendance";
 import { getDataForTableRows } from "../../../utils/tables";
 import { getTimeDifference } from "../../../utils/functions";
 
-// excel
-import ExportToExcel from "../../ExportToExcel";
-
 const InstructorAttendanceReport = ({
   instructorId,
   roundId,

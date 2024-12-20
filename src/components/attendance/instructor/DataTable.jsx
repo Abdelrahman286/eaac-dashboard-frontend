@@ -10,7 +10,6 @@ import {
   IconButton,
   Stack,
   Tooltip,
-  InputAdornment,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -38,6 +37,9 @@ import {
 // components
 import Modal from "../../Modal";
 import NotesModal from "./NotesModal";
+
+// utils
+import { getTimeDifference } from "../../../utils/functions";
 
 const DataTable = ({
   instructorId,
@@ -128,7 +130,7 @@ const DataTable = ({
             attendTime: `${startTime?.value}:00`,
             leaveTime: `${endTime?.value}:00`,
             attendFlag: 1,
-            notes: "-",
+            notes: row?.Notes || "",
           },
           token,
           config: {
@@ -376,18 +378,20 @@ const DataTable = ({
       field: "workedHours",
       headerName: "Hours",
       renderCell: (params) => {
-        if (params?.row?.workedHours) {
+        if (params?.row?.AttendTime && params?.row?.LeaveTime)
           return (
             <Chip
-              label={params?.row?.workedHours}
+              label={
+                getTimeDifference(
+                  params?.row?.AttendTime,
+                  params?.row?.LeaveTime
+                ) || "-"
+              }
               color="success"
               size="small"
               sx={{ fontWeight: "bold", fontSize: "14px" }}
             />
           );
-        } else {
-          return <span></span>;
-        }
       },
 
       flex: 1,

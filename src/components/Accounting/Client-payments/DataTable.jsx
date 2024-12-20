@@ -21,7 +21,8 @@ import { getPaymentsFn } from "../../../requests/ClientPayments";
 import Modal from "../../Modal";
 import CustomIconButton from "../../CustomIconButton";
 import CorrectCertainMovement from "./CorrectCertainMovement";
-import PaymentReceipt from "./PaymentReceipt";
+
+import ReceiptPage from "../../ReceiptModal/ReceiptModal";
 
 const DataTable = ({ onDataChange = () => {}, filterData }) => {
   const { studentId, roundId, paymentMethodId, startDate, endDate } =
@@ -280,10 +281,10 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
 
       {showReceipt && (
         <Modal title={"Payment Receipt"} onClose={() => setShowReceipt(false)}>
-          <PaymentReceipt
+          <ReceiptPage
             closeFn={() => setShowReceipt(false)}
-            id={receiptId}
-          ></PaymentReceipt>
+            paymentId={receiptId}
+          ></ReceiptPage>
         </Modal>
       )}
       <Box sx={{ height: "100%", width: "100%" }}>

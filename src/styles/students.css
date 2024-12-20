@@ -1,5 +1,6 @@
 @import url(variables.css);
 
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
 .students-page {
   background: white;
   padding: 20px;
@@ -128,34 +129,13 @@
   }
 }
 
-.receipt-box {
-  width: 700px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  direction: rtl;
+.receipt-box-ar * {
+  font-family: "Tajawal", serif;
+  font-style: normal;
 }
-
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.header-left p {
-  margin: 0;
-}
-
-.header-right {
-  width: 25%;
-}
-
-.receipt-logo {
-  width: 100%;
-  border-radius: 4px;
+.receipt-box-en * {
+  font-family: "Tajawal", serif;
+  font-style: normal;
 }
 
 /* Divider */
@@ -163,32 +143,4 @@
   margin: 16px 0;
   border: none;
   border-top: 1px solid #ddd;
-}
-
-/* Content */
-.content {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-.content p {
-  margin-bottom: 8px;
-}
-
-.content-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-/* Summary */
-.summary {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2px;
 }

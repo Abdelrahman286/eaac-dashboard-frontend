@@ -25,7 +25,8 @@ import CustomIconButton from "../CustomIconButton";
 import MutationForm from "./MutationForm";
 import Renew from "./Renew";
 import Modal from "../Modal";
-import MembershipReceipt from "./MembershipReceipt";
+// import MembershipReceipt from "./MembershipReceipt";
+import ReceiptPage from "../ReceiptModal/ReceiptModal";
 
 const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
   const { search, cardStatusId, clientId, membershipTypeId } = filterData;
@@ -387,12 +388,12 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
       flex: 1.2,
       minWidth: 100,
     },
-    // {
-    //   field: "notes",
-    //   headerName: "Notes",
-    //   minWidth: 100,
-    //   flex: 0.5,
-    // },
+    {
+      field: "Notes",
+      headerName: "Notes",
+      minWidth: 100,
+      flex: 0.5,
+    },
 
     {
       field: "controls",
@@ -505,10 +506,10 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
           title={"Membership Receipt"}
           onClose={() => setShowReceipt(false)}
         >
-          <MembershipReceipt
+          <ReceiptPage
             closeFn={() => setShowReceipt(false)}
-            id={receiptId}
-          ></MembershipReceipt>
+            membershipId={receiptId}
+          ></ReceiptPage>
         </Modal>
       )}
 

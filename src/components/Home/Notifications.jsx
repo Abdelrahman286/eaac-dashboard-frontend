@@ -133,7 +133,7 @@ const Notifications = () => {
                         )
                       }
                     >
-                      Submit Students Attendance
+                      Students Attendance
                     </Button>
                     <Button
                       sx={{
@@ -152,7 +152,7 @@ const Notifications = () => {
                         )
                       }
                     >
-                      Submit Instructor Attendance
+                      Instructor Attendance
                     </Button>
                   </Box>
 

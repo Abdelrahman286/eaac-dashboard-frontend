@@ -94,10 +94,15 @@ const NotesModal = ({ data, onClose }) => {
 
       sendAttendanceData({
         reqBody: {
-          instructorId: data?.UserID,
-          roundId: data?.RoundID?.id,
-          sessionId: data?.SessionID?.id,
-          notes: noteText,
+          date: data?.Date || "",
+          attendTime: data?.AttendTime || "",
+          leaveTime: data?.LeaveTime || "",
+          attendFlag: data?.AttendFlag || "",
+
+          instructorId: data?.UserID || "",
+          roundId: data?.RoundID?.id || "",
+          sessionId: data?.SessionID?.id || "",
+          notes: noteText || "",
         },
         token,
         config: {

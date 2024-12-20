@@ -141,7 +141,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   useEffect(() => {
     if (!isEditData || !data) return;
     // Handle edit data initialization
-
     const rawFormData = {
       id: [data.id],
       membershipTypeId: data?.MembershipTypeID?.id || "",
@@ -149,6 +148,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       startAt: data?.startAt || "",
       cardStatusId: data?.CardStatusID?.id,
       statusId: data?.StatusID?.id || "",
+      notes: data?.Notes || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -647,19 +647,18 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             )}
           />
         )}
-        {/* <TextField
+        <TextField
           label="Notes"
-          placeholder="Notes"
+          placeholder="notes"
           id="notes"
-          //   onChange={handleFormChange}
-          //   error={Boolean(formErrors?.descriptionEn)}
-          //   helperText={formErrors?.descriptionEn}
-          //   value={formData?.descriptionEn || ""}
+          name="notes"
+          onChange={handleFormChange}
+          value={formData?.notes || ""}
           multiline
           minRows={2}
           fullWidth
           variant="outlined"
-        /> */}
+        />
       </Box>
 
       {isEditData ? (

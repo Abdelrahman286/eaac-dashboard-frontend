@@ -17,9 +17,10 @@ import { getDataForTableRows } from "../../utils/tables";
 import { getReceiptsFn } from "../../requests/receipts";
 // components
 import CustomIconButton from "../CustomIconButton";
-import ReceiptModal from "./ReceiptModal";
 import EditNotes from "./EditNotes";
 import Modal from "../Modal";
+
+import ReceiptModal from "../ReceiptModal/ReceiptModal";
 
 const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   // studentId, receipt type, search , start date, end date
