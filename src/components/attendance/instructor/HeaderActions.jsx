@@ -179,7 +179,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
                 handleInstructorSelect(value);
                 setFilterDataView({
                   ...filterDataView,
-                  instructorId: value?.Name,
+                  instructorId: value,
                 });
               }}
               loading={instructorLoading}
@@ -201,7 +201,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
                 setRoundId(value?.id);
                 setFilterDataView({
                   ...filterDataView,
-                  roundId: value?.Name_en,
+                  roundId: value,
                 });
               }}
               loading={groupsLoading}

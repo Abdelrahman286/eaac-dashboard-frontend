@@ -1,7 +1,12 @@
 import React from "react";
 import FormButton from "./FormButton";
 
-const DeleteConfirmation = ({ deleteFn, closeFn, isLoading }) => {
+const DeleteConfirmation = ({
+  deleteFn,
+  closeFn,
+  isLoading,
+  deleteMessage,
+}) => {
   const handleDelete = () => {
     deleteFn();
   };
@@ -10,7 +15,11 @@ const DeleteConfirmation = ({ deleteFn, closeFn, isLoading }) => {
   };
   return (
     <div className="delete-confirmation">
-      <p>Are you sure you want to delete this item?</p>
+      {deleteMessage ? (
+        <p>{deleteMessage}</p>
+      ) : (
+        <p>Are you sure you want to delete this item?</p>
+      )}
 
       <div className="actions">
         <FormButton

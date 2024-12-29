@@ -205,3 +205,10 @@ export function getTimeDifference(startTime, endTime) {
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
+
+// convert date format from yyyy-mm-dd to dd-mm-yyyy
+export function convertDateFormat3(dateString) {
+  if (!dateString) return;
+  const [year, month, day] = dateString.split("-");
+  return `${day}-${month}-${year}`;
+}

@@ -183,6 +183,7 @@ const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
       branchId: mainFormData.branchId,
       roundCode: mainFormData.nameEn,
       sessionDinamicallyFlag: 0,
+      attendancePercentage: mainFormData?.attendancePercentage || "0",
     };
 
     const formattedSessionList = sessionsList.map((session) => {

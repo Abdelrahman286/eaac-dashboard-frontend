@@ -244,7 +244,7 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
       field: "SessionDate",
       headerName: "Session Date",
       valueGetter: (value, row) => {
-        return `${row?.Date || "-"}`;
+        return `${row?.SessionID?.created_at?.split(" ")[0] || "-"}`;
       },
       flex: 1,
       minWidth: 100,

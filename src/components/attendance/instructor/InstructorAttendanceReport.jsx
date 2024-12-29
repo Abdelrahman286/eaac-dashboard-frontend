@@ -7,6 +7,7 @@ import {
   AppBar,
   Toolbar,
   Button,
+  Grid,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid"; // Import MUI DataGrid
 
@@ -70,10 +71,12 @@ const InstructorAttendanceReport = ({
           ...(roundId && { roundId: roundId }),
           numOfElements: 99999999999,
         },
+
         token,
         { isFormData: false }
       );
     },
+    enabled: !!instructorId && !!roundId,
     queryKey: ["instructorAttendanceReport", instructorId, roundId],
   });
 
@@ -133,7 +136,7 @@ const InstructorAttendanceReport = ({
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"], // Avoid breaking important elements
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 
@@ -211,43 +214,116 @@ const InstructorAttendanceReport = ({
               </Toolbar>
             </AppBar>
             {/* header data */}
-            <Box>
-              <Box
-                sx={{
-                  padding: 2,
-                  margin: "8px 0px",
-                  border: "1px solid #ddd",
-                  backgroundColor: "#fafafa",
+            <div
+              style={{
+                padding: "16px",
+                backgroundColor: "#f9f9f9",
+                borderRadius: "8px",
+                minWidth: "800px",
+                width: "100%",
+                margin: "10px 0px",
+              }}
+            >
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: "2px",
                 }}
               >
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight="bold"
-                    >
-                      Instructor Name
-                    </Typography>
-                    <Typography variant="body1">
-                      {filterDataView?.instructorId || "N/A"}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight="bold"
-                    >
-                      Round
-                    </Typography>
-                    <Typography variant="body1">
-                      {filterDataView?.roundId || "N/A"}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Instructor
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.instructorId?.Name || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Round Code
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.RoundCode || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Course Name
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.CourseID?.Name_en || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    No. of Students
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.Capacity?.numOfAttendees || "N/A"}{" "}
+                    / {filterDataView?.roundId?.Capacity?.roomCapicity || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Total Hours
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.Capacity?.totalHours || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Start/End Date
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.StartDate?.split(" ")[0] || "N/A"}{" "}
+                    - {filterDataView?.roundId?.EndDate?.split(" ")[0] || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Time
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.totalHours || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Room{" "}
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.RoomID?.RoomCode || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Days
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.roundId?.days || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Today's Date
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {`${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                    }/${new Date().getFullYear()}`}
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* table data */}
             {isError && <p style={{ textAlign: "center" }}>No Rows Found</p>}

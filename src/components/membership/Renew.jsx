@@ -63,7 +63,6 @@ const Renew = ({ onClose, data }) => {
 
   const [selectedStudent, setSelectedStudent] = useState({});
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
-
   const [previewImg, setPreviewImg] = useState("");
 
   // --------- request data for dropdowns -----------
@@ -194,7 +193,7 @@ const Renew = ({ onClose, data }) => {
     const selectedImage = e.target.files[0];
 
     setPreviewImg(URL.createObjectURL(selectedImage));
-    setFormData({ ...formData, image: selectedImage });
+    setFormData({ ...formData, image: [selectedImage] });
   };
 
   const handleFeeChange = (membershiptType) => {
@@ -368,7 +367,7 @@ const Renew = ({ onClose, data }) => {
         >
           <TextField
             size={"small"}
-            label="Memebership Code"
+            label="Membership Code"
             variant="outlined"
             fullWidth
             type="number"

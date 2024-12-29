@@ -151,9 +151,10 @@ const DataTable = ({ filterData }) => {
     {
       field: "paid",
       headerName: "Paid (EGP)",
-      valueGetter: (value, row) => {
-        return `${row?.Debit || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Debit == undefined ? "-" : row.Debit || "0",
+
       flex: 1.2,
       minWidth: 160,
     },

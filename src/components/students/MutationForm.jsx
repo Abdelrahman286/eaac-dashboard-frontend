@@ -48,6 +48,10 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
+  const [previewImg, setPreviewImg] = useState("");
+  const [imageErrorMsg, setImageErrorMsg] = useState(false);
+
   // --------- request data for dropdowns -----------
 
   //----- branches
@@ -148,6 +152,10 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       companyId: data?.CompanyID?.id || "",
     };
 
+    if (data?.Image) {
+      setPreviewImg(data.Image);
+    }
+
     // Remove properties with empty string, null, or undefined values
     const newFormData = Object.fromEntries(
       Object.entries(rawFormData).filter(([_, value]) => value)
@@ -197,6 +205,19 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     }
   };
 
+  const handleImgInput = (e) => {
+    const selectedImage = e.target.files[0];
+
+    // check if user upload non image data
+    if (!selectedImage?.type?.startsWith("image")) {
+      return setImageErrorMsg(true);
+    }
+    if (selectedImage) {
+      setPreviewImg(URL.createObjectURL(selectedImage));
+      setFormData({ ...formData, image: [selectedImage] });
+      setImageErrorMsg(false);
+    }
+  };
   return (
     <div className="student-form-page">
       <form>
@@ -240,7 +261,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.whatsappNum)}
                 helperText={formErrors?.whatsappNum}
                 value={formData?.whatsappNum || ""}
-                label="WhatsApp Number *"
+                label="WhatsApp Number"
                 name="whatsappNum"
               />
 
@@ -248,7 +269,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <TextField
                 error={Boolean(formErrors?.birthDate)}
                 helperText={formErrors?.birthDate}
-                label="Birth Date *"
+                label="Birth Date"
                 type="date"
                 value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
@@ -280,10 +301,23 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   <TextField
                     id="vendorId"
                     {...params}
-                    label="Company"
+                    label="Company *"
+                    error={Boolean(formErrors?.companyId)}
+                    helperText={formErrors?.companyId}
                     fullWidth
                   />
                 )}
+              />
+
+              <TextField
+                value={formData?.notes || ""}
+                id="notes"
+                name="notes"
+                multiline
+                rows={2}
+                label="Notes"
+                sx={{ width: "100%" }}
+                onChange={handleFormChange}
               />
             </Box>
 
@@ -291,6 +325,58 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             <Box
               sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
             >
+              <TextField
+                label="Photo"
+                variant="outlined"
+                fullWidth
+                type="file"
+                error={Boolean(formErrors?.image)}
+                helperText={formErrors?.image}
+                id="image"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleImgInput}
+              />
+
+              {imageErrorMsg && (
+                <p className="invalid-message">Please upload an image file</p>
+              )}
+
+              {previewImg && (
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 150,
+                      height: 150,
+                      overflow: "hidden",
+                      borderRadius: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={previewImg || ""}
+                      alt={""}
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
+
               <Autocomplete
                 loading={branchesLoading}
                 value={
@@ -326,7 +412,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.govIssuedId)}
                 helperText={formErrors?.govIssuedId}
                 value={formData?.govIssuedId || ""}
-                label="Government ID *"
+                label="Government ID"
                 name="govIssuedId"
               />
               <TextField
@@ -337,16 +423,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 value={formData?.email || ""}
                 label="Email *"
                 name="Email"
-              />
-              <TextField
-                value={formData?.notes || ""}
-                id="notes"
-                name="notes"
-                multiline
-                rows={2}
-                label="Notes"
-                sx={{ width: "100%" }}
-                onChange={handleFormChange}
               />
             </Box>
           </Box>

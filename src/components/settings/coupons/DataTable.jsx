@@ -218,6 +218,15 @@ const DataTable = ({ onDataChange }) => {
       headerName: "#",
       flex: 0.5, // Makes the column responsive, taking up half a unit of space
     },
+    {
+      field: "Name",
+      headerName: "Name",
+      valueGetter: (value, row) => {
+        return `${row?.Name || ""}`;
+      },
+      flex: 1.5,
+      minWidth: 100,
+    },
 
     {
       field: "couponCode",
@@ -252,6 +261,16 @@ const DataTable = ({ onDataChange }) => {
         } else {
           return `${row?.DiscountPercentage} %`;
         }
+      },
+      flex: 1.5,
+      minWidth: 100,
+    },
+
+    {
+      field: "ValidTo",
+      headerName: "Valid To",
+      valueGetter: (value, row) => {
+        return `${row?.ValidTo?.split(" ")[0] || ""}`;
       },
       flex: 1.5,
       minWidth: 100,

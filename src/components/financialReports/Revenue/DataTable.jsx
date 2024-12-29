@@ -98,8 +98,6 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
-  console.log(updatedDataList);
-
   const columns = [
     {
       field: "rowIndex",
@@ -110,6 +108,7 @@ const DataTable = ({ filterData }) => {
     {
       field: "clientName",
       headerName: "Client's Name",
+
       valueGetter: (value, row) => {
         return `${row?.Payor?.Name || ""}`;
       },
@@ -166,18 +165,18 @@ const DataTable = ({ filterData }) => {
     {
       field: "totalCoursePrice",
       headerName: "Total Course Price",
-      valueGetter: (value, row) => {
-        return `${row?.CoursePrice || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.CoursePrice == undefined ? "-" : row.CoursePrice || "0",
       flex: 1.2,
       minWidth: 120,
     },
     {
       field: "paid",
       headerName: "Paid (EGP)",
-      valueGetter: (value, row) => {
-        return `${row?.PaiedAmount || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.PaiedAmount == undefined ? "-" : row.PaiedAmount || "0",
       flex: 1.2,
       minWidth: 120,
     },

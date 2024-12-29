@@ -21,8 +21,8 @@ import { UserContext } from "../../contexts/UserContext";
 import ExportToExcel from "../ExportToExcel";
 
 // utils
-
-import { getStudentFn } from "../../requests/receipts";
+import { getDataForTableRows } from "../../utils/tables";
+import { getStudentFn, getReceiptTypes } from "../../requests/receipts";
 
 // components
 import SearchableDropdown from "../SearchableDropdown";
@@ -38,6 +38,24 @@ const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
+
+  // receipt types
+  const { data: receiptTypesObj, isLoading: receiptTypesLoading } = useQuery({
+    queryFn: () => {
+      return getReceiptTypes(
+        {
+          numOfElements: "2000",
+        },
+        token,
+        { isFormData: false }
+      );
+    },
+
+    queryKey: ["receiptTypes"],
+  });
+  const receiptTypes = getDataForTableRows(
+    receiptTypesObj?.success?.response?.data
+  );
 
   const [formData, setFormData] = useState({});
 
@@ -78,7 +96,7 @@ const Header = ({ excelData, onFilterChange }) => {
             <TextField
               value={formData?.search || ""}
               onChange={(e) => {
-                // setFormData({ ...formData, search: e.target.value || "" });
+                setFormData({ ...formData, search: e.target.value || "" });
               }}
               size={"small"}
               label="Search Receipts"
@@ -96,19 +114,19 @@ const Header = ({ excelData, onFilterChange }) => {
 
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <Autocomplete
-              //   disabled
-              //   value={
-              //     receiptTypes.find((item) => item.id == formData?.reciptType) ||
-              //     null
-              //   }
-              //   onChange={(e, value) => {
-              //     setFormData({ ...formData, reciptType: value?.id || "" });
-              //   }}
+              value={
+                receiptTypes.find(
+                  (item) => item.id == formData?.paymentTypeId
+                ) || null
+              }
+              onChange={(e, value) => {
+                setFormData({ ...formData, paymentTypeId: value?.id || "" });
+              }}
               sx={{
                 flex: 1,
               }}
               options={receiptTypes || []}
-              getOptionLabel={(option) => `${option?.value}` || ""}
+              getOptionLabel={(option) => `${option?.Name_en}` || ""}
               size="small"
               renderInput={(params) => (
                 <TextField {...params} label="Receipt Type" fullWidth />
@@ -142,7 +160,7 @@ const Header = ({ excelData, onFilterChange }) => {
           <TextField
             value={formData?.startDate || ""}
             onChange={(e) => {
-              //   setFormData({ ...formData, startDate: e.target.value || "" });
+              setFormData({ ...formData, startDate: e.target.value || "" });
             }}
             size={"small"}
             label="Start Date"
@@ -157,7 +175,7 @@ const Header = ({ excelData, onFilterChange }) => {
           <TextField
             value={formData?.endDate || ""}
             onChange={(e) => {
-              //   setFormData({ ...formData, endDate: e.target.value || "" });
+              setFormData({ ...formData, endDate: e.target.value || "" });
             }}
             size={"small"}
             label="End Date"
@@ -210,16 +228,6 @@ const Header = ({ excelData, onFilterChange }) => {
             headers={headers}
           ></ExportToExcel>
         </Box>
-
-        {/* {showAddForm && (
-          <Modal
-            classNames={"h-70per"}
-            title={"Add Membership"}
-            onClose={() => setShowAddForm(false)}
-          >
-            <MutationForm onClose={() => setShowAddForm(false)}></MutationForm>
-          </Modal>
-        )} */}
       </Box>
     </div>
   );

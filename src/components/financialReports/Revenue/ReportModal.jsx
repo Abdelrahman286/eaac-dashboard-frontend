@@ -95,7 +95,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"], // Avoid breaking important elements
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 
@@ -104,6 +104,19 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
     } else {
       console.error(`Element with class ${documentClass} not found.`);
     }
+  };
+
+  const getTotal = () => {
+    let sum = 0;
+    if (reportData?.length == 0 || !Array.isArray(reportData)) return 0;
+
+    reportData?.forEach((ele) => {
+      if (ele?.PaiedAmount) {
+        sum += ele?.PaiedAmount;
+      }
+    });
+
+    return sum;
   };
 
   return (
@@ -174,7 +187,13 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                 backgroundColor: "#fafafa",
               }}
             >
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 2,
+                }}
+              >
                 <Box>
                   <Typography
                     variant="body2"
@@ -224,6 +243,25 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                     {filterData?.endDate || "N/A"}
                   </Typography>
                 </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifySelf: "flex-end",
+                    justifyContent: "flex-end",
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    {`${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                    }/${new Date().getFullYear()}`}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -263,14 +301,49 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                             </span>
                             <span>{ele?.PaymentTypeID?.id || "-"}</span>
 
-                            <span>{ele?.CoursePrice || "-"}</span>
-                            <span>{ele?.PaiedAmount || "-"}</span>
-                            <span>{ele?.receiptSerialNum || "-"}</span>
+                            <span>
+                              {ele?.CoursePrice == undefined
+                                ? "-"
+                                : ele.CoursePrice || "0"}
+                            </span>
+                            <span>
+                              {ele?.PaiedAmount == undefined
+                                ? "-"
+                                : ele.PaiedAmount || "0"}
+                            </span>
+                            <span>{ele?.BillID?.BillCode || "-"}</span>
                           </div>
                         </div>
                       );
                     })}
                   </div>
+                </div>
+              </div>
+
+              {/* revenue total */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                  padding: "20px 0px",
+                  margin: "2px 0px",
+                  borderBottom: "1px solid #c1c1c1cd",
+                }}
+              >
+                <div
+                  style={{
+                    width: "80%",
+                  }}
+                >
+                  Total Revenue
+                </div>
+                <div
+                  style={{
+                    width: "20%",
+                  }}
+                >
+                  {getTotal()} EGP
                 </div>
               </div>
             </div>

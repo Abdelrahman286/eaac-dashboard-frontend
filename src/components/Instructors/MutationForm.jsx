@@ -101,7 +101,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       showSnackbar("Instructor Added Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at adding new Instructor", error);
       showSnackbar("Failed to Add New Instructor", "error");
     },
   });
@@ -163,7 +162,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       showSnackbar("Instructor Edited Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at editing Instructor data", error);
       showSnackbar("Faild to edit Instructor Data", "error");
     },
   });
@@ -237,7 +235,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.whatsappNum)}
                 helperText={formErrors?.whatsappNum}
                 value={formData?.whatsappNum || ""}
-                label="WhatsApp Number *"
+                label="WhatsApp Number"
                 name="whatsappNum"
               />
 
@@ -245,11 +243,10 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <TextField
                 error={Boolean(formErrors?.birthDate)}
                 helperText={formErrors?.birthDate}
-                label="Birth Date *"
+                label="Birth Date"
                 type="date"
                 value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
-                  console.log(e.target.value);
                   const inputDate = e.target.value; // YYYY-MM-DD
                   setFormData({ ...formData, birthDate: inputDate });
                 }}
@@ -269,7 +266,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <Autocomplete
                 loading={branchesLoading}
                 value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
+                  branches.find((branch) => branch.id == formData.branchId) ||
                   null
                 }
                 options={branches}
@@ -326,7 +323,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.govIssuedId)}
                 helperText={formErrors?.govIssuedId}
                 value={formData?.govIssuedId || ""}
-                label="Government ID *"
+                label="Government ID"
                 name="govIssuedId"
               />
               <TextField
@@ -361,14 +358,21 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         <div className="form-actions">
           {isAddError && (
             <p className="invalid-message">
-              {addError?.responseError?.failed?.response?.msg ||
-                "An Error Occurred, please try Again"}
+              {`${addError?.responseError?.failed?.response?.msg}  
+                 ${
+                   addError?.responseError?.failed?.response?.errors?.email ||
+                   ""
+                 }` || "An Error Ocurred"}
             </p>
           )}
+
           {isEditError && (
             <p className="invalid-message">
-              {editingError?.responseError?.failed?.response?.msg ||
-                "An Error Occurred, please try Again"}
+              {`${editingError?.responseError?.failed?.response?.msg}  
+                 ${
+                   editingError?.responseError?.failed?.response?.errors
+                     ?.email || ""
+                 }` || "An Error Ocurred"}
             </p>
           )}
 

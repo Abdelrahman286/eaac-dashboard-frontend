@@ -184,7 +184,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.name)}
                 helperText={formErrors?.name}
                 value={formData?.name || ""}
-                label="Instructor Name *"
+                label="Name *"
                 name="name"
               />
 
@@ -214,7 +214,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.whatsappNum)}
                 helperText={formErrors?.whatsappNum}
                 value={formData?.whatsappNum || ""}
-                label="WhatsApp Number *"
+                label="WhatsApp Number"
                 name="whatsappNum"
               />
 
@@ -222,7 +222,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <TextField
                 error={Boolean(formErrors?.birthDate)}
                 helperText={formErrors?.birthDate}
-                label="Birth Date *"
+                label="Birth Date"
                 type="date"
                 value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
@@ -275,7 +275,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.govIssuedId)}
                 helperText={formErrors?.govIssuedId}
                 value={formData?.govIssuedId || ""}
-                label="Government ID *"
+                label="Government ID"
                 name="govIssuedId"
               />
               <TextField
@@ -314,14 +314,21 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         <div className="form-actions">
           {isAddError && (
             <p className="invalid-message">
-              {addError?.responseError?.failed?.response?.msg ||
-                "An Error Occurred, please try Again"}
+              {`${addError?.responseError?.failed?.response?.msg}  
+                 ${
+                   addError?.responseError?.failed?.response?.errors?.email ||
+                   ""
+                 }` || "An Error Ocurred"}
             </p>
           )}
+
           {isEditError && (
             <p className="invalid-message">
-              {editingError?.responseError?.failed?.response?.msg ||
-                "An Error Occurred, please try Again"}
+              {`${editingError?.responseError?.failed?.response?.msg}  
+                 ${
+                   editingError?.responseError?.failed?.response?.errors
+                     ?.email || ""
+                 }` || "An Error Ocurred"}
             </p>
           )}
 

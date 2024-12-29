@@ -73,7 +73,8 @@ const ExtrasList = ({ data, courseId }) => {
         <span>Description</span>
 
         <span>Type</span>
-        <span>Price</span>
+        <span>Member Price</span>
+        <span>Non Member Price</span>
         <span
           style={{
             width: "140px",
@@ -88,6 +89,7 @@ const ExtrasList = ({ data, courseId }) => {
       )}
       <div className="data-list">
         {arrayWithIndex.map((ele) => {
+          console.log(ele);
           return (
             <div className="contact-row" key={ele?.rowIndex}>
               {idToEdit !== ele.id && (
@@ -96,9 +98,9 @@ const ExtrasList = ({ data, courseId }) => {
 
                   <span>{ele?.Name_en || "-"}</span>
                   <span>{ele?.Description_en || "-"}</span>
-
                   <span>{ele?.ExtraType || "-"}</span>
                   <span>{ele?.MemberPrice || "-"}</span>
+                  <span>{ele?.NonMemberPrice || "-"}</span>
 
                   <span
                     style={{

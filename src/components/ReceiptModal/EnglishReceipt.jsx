@@ -86,7 +86,7 @@ const ArabicReceipt = ({ data }) => {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              flexShrink: 0,
+              //   flexShrink: 0,
             }}
           >
             <img
@@ -134,7 +134,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Client's Name (Ar)</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.customerNameEN || "--"}
+                {data?.Payor?.Name || "--"}
               </p>
             </div>
 
@@ -197,7 +197,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Total Round Price</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.coursePriceTotal || "--"}
+                {data?.CoursePrice || "--"}
               </p>
             </div>
 
@@ -211,21 +211,21 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Remaining</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Credit || "EGP"}
+                {data?.Balance || "EGP"}
               </p>
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Recipient</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.employeeName || "--"}
+                {data?.Receiver?.Name || "--"}
               </p>
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Employee Code </p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.employeeCode || "--"}
+                {data?.Receiver?.id || "--"}
               </p>
             </div>
           </div>
@@ -241,7 +241,7 @@ const ArabicReceipt = ({ data }) => {
         >
           <div>
             <p style={{ margin: "4px 0" }}>Branch</p>
-            <p style={{ margin: "4px 0" }}>{data?.branch || "--"}</p>
+            <p style={{ margin: "4px 0" }}>{data?.BranchID?.Name_en || "--"}</p>
           </div>
           <div>
             <p style={{ margin: "4px 0" }}>Signature</p>
@@ -281,7 +281,7 @@ const ArabicReceipt = ({ data }) => {
           }}
           onClick={handlePrintPdf}
         >
-          حفظ PDF
+          Save PDF
         </Button>
       </div>
     </div>

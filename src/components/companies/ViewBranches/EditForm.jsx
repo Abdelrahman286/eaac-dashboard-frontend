@@ -17,7 +17,11 @@ import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 // Requests
-import { editBranchFn, getCitiesFn } from "../../../requests/companies";
+import {
+  editBranchFn,
+  getCitiesFn,
+  getProvincesFn,
+} from "../../../requests/companies";
 
 // validations
 import { validateEditBranch } from "./validateBranches";
@@ -34,15 +38,14 @@ const EditForm = ({ branch, onCancel, companyId }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  //-------------------- Cities -------------------------
+  //-------------------- Provences -------------------------
 
   const { data: citiesList, isLoading: citiesLoading } = useQuery({
     queryFn: () => {
-      return getCitiesFn(
+      return getProvincesFn(
         {
           numOfElements: "2000",
-          //   provenceId: formData?.provinceId,
-          provenceId: 1,
+          countryId: "66",
         },
         token,
         {

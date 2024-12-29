@@ -159,7 +159,7 @@ const Header = ({ onFilterChange }) => {
           }}
         >
           <TextField
-            value={formData?.date || ""}
+            value={formData?.startDate || ""}
             onChange={(e) => {
               setFormData({ ...formData, startDate: e.target.value || "" });
             }}

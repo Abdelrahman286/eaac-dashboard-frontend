@@ -15,7 +15,11 @@ import "../../../styles/rounds.css";
 import { getDataForTableRows } from "../../../utils/tables";
 
 // Requests
-import { addBranchFn, getCitiesFn } from "../../../requests/companies";
+import {
+  addBranchFn,
+  getCitiesFn,
+  getProvincesFn,
+} from "../../../requests/companies";
 // contexts
 import { AppContext } from "../../../contexts/AppContext";
 import { UserContext } from "../../../contexts/UserContext";
@@ -44,11 +48,10 @@ const AddNewBranch = ({ id }) => {
 
   const { data: citiesList, isLoading: citiesLoading } = useQuery({
     queryFn: () => {
-      return getCitiesFn(
+      return getProvincesFn(
         {
           numOfElements: "2000",
-          //   provenceId: formData?.provinceId,
-          provenceId: 1,
+          countryId: "66",
         },
         token,
         {
@@ -56,9 +59,7 @@ const AddNewBranch = ({ id }) => {
         }
       );
     },
-
     retry: 2,
-
     queryKey: ["cities"],
   });
 

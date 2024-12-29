@@ -121,7 +121,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       showSnackbar("Course Added Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at adding new Course", error);
+      //   console.log("Error at adding new Course", error);
       showSnackbar("Failed to Add new course data", "error");
     },
   });
@@ -196,7 +196,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       showSnackbar("Course is Edited Successfully", "success");
     },
     onError: (error) => {
-      console.log("Error at editing Course data", error);
       showSnackbar("Failed to edit course data", "error");
     },
   });
@@ -323,6 +322,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               />
               {/* Input Field for Course Code */}
               <TextField
+                disabled={isEditData}
                 id="courseCode"
                 onChange={handleFormChange}
                 error={Boolean(formErrors?.courseCode)}

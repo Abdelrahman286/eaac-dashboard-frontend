@@ -129,7 +129,7 @@ const Header = ({ excelData, onFilterChange }) => {
                 setFormData({ ...formData, search: e.target.value || "" });
               }}
               size={"small"}
-              label="Search By Memebership Code"
+              label="Search By Membership Code"
               variant="outlined"
               fullWidth
               InputProps={{

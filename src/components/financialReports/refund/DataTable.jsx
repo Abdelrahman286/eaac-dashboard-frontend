@@ -93,8 +93,6 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
-
-
   const columns = [
     {
       field: "rowIndex",
@@ -144,9 +142,9 @@ const DataTable = ({ filterData }) => {
     {
       field: "totalCoursePrice",
       headerName: "totalCoursePrice",
-      valueGetter: (value, row) => {
-        return `${row?.CoursePrice || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.CoursePrice == undefined ? "-" : row.CoursePrice || "0",
       flex: 1.2,
       minWidth: 120,
     },
@@ -154,9 +152,9 @@ const DataTable = ({ filterData }) => {
     {
       field: "totalPaidByClient",
       headerName: "Total Paid By Client",
-      valueGetter: (value, row) => {
-        return `${row?.PaiedAmount || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.PaiedAmount == undefined ? "-" : row.PaiedAmount || "0",
       flex: 1.2,
       minWidth: 120,
     },
@@ -172,9 +170,9 @@ const DataTable = ({ filterData }) => {
     {
       field: "refundedValue",
       headerName: "Refunded Value",
-      valueGetter: (value, row) => {
-        return `${row?.Debit || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Debit == undefined ? "-" : row.Debit || "0",
       flex: 1.2,
       minWidth: 120,
     },

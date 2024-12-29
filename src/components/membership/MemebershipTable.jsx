@@ -375,6 +375,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
             }}
           >
             <a
+              target="_blank"
               href={params?.row?.Image}
               style={{
                 fontSize: "12px",

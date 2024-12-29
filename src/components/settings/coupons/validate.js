@@ -10,6 +10,18 @@ import {
 export const validateAdd = (formData) => {
   const errors = {};
 
+  if (isBlank(formData?.voucherName)) {
+    errors.voucherName = "Please fill in Voucher Name";
+  }
+
+  if (isBlank(formData?.validTo)) {
+    errors.validTo = "Please fill in date";
+  }
+
+  if (!isBlank(formData?.validTo) && !isFutureDate(formData?.validTo)) {
+    errors.validTo = "Valid Date can't be in the past";
+  }
+
   if (isBlank(formData?.voucherCode)) {
     errors.voucherCode = "Please fill promo code";
   }

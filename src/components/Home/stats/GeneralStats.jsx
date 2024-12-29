@@ -15,37 +15,37 @@ const DashboardStats = ({ data }) => {
   const stats = [
     {
       label: "Students",
-      value: data?.numberOfActiveCompanies,
+      value: data?.numberOfActiveCompanies || "",
       icon: <PeopleIcon />,
     },
     {
       label: "Instructors",
-      value: data?.numberOfActiveInstructors,
+      value: data?.numberOfActiveInstructors || "",
       icon: <SchoolIcon />,
     },
     {
       label: "Courses",
-      value: data?.numberOfActiveCourses,
+      value: data?.numberOfActiveCourses || "",
       icon: <EventIcon />,
     },
     {
       label: "Rounds",
-      value: data?.numberOfActiveRounds,
+      value: data?.numberOfActiveRounds || "",
       icon: <AccessTimeIcon />,
     },
     {
       label: "Sessions",
-      value: data?.numberOfActiveSessions,
+      value: data?.numberOfActiveSessions || "",
       icon: <AccountBoxIcon />,
     },
     {
       label: "Members",
-      value: data?.numberOfActiveMemberships,
+      value: data?.numberOfActiveMemberships || "",
       icon: <GroupIcon />,
     },
     {
       label: "Companies",
-      value: data?.numberOfActiveCompanies,
+      value: data?.numberOfActiveCompanies || "",
       icon: <BusinessIcon />,
     },
   ];

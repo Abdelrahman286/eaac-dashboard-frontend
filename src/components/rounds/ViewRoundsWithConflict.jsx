@@ -18,11 +18,11 @@ const ViewRoundsWithConflict = ({ data, mainFormData }) => {
     <div className="one-by-one-sessionsList">
       <div className="header">
         <span>#</span>
-        <span>Session Name</span>
+        {/* <span>Session Name</span> */}
         <span>Date</span>
         <span>Start Time</span>
         <span>End Time</span>
-        <span>Description</span>
+        {/* <span>Description</span> */}
         <span>Room</span>
         <span>Instructor</span>
         {/* <span>Controls</span> */}
@@ -42,11 +42,11 @@ const ViewRoundsWithConflict = ({ data, mainFormData }) => {
             <div className="session-row" key={ele?.rowIndex}>
               <div className="data-row">
                 <span>{ele?.rowIndex}</span>
-                <span>{ele?.sessionName || "-"}</span>
+                {/* <span>{ele?.sessionName || "-"}</span> */}
                 <span>{startDate}</span>
                 <span>{startTime}</span>
                 <span>{endTime}</span>
-                <span>{"-"}</span>
+                {/* <span>{"-"}</span> */}
                 <span>{ele?.room?.Name_en}</span>
                 <span>{ele?.instructor?.Name}</span>
               </div>

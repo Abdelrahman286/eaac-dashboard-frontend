@@ -235,6 +235,24 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                     {filterData?.endDate || "N/A"}
                   </Typography>
                 </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifySelf: "flex-end",
+                    justifyContent: "flex-end",
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    {`${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                    }/${new Date().getFullYear()}`}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -271,7 +289,9 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                               {ele?.PaymentMethodID?.Method_en || "-"}
                             </span>
                             <span>{ele?.Notes || "-"}</span>
-                            <span>{ele?.Debit || "-"}</span>
+                            <span>
+                              {ele?.Debit == undefined ? "-" : ele.Debit || "0"}
+                            </span>
                           </div>
                         </div>
                       );

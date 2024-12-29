@@ -15,21 +15,27 @@ export const validateAddStudent = (formData) => {
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";
   }
-  if (!validatePhoneNumber(formData.whatsappNum)) {
+  if (
+    !isBlank(formData.whatsappNum) &&
+    !validatePhoneNumber(formData.whatsappNum)
+  ) {
     errors.whatsappNum = "Please Enter a Valid Phone Number";
   }
-  if (isBlank(formData?.birthDate)) {
-    errors.birthDate = "Please Fill in Birth Date";
-  }
-  if (isFutureDate(formData?.birthDate)) {
+  //   if (isBlank(formData?.govIssuedId))
+  //     errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+
+  //   if (isBlank(formData?.birthDate)) {
+  //     errors.birthDate = "Please Fill in Birth Date";
+  //   }
+  if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
     errors.birthDate = "Birth Date Can not be in the future";
+  }
+  if (isBlank(formData?.companyId)) {
+    errors.companyId = "Please Select a Company";
   }
 
   if (isBlank(formData?.branchId))
     errors.branchId = "Please Provide the Branch";
-
-  if (isBlank(formData?.govIssuedId))
-    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
 
   if (isBlank(formData.email) || !isValidEmail(formData.email))
     errors.email = "Please enter a valid email address";
@@ -45,21 +51,31 @@ export const validateEditStudent = (formData) => {
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";
   }
-  if (!validatePhoneNumber(formData.whatsappNum)) {
+  if (
+    !isBlank(formData.whatsappNum) &&
+    !validatePhoneNumber(formData.whatsappNum)
+  ) {
     errors.whatsappNum = "Please Enter a Valid Phone Number";
   }
-  if (isBlank(formData?.birthDate)) {
-    errors.birthDate = "Please Fill in Birth Date";
-  }
-  if (isFutureDate(formData?.birthDate)) {
+  //   if (!validatePhoneNumber(formData.whatsappNum)) {
+  //     errors.whatsappNum = "Please Enter a Valid Phone Number";
+  //   }
+  //   if (isBlank(formData?.birthDate)) {
+  //     errors.birthDate = "Please Fill in Birth Date";
+  //   }
+  //   if (isBlank(formData?.govIssuedId))
+  //     errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+
+  if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
     errors.birthDate = "Birth Date Can not be in the future";
+  }
+
+  if (isBlank(formData?.companyId)) {
+    errors.companyId = "Please Select a Company";
   }
 
   if (isBlank(formData?.branchId))
     errors.branchId = "Please Provide the Branch";
-
-  if (isBlank(formData?.govIssuedId))
-    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
 
   if (isBlank(formData.email) || !isValidEmail(formData.email))
     errors.email = "Please enter a valid email address";

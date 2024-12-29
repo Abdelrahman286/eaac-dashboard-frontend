@@ -169,8 +169,10 @@ const DataTable = ({ filterData }) => {
     {
       field: "Balance",
       headerName: "Balance",
-      valueGetter: (value, row) =>
-        row?.Balance == undefined ? "-" : row.Balance || "0",
+      valueGetter: (value, row) => {
+        row?.Balance == undefined ? "-" : row.Balance || "0";
+      },
+
       flex: 1.2,
       minWidth: 120,
     },

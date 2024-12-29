@@ -21,7 +21,7 @@ const AddSessions = ({ mainFormData, onClose, instructors, rooms }) => {
       </Tabs>
 
       <Box sx={{ p: 2 }}>
-        {selectedTab === 0 && (
+        {selectedTab == 0 && (
           <OneByOneSection
             mainFormData={mainFormData}
             onClose={onClose}
@@ -30,7 +30,7 @@ const AddSessions = ({ mainFormData, onClose, instructors, rooms }) => {
           ></OneByOneSection>
         )}
 
-        {selectedTab === 1 && (
+        {selectedTab == 1 && (
           <div>
             <AddBulkSection
               mainFormData={mainFormData}

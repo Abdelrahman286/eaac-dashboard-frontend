@@ -291,7 +291,7 @@ const CoursesTable = ({ onDataChange }) => {
 
     {
       field: "NonMemberPrice",
-      headerName: "Price (non Memebers)",
+      headerName: "Price (non Members)",
 
       flex: 1,
       minWidth: 100,
@@ -299,7 +299,7 @@ const CoursesTable = ({ onDataChange }) => {
 
     {
       field: "MemberPrice",
-      headerName: "Price (Memebers)",
+      headerName: "Price (Members)",
       flex: 1,
       minWidth: 100,
     },

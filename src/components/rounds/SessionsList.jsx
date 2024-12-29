@@ -13,7 +13,6 @@ import { getDataForTableRows } from "../../utils/tables";
 
 // loading
 import LoadingSpinner from "../../components/LoadingSpinner";
-import ViewRoundsWithConflict from "./ViewRoundsWithConflict";
 
 const SessionsList = ({ onClose, roundId }) => {
   const { token } = useContext(UserContext);

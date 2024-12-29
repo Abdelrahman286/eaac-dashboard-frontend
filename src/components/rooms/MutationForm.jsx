@@ -117,8 +117,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       Object.entries(rawFormData).filter(([_, value]) => value)
     );
 
-    console.log(newFormData);
-
     setFormData(newFormData);
   }, [isEditData, data]);
 
@@ -181,9 +179,9 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 }
                 options={branches}
                 getOptionLabel={(option) => option?.Name_en}
-                onChange={(e, value) =>
-                  setFormData({ ...formData, branchId: value.id })
-                }
+                onChange={(e, value) => {
+                  setFormData({ ...formData, branchId: value?.id || "" });
+                }}
                 renderInput={(params) => (
                   <TextField
                     id="branchId"

@@ -11,67 +11,136 @@ import {
 import { useNavigate } from "react-router-dom";
 import imageIcon from "./shorcutsIcons/img.png";
 import ShortcutIcon from "@mui/icons-material/Shortcut";
+import {
+  School,
+  Group,
+  PersonAdd,
+  Payments,
+  Receipt,
+  BarChart,
+  AddCircle,
+  Assessment,
+  AccountBalance,
+  CalendarViewMonth,
+} from "@mui/icons-material";
 
 const Shortcuts = () => {
   const navigate = useNavigate();
+  //   const shortcuts = [
+  //     {
+  //       icon: imageIcon,
+  //       label: "Student Attendance",
+  //       link: "/attendance/students",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Instructor Attendance",
+  //       link: "/attendance/instructors",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Add Student",
+  //       link: "/students?action=add",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Add Instructor",
+  //       link: "/instructors?action=add",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Student Payment",
+  //       link: "/accounting/client-payments",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Add Expenses",
+  //       link: "/settings/expenses-types?action=add",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Enroll Student",
+  //       link: "/students",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Membership",
+  //       link: "/membership",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "Financial Reports",
+  //       link: "/financial-reports",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "View Rounds",
+  //       link: "/rounds",
+  //     },
+  //     {
+  //       icon: imageIcon,
+  //       label: "New Round",
+  //       link: "/rounds?action=add",
+  //     },
+  //   ];
+
   const shortcuts = [
     {
-      icon: imageIcon,
+      icon: <School fontSize="large" />,
       label: "Student Attendance",
       link: "/attendance/students",
     },
     {
-      icon: imageIcon,
+      icon: <Group fontSize="large" />,
       label: "Instructor Attendance",
       link: "/attendance/instructors",
     },
     {
-      icon: imageIcon,
+      icon: <PersonAdd fontSize="large" />,
       label: "Add Student",
       link: "/students?action=add",
     },
     {
-      icon: imageIcon,
+      icon: <PersonAdd fontSize="large" />,
       label: "Add Instructor",
       link: "/instructors?action=add",
     },
     {
-      icon: imageIcon,
+      icon: <Payments fontSize="large" />,
       label: "Student Payment",
       link: "/accounting/client-payments",
     },
     {
-      icon: imageIcon,
+      icon: <Receipt fontSize="large" />,
       label: "Add Expenses",
       link: "/settings/expenses-types?action=add",
     },
     {
-      icon: imageIcon,
+      icon: <AddCircle fontSize="large" />,
       label: "Enroll Student",
       link: "/students",
     },
     {
-      icon: imageIcon,
+      icon: <Assessment fontSize="large" />,
       label: "Membership",
       link: "/membership",
     },
     {
-      icon: imageIcon,
+      icon: <BarChart fontSize="large" />,
       label: "Financial Reports",
       link: "/financial-reports",
     },
     {
-      icon: imageIcon,
+      icon: <CalendarViewMonth fontSize="large" />,
       label: "View Rounds",
       link: "/rounds",
     },
     {
-      icon: imageIcon,
+      icon: <AddCircle fontSize="large" />,
       label: "New Round",
       link: "/rounds?action=add",
     },
   ];
-
   return (
     <Box
       sx={{
@@ -144,12 +213,14 @@ const Shortcuts = () => {
                   marginBottom: 1.5,
                 }}
               >
-                <CardMedia
+                {/* <CardMedia
                   component="img"
                   image={shortcut.icon}
                   alt={shortcut.label}
                   sx={{ width: 30, height: 30 }}
-                />
+                /> */}
+
+                {shortcut?.icon}
               </Box>
               <CardContent sx={{ padding: "8px 0 0 0" }}>
                 <Typography

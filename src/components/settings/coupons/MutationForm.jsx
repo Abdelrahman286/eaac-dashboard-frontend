@@ -30,12 +30,15 @@ import { validateAdd } from "./validate";
 
 // utils
 import { getDataForTableRows } from "../../../utils/tables";
+import { convertDateFormat3 } from "../../../utils/functions";
 
 const MutationForm = ({ onClose, isEditData, data }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    percentageFlag: 0,
+  });
   const [formErrors, setFormErrors] = useState({});
 
   const [categoryType, setCategoryType] = useState("0");
@@ -70,8 +73,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       setFormErrors(errors);
     } else {
       setFormErrors({});
+
+      const { validTo, ...rest } = formData;
+      const newObj = { ...rest };
+      newObj.validTo = convertDateFormat3(validTo);
+
       sendPromoCode({
-        reqBody: formData,
+        reqBody: newObj,
         token,
         config: {
           isFormData: false,
@@ -83,10 +91,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
+
     const rawFormData = {
       id: [data.id],
       voucherCode: data?.VoucherCode || "",
       discountPercentage: data?.DiscountPercentage || "",
+      voucherName: data?.Name || "",
+      validTo: data?.ValidTo?.split(" ")[0] || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -176,12 +187,32 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             </FormControl>
 
             <TextField
+              id="voucherName"
+              onChange={handleFormChange}
+              error={Boolean(formErrors?.voucherName)}
+              helperText={formErrors?.voucherName}
+              value={formData?.voucherName || ""}
+              label={"Voucher Name *"}
+            />
+            <TextField
               id="voucherCode"
               onChange={handleFormChange}
               error={Boolean(formErrors?.voucherCode)}
               helperText={formErrors?.voucherCode}
               value={formData?.voucherCode || ""}
               label={"Promo Code *"}
+            />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              type="date"
+              id="validTo"
+              onChange={handleFormChange}
+              error={Boolean(formErrors?.validTo)}
+              helperText={formErrors?.validTo}
+              value={formData?.validTo || ""}
+              label={"Valid To *"}
             />
 
             {categoryType == 1 ? (

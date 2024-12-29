@@ -74,7 +74,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   // Handle image selection
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
-    console.log(selectedImage);
 
     // check if user upload non image data
     if (!selectedImage?.type?.startsWith("image")) {
@@ -300,11 +299,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     }
   };
 
-  // for testing / debug
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
   return (
     <div className="company-form-page">
       <form>
@@ -364,6 +358,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             >
               {/* TextField Components */}
               <TextField
+                disabled={isEditData}
                 id="companyCode"
                 error={Boolean(formErrors?.companyCode)}
                 helperText={formErrors?.companyCode}

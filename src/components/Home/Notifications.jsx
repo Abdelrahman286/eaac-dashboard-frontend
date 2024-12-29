@@ -17,6 +17,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+import DeleteConfirmation from "../DeleteConfirmation";
+import Modal from "../Modal";
+
 // requests
 import { getNotifications } from "../../requests/home";
 
@@ -28,6 +31,10 @@ import { AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 const Notifications = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const { token } = useContext(UserContext);
 
   // general stats
@@ -44,6 +51,10 @@ const Notifications = () => {
     notificationsList?.success?.response?.data
   );
 
+  const confirmDelete = () => {
+    queryClient.setQueryData(["notifications"], []);
+    setShowDeleteModal(false);
+  };
   return (
     <Box
       sx={{
@@ -55,6 +66,17 @@ const Notifications = () => {
         marginBottom: "12px",
       }}
     >
+      {showDeleteModal && (
+        <Modal title={""} onClose={() => setShowDeleteModal(false)}>
+          <DeleteConfirmation
+            closeFn={() => setShowDeleteModal(false)}
+            deleteFn={confirmDelete}
+            deleteMessage={"Are you sure you want to delete Notifications ?"}
+
+            // isLoading={deleteLoading}
+          ></DeleteConfirmation>
+        </Modal>
+      )}
       {/* Accordion for Notifications */}
       <Accordion sx={{ boxShadow: 2, borderRadius: "12px" }}>
         {/* Accordion Summary */}
@@ -165,12 +187,15 @@ const Notifications = () => {
             ))}
 
             {/* Clear History */}
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 p: 2,
                 alignItems: "center",
+              }}
+              onClick={() => {
+                setShowDeleteModal(true);
               }}
             >
               <Typography
@@ -182,7 +207,7 @@ const Notifications = () => {
               <IconButton color="error" size="small">
                 <DeleteIcon />
               </IconButton>
-            </Box>
+            </Box> */}
           </Card>
         </AccordionDetails>
       </Accordion>

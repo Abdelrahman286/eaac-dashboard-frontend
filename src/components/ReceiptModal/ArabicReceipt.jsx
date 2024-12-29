@@ -87,7 +87,7 @@ const ArabicReceipt = ({ data }) => {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              flexShrink: 0,
+              //   flexShrink: 0,
             }}
           >
             <img
@@ -114,7 +114,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>المبلغ المدفوع</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Debit || "--"}
+                {data?.Credit || "--"}
               </p>
             </div>
 
@@ -135,7 +135,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>اسم العميل (EN)</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.customerNameEN || "--"}
+                {data?.Payor?.Name || "--"}
               </p>
             </div>
 
@@ -198,7 +198,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>إجمالي سعر الدورة</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.coursePriceTotal || "--"}
+                {data?.CoursePrice || "--"}
               </p>
             </div>
 
@@ -212,21 +212,21 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>المتبقي</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Credit || "EGP"}
+                {data?.Balance || "EGP"}
               </p>
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>اسم الموظف</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.employeeName || "--"}
+                {data?.Receiver?.Name || "--"}
               </p>
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>كود الموظف</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.employeeCode || "--"}
+                {data?.Receiver?.id || "--"}
               </p>
             </div>
           </div>
@@ -242,7 +242,7 @@ const ArabicReceipt = ({ data }) => {
         >
           <div>
             <p style={{ margin: "4px 0" }}>الفرع</p>
-            <p style={{ margin: "4px 0" }}>{data?.branch || "--"}</p>
+            <p style={{ margin: "4px 0" }}>{data?.BranchID?.Name_en || "--"}</p>
           </div>
           <div>
             <p style={{ margin: "4px 0" }}>التوقيع</p>

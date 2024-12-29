@@ -210,6 +210,24 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                     {filterData?.date || "N/A"}
                   </Typography>
                 </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifySelf: "flex-end",
+                    justifyContent: "flex-end",
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    {`${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                    }/${new Date().getFullYear()}`}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -249,9 +267,19 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                             <span>{ele?.RoundID?.Name_en || "-"}</span>
                             <span>{ele?.Payor?.Name || "-"}</span>
                             <span>{ele?.Type || "-"}</span>
-                            <span>{ele?.Debit || "-"}</span>
-                            <span>{ele?.Credit || "-"}</span>
-                            <span>{ele?.Balance || "-"}</span>
+                            <span>
+                              {ele?.Debit == undefined ? "-" : ele.Debit || "0"}
+                            </span>
+                            <span>
+                              {ele?.Credit == undefined
+                                ? "-"
+                                : ele.Credit || "0"}
+                            </span>
+                            <span>
+                              {ele?.Balance == undefined
+                                ? "-"
+                                : ele.Balance || "0"}
+                            </span>
                           </div>
                         </div>
                       );

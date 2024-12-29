@@ -155,6 +155,9 @@ const AddBulkSection = ({ mainFormData, onClose }) => {
       rest.startDate = convertDateFormat(startDate);
       rest.endDate = convertDateFormat(endDate);
 
+      // attendance limit
+      rest.attendancePercentage = mainFormData?.attendancePercentage || "0";
+
       sendRoundData({
         reqBody: rest,
         token,
@@ -411,12 +414,14 @@ const AddBulkSection = ({ mainFormData, onClose }) => {
           />
         </div>
       )}
-      {isAddError && (
+
+      {isAddError ? (
         <p className="invalid-message">
-          {String(addError).includes("Round Already exists")
-            ? "Round Name Already Exist"
-            : String(addError)}
+          {addError?.responseError?.failed?.response?.msg ||
+            "An Error Occured, please try again"}
         </p>
+      ) : (
+        ""
       )}
     </div>
   );

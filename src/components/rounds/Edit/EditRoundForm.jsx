@@ -144,8 +144,7 @@ const EditRoundForm = ({ data, onClose }) => {
     error,
   } = useMutation({
     onError: (error) => {
-      //   console.log(error.responseError?.failed?.response?.msg);
-      //   console.log("Error at editing Round data", error);
+
       showSnackbar("Faild to edit Round Data", "error");
     },
     mutationFn: EditRoundFn,

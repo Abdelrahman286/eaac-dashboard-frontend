@@ -139,7 +139,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       parentId: data?.ParentID?.id || "",
       branchId: data?.BranchID?.id || "",
       description_en: data?.Description_en || "",
-      categoryCode: data?.CourseCategoryCode || "",
+      //   categoryCode: data?.CourseCategoryCode || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -185,11 +185,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       });
     }
   };
-
-  // for DEBUG
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   return (
     <div className="category-form-page">
@@ -241,9 +236,20 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     }
                     options={mainCategories}
                     getOptionLabel={(option) => option?.Name_en}
-                    onChange={(e, value) =>
-                      setFormData({ ...formData, parentId: value?.id || null })
-                    }
+                    onChange={(e, value) => {
+                      if (categoryType == "sub") {
+                        setFormData({
+                          ...formData,
+                          parentId: value?.id || null,
+                          branchId: value?.BranchID?.id,
+                        });
+                      } else {
+                        setFormData({
+                          ...formData,
+                          parentId: value?.id || null,
+                        });
+                      }
+                    }}
                     renderInput={(params) => (
                       <TextField
                         id="parentId"
@@ -327,37 +333,46 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 gap: 2,
               }}
             >
-              <Autocomplete
-                id="branchId"
-                loading={branchesLoading}
-                value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
-                  null
-                }
-                options={branches}
-                getOptionLabel={(option) => option?.Name_en}
-                onChange={(e, value) =>
-                  setFormData({ ...formData, branchId: value.id })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    id="branchId"
-                    error={Boolean(formErrors?.branchId)}
-                    helperText={formErrors?.branchId}
-                    {...params}
-                    label="Select Branch *"
-                  />
-                )}
-              />
-              <TextField
-                id="categoryCode"
-                onChange={handleFormChange}
-                error={Boolean(formErrors?.categoryCode)}
-                helperText={formErrors?.categoryCode}
-                value={formData?.categoryCode || ""}
-                label={isEditData ? "Category Code" : "Category Code *"}
-                name="categoryCode"
-              />
+              {categoryType == "main" ? (
+                <Autocomplete
+                  id="branchId"
+                  loading={branchesLoading}
+                  value={
+                    branches.find(
+                      (branch) => branch.id == formData?.branchId
+                    ) || null
+                  }
+                  options={branches}
+                  getOptionLabel={(option) => option?.Name_en}
+                  onChange={(e, value) =>
+                    setFormData({ ...formData, branchId: value.id })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      id="branchId"
+                      error={Boolean(formErrors?.branchId)}
+                      helperText={formErrors?.branchId}
+                      {...params}
+                      label="Select Branch *"
+                    />
+                  )}
+                />
+              ) : (
+                ""
+              )}
+
+              {!isEditData && (
+                <TextField
+                  id="categoryCode"
+                  onChange={handleFormChange}
+                  error={Boolean(formErrors?.categoryCode)}
+                  helperText={formErrors?.categoryCode}
+                  value={formData?.categoryCode || ""}
+                  label={isEditData ? "Category Code" : "Category Code *"}
+                  name="categoryCode"
+                />
+              )}
+
               <TextField
                 placeholder="Course Category Description/Notes"
                 id="description_en"
@@ -381,12 +396,23 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         </div>
 
         <div className="form-actions">
-          {isEditError && (
-            <p className="invalid-message">{String(editError)}</p>
+          {isEditError ? (
+            <p className="invalid-message">
+              {editError?.responseError?.failed?.response?.msg ||
+                "An Error Occured, please try again"}
+            </p>
+          ) : (
+            ""
           )}
 
-          {isAddError && <p className="invalid-message">{String(addError)}</p>}
-
+          {isAddError ? (
+            <p className="invalid-message">
+              {addError?.responseError?.failed?.response?.msg ||
+                "An Error Occured, please try again"}
+            </p>
+          ) : (
+            ""
+          )}
           {isEditData && (
             <FormButton
               isLoading={editLoading}

@@ -105,7 +105,7 @@ const ViewStudentData = ({ data }) => {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">
-                <strong>Company Name:</strong> {data?.companyName || ""}
+                <strong>Company Name:</strong> {data?.CompanyID?.Name_en || ""}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -131,6 +131,13 @@ const ViewStudentData = ({ data }) => {
             <Grid item xs={6}>
               <Typography variant="body1">
                 <strong>Branch:</strong> {data?.BranchID?.name_en || ""}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                <strong>Membership Code:</strong>{" "}
+                {data?.membership?.MembershipCode || ""}
               </Typography>
             </Grid>
           </Grid>

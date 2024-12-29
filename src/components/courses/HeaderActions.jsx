@@ -43,9 +43,9 @@ const HeaderActions = ({ data }) => {
     { key: "Description_en", label: "Describtion" },
     {
       key: "NonMemberPrice",
-      label: "Non Memeber Price",
+      label: "Non Member Price",
     },
-    { key: "MemberPrice", label: "Memeber Price" },
+    { key: "MemberPrice", label: "Member Price" },
   ];
 
   const handleSearchChange = (e) => {

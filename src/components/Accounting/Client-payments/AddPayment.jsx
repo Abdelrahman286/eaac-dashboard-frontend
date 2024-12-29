@@ -409,7 +409,11 @@ const AddPayment = ({ onClose }) => {
                     Total (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {paymentHistory?.CoursePrice || "N/A"}
+                    {paymentHistoryLoading ? (
+                      <span>Loading...</span>
+                    ) : (
+                      paymentHistory?.CoursePrice || "N/A"
+                    )}
                   </Typography>
                 </Box>
                 <Box>
@@ -421,7 +425,11 @@ const AddPayment = ({ onClose }) => {
                     Paid (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {paymentHistory?.paiedAmount || "N/A"}
+                    {paymentHistoryLoading ? (
+                      <span>Loading...</span>
+                    ) : (
+                      paymentHistory?.paiedAmount || "N/A"
+                    )}
                   </Typography>
                 </Box>
                 <Box>
@@ -433,7 +441,11 @@ const AddPayment = ({ onClose }) => {
                     Remaining (EGP)
                   </Typography>
                   <Typography variant="body1">
-                    {paymentHistory?.remainingAmount || "N/A"}
+                    {paymentHistoryLoading ? (
+                      <span>Loading...</span>
+                    ) : (
+                      paymentHistory?.remainingAmount || "N/A"
+                    )}
                   </Typography>
                 </Box>
               </Box>

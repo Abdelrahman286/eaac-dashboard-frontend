@@ -291,17 +291,17 @@ export const validateEditCourse = (formData) => {
   }
 
   // validate extras
-  if (formData?.extras.length > 0) {
-    formData.extras.forEach((extra) => {
-      if (!isValidPositiveNumber(extra?.price)) {
-        errors.extras = "Please enter a valid price";
-      }
-    });
-    if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
-      errors.extras =
-        "Please complete the empty fields or remove any empty rows";
-    }
-  }
+  //   if (formData?.extras?.length > 0) {
+  //     formData.extras.forEach((extra) => {
+  //       if (!isValidPositiveNumber(extra?.price)) {
+  //         errors.extras = "Please enter a valid price";
+  //       }
+  //     });
+  //     if (hasEmptyKeys(formData.extras, ["extraName", "price"])) {
+  //       errors.extras =
+  //         "Please complete the empty fields or remove any empty rows";
+  //     }
+  //   }
 
   return errors;
 };
@@ -389,13 +389,16 @@ export const validateAddInstructor = (formData) => {
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";
   }
-  if (!validatePhoneNumber(formData.whatsappNum)) {
+  if (
+    !isBlank(formData.whatsappNum) &&
+    !validatePhoneNumber(formData.whatsappNum)
+  ) {
     errors.whatsappNum = "Please Enter a Valid Phone Number";
   }
 
-  if (isBlank(formData?.birthDate)) {
-    errors.birthDate = "Please Fill in Birth Date";
-  }
+  //   if (isBlank(formData?.birthDate)) {
+  //     errors.birthDate = "Please Fill in Birth Date";
+  //   }
 
   // validate if birthday is in the future
   if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
@@ -408,8 +411,8 @@ export const validateAddInstructor = (formData) => {
   if (isBlank(formData?.courseId))
     errors.courseId = "Please fill in the course name";
 
-  if (isBlank(formData?.govIssuedId))
-    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+  //   if (isBlank(formData?.govIssuedId))
+  //     errors.govIssuedId = "Please Fill in the instructor's Gov Id";
 
   if (isBlank(formData.email) || !isValidEmail(formData.email))
     errors.email = "Please enter a valid email address";
@@ -428,13 +431,16 @@ export const validateEditInstuctor = (formData) => {
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";
   }
-  if (!validatePhoneNumber(formData.whatsappNum)) {
+  if (
+    !isBlank(formData?.birthDate) &&
+    !validatePhoneNumber(formData.whatsappNum)
+  ) {
     errors.whatsappNum = "Please Enter a Valid Phone Number";
   }
 
-  if (isBlank(formData?.birthDate)) {
-    errors.birthDate = "Please Fill in Birth Date";
-  }
+  //   if (isBlank(formData?.birthDate)) {
+  //     errors.birthDate = "Please Fill in Birth Date";
+  //   }
   // validate if birthday is in the future
   if (!isBlank(formData?.birthDate) && isFutureDate(formData?.birthDate)) {
     errors.birthDate = "Birth Date Can not be in the future";
@@ -446,8 +452,8 @@ export const validateEditInstuctor = (formData) => {
   if (isBlank(formData?.courseId))
     errors.courseId = "Please fill in the course name";
 
-  if (isBlank(formData?.govIssuedId))
-    errors.govIssuedId = "Please Fill in the instructor's Gov Id";
+  //   if (isBlank(formData?.govIssuedId))
+  //     errors.govIssuedId = "Please Fill in the instructor's Gov Id";
 
   if (isBlank(formData.email) || !isValidEmail(formData.email))
     errors.email = "Please enter a valid email address";

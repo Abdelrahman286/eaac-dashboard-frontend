@@ -340,9 +340,10 @@ const RoundsTable = ({ onDataChange }) => {
       field: "AttendancePercentage",
       headerName: "Attendance Limit %",
 
-      valueGetter: (value, row) => {
-        return `${row?.AttendancePercentage || ""}`;
-      },
+      valueGetter: (value, row) =>
+        row?.AttendancePercentage == undefined
+          ? "-"
+          : row.AttendancePercentage || "0",
       flex: 1,
       minWidth: 130,
     },
@@ -418,17 +419,6 @@ const RoundsTable = ({ onDataChange }) => {
                 onClick={() => handleShowRound(params?.row)}
               ></CustomIconButton>
             )}
-
-            {/* <CustomIconButton
-              icon={"attendance"}
-              title="Attendance"
-              onClick={() => console.log("show attendance")}
-            ></CustomIconButton>
-            <CustomIconButton
-              icon={"enroll"}
-              title="Enroll Student"
-              onClick={() => console.log("Enroll Student")}
-            ></CustomIconButton> */}
 
             {hasPermission("Edit Round") && (
               <CustomIconButton
@@ -511,6 +501,7 @@ const RoundsTable = ({ onDataChange }) => {
 
       {showRoundModal && (
         <Modal
+          title={"Round Data"}
           classNames={"view-round-modal"}
           //   title={"Round"}
           onClose={() => setShowRoundModal(false)}

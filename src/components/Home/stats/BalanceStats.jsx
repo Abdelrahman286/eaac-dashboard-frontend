@@ -7,19 +7,19 @@ const Stats = ({ data }) => {
   const cardData = [
     {
       label: "Cash",
-      value: data?.paymentMethods[0].balance,
+      value: data?.paymentMethods[0]?.balance || "",
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
     },
     {
       label: "Vodafone Cash",
-      value: data?.paymentMethods[1].balance,
+      value: data?.paymentMethods[1]?.balance || "",
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
     },
     {
       label: "InstaPay",
-      value: data?.paymentMethods[2].balance,
+      value: data?.paymentMethods[2]?.balance || "",
       icon: <TrendingUp />,
       gradient: "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
     },

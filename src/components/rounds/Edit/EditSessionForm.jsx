@@ -167,7 +167,7 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
   } = useMutation({
     onError: (error) => {
       //   console.log(error.responseError?.failed?.response?.msg);
-      console.log("Error at editing Session data", error);
+      //   console.log("Error at editing Session data", error);
       showSnackbar("Faild to edit Session Data", "error");
     },
     mutationFn: updateSessionFn,
@@ -392,14 +392,9 @@ const EditSessionForm = ({ session, onCancel, roundId }) => {
       {/*  Add server error here */}
 
       {isEditError && (
-        <p
-          style={{
-            maxWidth: "320px",
-            whiteSpace: "pre-line",
-          }}
-          className="invalid-message"
-        >
-          {"An Error Occurred, please try again"}
+        <p className="invalid-message">
+          {error?.responseError?.failed?.response?.msg ||
+            "An Error Occured, please try again"}
         </p>
       )}
 

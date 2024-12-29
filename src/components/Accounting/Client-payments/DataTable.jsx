@@ -197,27 +197,25 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
     {
       field: "Credit",
       headerName: "Credit",
-      valueGetter: (value, row) => {
-        return `${row?.Credit || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Credit == undefined ? "-" : row?.Credit || "0",
       flex: 1,
       minWidth: 100,
     },
     {
       field: "Debit",
       headerName: "Debit",
-      valueGetter: (value, row) => {
-        return `${row?.Debit || ""}`;
-      },
+      valueGetter: (value, row) =>
+        row?.Debit == undefined ? "-" : row?.Debit || "0",
       flex: 1,
       minWidth: 100,
     },
     {
       field: "Balance",
       headerName: "Balance",
-      valueGetter: (value, row) => {
-        return `${row?.Balance || ""}`;
-      },
+      valueGetter: (value, row) =>
+        row?.Balance == undefined ? "-" : row?.Balance || "0",
       flex: 1.2,
       minWidth: 100,
     },

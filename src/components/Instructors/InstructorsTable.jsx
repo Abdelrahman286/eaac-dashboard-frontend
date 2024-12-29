@@ -330,7 +330,7 @@ const InstructorsTable = ({ onDataChange }) => {
       field: "controls",
       headerName: "Controls",
       flex: 1.5,
-      minWidth: 100,
+      minWidth: 160,
       renderCell: (params) => {
         if (disabledList?.key == "instructor") {
           return (
@@ -375,8 +375,6 @@ const InstructorsTable = ({ onDataChange }) => {
       },
     },
   ];
-
-  
 
   // to update the table elements if user deleted the only search result appeared
   if (paginationErr) {

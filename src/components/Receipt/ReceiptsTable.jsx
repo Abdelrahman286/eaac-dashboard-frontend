@@ -23,8 +23,9 @@ import Modal from "../Modal";
 import ReceiptModal from "../ReceiptModal/ReceiptModal";
 
 const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
-  // studentId, receipt type, search , start date, end date
-  const { studentId } = filterData;
+  // studentId, paymentTypeId , search , start date, end date
+
+  const { studentId, paymentTypeId, search, startDate, endDate } = filterData;
   const queryClient = useQueryClient();
 
   const { token, hasPermission } = useContext(UserContext);
@@ -55,11 +56,20 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   const paginationReqBody = {
     // filter parameters
     ...(studentId && { studentId }),
+    ...(paymentTypeId && { paymentTypeId }),
+    ...(search && { search }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
     // filter parameters
     ...(studentId && { studentId }),
+    ...(studentId && { studentId }),
+    ...(paymentTypeId && { paymentTypeId }),
+    ...(search && { search }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
 
   const {

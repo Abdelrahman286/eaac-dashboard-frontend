@@ -235,9 +235,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
   const handleImgInput = (e) => {
     const selectedImage = e.target.files[0];
-
     setPreviewImg(URL.createObjectURL(selectedImage));
-    setFormData({ ...formData, image: selectedImage });
+    setFormData({ ...formData, image: [selectedImage] });
   };
 
   const handleFeeChange = (membershiptType) => {
@@ -277,7 +276,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             helperText={formErrors?.clientId}
             onSelect={handleSelectStudent}
             isFromData={false}
-            label="Student"
+            label="Student*"
             fetchData={getStudentFn}
             queryKey="studentForMemebership"
             getOptionLabel={(option) => `[${option?.id}] - ${option?.Name} `}
@@ -436,51 +435,53 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               error={Boolean(formErrors?.membershipTypeId)}
               helperText={formErrors?.membershipTypeId}
               {...params}
-              label="Membership Type"
+              label="Membership Type*"
               fullWidth
             />
           )}
         />
 
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-          }}
-        >
-          <TextField
-            size={"small"}
-            label="Memebership Code"
-            variant="outlined"
-            fullWidth
-            type="number"
-            value={formData?.membershipCode || ""}
-            onChange={handleFormChange}
-            id="membershipCode"
-            name="membershipCode"
-            error={Boolean(formErrors?.membershipCode)}
-            helperText={formErrors?.membershipCode}
-          />
-          <Button
-            color="success"
-            variant="outlined"
+        {!isEditData && (
+          <Box
             sx={{
-              height: "40px",
-            }}
-            onClick={() => {
-              setFormData({
-                ...formData,
-                membershipCode: generateRandomNumber(),
-              });
+              display: "flex",
+              gap: 1,
             }}
           >
-            Generate
-          </Button>
-        </Box>
+            <TextField
+              size={"small"}
+              label="Membership Code*"
+              variant="outlined"
+              fullWidth
+              type="number"
+              value={formData?.membershipCode || ""}
+              onChange={handleFormChange}
+              id="membershipCode"
+              name="membershipCode"
+              error={Boolean(formErrors?.membershipCode)}
+              helperText={formErrors?.membershipCode}
+            />
+            <Button
+              color="success"
+              variant="outlined"
+              sx={{
+                height: "40px",
+              }}
+              onClick={() => {
+                setFormData({
+                  ...formData,
+                  membershipCode: generateRandomNumber(),
+                });
+              }}
+            >
+              Generate
+            </Button>
+          </Box>
+        )}
         {!isEditData && (
           <TextField
             size={"small"}
-            label="Start Date"
+            label="Start Date*"
             variant="outlined"
             fullWidth
             type="Date"
@@ -502,7 +503,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         {isEditData && (
           <TextField
             size={"small"}
-            label="Start Date"
+            label="Start Date*"
             variant="outlined"
             fullWidth
             type="Date"
@@ -525,7 +526,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         {!isEditData && (
           <TextField
             size={"small"}
-            label="Photo"
+            label="Photo*"
             variant="outlined"
             fullWidth
             type="file"
@@ -576,7 +577,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         {!isEditData && (
           <TextField
             size={"small"}
-            label="Membership Fees"
+            label="Membership Fees*"
             variant="outlined"
             value={formData?.fee || ""}
             onChange={handleFormChange}
@@ -613,7 +614,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.paymentMethodId)}
                 helperText={formErrors?.paymentMethodId}
                 {...params}
-                label="Payment Method"
+                label="Payment Method*"
                 fullWidth
               />
             )}

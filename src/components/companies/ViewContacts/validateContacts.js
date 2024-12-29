@@ -28,6 +28,9 @@ export const validateContacts = (formData) => {
   if (isBlank(formData?.email1)) {
     errors.email1 = "Please Fill in Email Field";
   }
+  if (!isBlank(formData?.email1) && !isValidEmail(formData?.email1)) {
+    errors.email1 = "Please Fill in a valid email";
+  }
   if (isBlank(formData?.jobTitle)) {
     errors.jobTitle = "Please Fill in the Job Title";
   }
@@ -54,6 +57,9 @@ export const validateEditContact = (formData) => {
 
   if (isBlank(formData?.email1)) {
     errors.email1 = "Please Fill in Email Field";
+  }
+  if (!isBlank(formData?.email1) && !isValidEmail(formData?.email1)) {
+    errors.email1 = "Please Fill in a valid email";
   }
   if (isBlank(formData?.jobTitle)) {
     errors.jobTitle = "Please Fill in the Job Title";

@@ -90,7 +90,6 @@ const DataTable = ({ filterData }) => {
     rowIndex: paginationModel.page * paginationModel.pageSize + index + 1,
   }));
 
-  
   const columns = [
     {
       field: "rowIndex",
@@ -158,27 +157,28 @@ const DataTable = ({ filterData }) => {
     {
       field: "debit",
       headerName: "Debit",
-      valueGetter: (value, row) => {
-        return `${row?.Debit || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Debit == undefined ? "-" : row.Debit || "0",
       flex: 1.2,
       minWidth: 120,
     },
     {
       field: "Credit",
       headerName: "Credit",
-      valueGetter: (value, row) => {
-        return `${row?.Credit || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Credit == undefined ? "-" : row.Credit || "0",
+
       flex: 1.2,
       minWidth: 120,
     },
     {
       field: "Balance",
       headerName: "Balance",
-      valueGetter: (value, row) => {
-        return `${row?.Balance || ""}`;
-      },
+
+      valueGetter: (value, row) =>
+        row?.Balance == undefined ? "-" : row.Balance || "0",
       flex: 1.2,
       minWidth: 120,
     },

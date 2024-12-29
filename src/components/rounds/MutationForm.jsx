@@ -87,13 +87,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       return getRoomsFn(
         {
           numOfElements: "2000",
-          //   companyId: "1",
+          branchId: formData?.branchId,
         },
         token
       );
     },
-
-    queryKey: ["rooms"],
+    enabled: !!formData?.branchId,
+    queryKey: ["rooms", formData?.branchId],
   });
   const rooms = getDataForTableRows(roomsList?.success?.response?.data);
 

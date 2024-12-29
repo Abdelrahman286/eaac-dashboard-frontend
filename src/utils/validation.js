@@ -61,3 +61,9 @@ export function isValidPositiveNumber(input) {
     parsedNumber > 0 && !isNaN(parsedNumber) && !input.toString().includes("e")
   );
 }
+
+export function isDateInThePast(date) {
+  const inputDate = new Date(date);
+  const now = new Date();
+  return inputDate < now;
+}
