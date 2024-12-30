@@ -56,6 +56,12 @@ export function convertDateFormatStudent(dateString) {
   return `${year}-${month}-${day}`;
 }
 
+export function convertDateFormatStudentReverse(dateString) {
+  if (!dateString) return;
+  const [day, month, year] = dateString.split("-");
+  return `${year}/${month}/${day}`;
+}
+
 export function convertTo12HourFormat(time24) {
   if (!time24) return;
   const [hours, minutes, seconds] = time24?.split(":");

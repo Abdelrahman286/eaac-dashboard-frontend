@@ -101,7 +101,12 @@ const EnrollTab = ({ data, closeFn }) => {
   const finalPrice = finalPrice_?.success?.response?.data;
 
   // Send Enroll data
-  const { mutate: sendEnrollData, isPending: enrollLoading } = useMutation({
+  const {
+    mutate: sendEnrollData,
+    isPending: enrollLoading,
+    isError: isAddError,
+    error: addError,
+  } = useMutation({
     mutationFn: enrollFn,
     onSuccess: () => {
       showSnackbar("Student Enrolled Successfully ", "success");
@@ -431,6 +436,13 @@ const EnrollTab = ({ data, closeFn }) => {
             </Box>
           </Box>
         </Box>
+      )}
+
+      {isAddError && (
+        <p className="invalid-message">
+          {addError?.responseError?.failed?.response?.msg ||
+            "An Error Occured, please try again"}
+        </p>
       )}
     </Box>
   );

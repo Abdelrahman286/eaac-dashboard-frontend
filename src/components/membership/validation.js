@@ -98,17 +98,17 @@ export const validateRenew = (formData) => {
 export const validateEdit = (formData) => {
   const errors = {};
 
-  if (isBlank(formData?.membershipTypeId)) {
-    errors.membershipTypeId = "Please select Membership Type";
-  }
+  //   if (isBlank(formData?.membershipTypeId)) {
+  //     errors.membershipTypeId = "Please select Membership Type";
+  //   }
 
-  if (isBlank(formData?.membershipCode)) {
-    errors.membershipCode = "Please fill in Membership Code";
-  }
+  //   if (isBlank(formData?.membershipCode)) {
+  //     errors.membershipCode = "Please fill in Membership Code";
+  //   }
 
-  if (isBlank(formData?.startAt)) {
-    errors.startAt = "Please fill in Start Date";
-  }
+  //   if (isBlank(formData?.startAt)) {
+  //     errors.startAt = "Please fill in Start Date";
+  //   }
 
   //   if (!isBlank(formData?.startAt) && isDateInThePast(formData?.startAt)) {
   //     errors.startAt = "Start Date Can't be in the past";

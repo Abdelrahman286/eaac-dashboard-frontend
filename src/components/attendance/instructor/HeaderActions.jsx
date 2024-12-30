@@ -137,10 +137,13 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
   // handle notification redirect
   const roundParamsId = useQueryParam("paramsRound");
   useEffect(() => {
-    if (roundParamsId) {
+    if (roundParamsId && !groupsLoading) {
       setRoundId(roundParamsId);
+      onChange({
+        roundId: roundParamsId,
+      });
     }
-  }, [roundParamsId]);
+  }, [roundParamsId, groupsLoading]);
 
   return (
     <div className="header-wrapper">

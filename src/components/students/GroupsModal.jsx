@@ -208,7 +208,7 @@ const GroupsModal = ({ closeFn, data }) => {
 
           <TextField
             label="Client Balance"
-            value={clientBalanceLoading ? "Loading..." : clientBalance || "-"}
+            value={clientBalanceLoading ? "Loading..." : clientBalance || "0"}
             fullWidth
             size="small"
             sx={{ flex: 1 }}

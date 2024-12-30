@@ -321,37 +321,13 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 variant="outlined"
               />
               {/* Input Field for Course Code */}
-              <TextField
-                disabled={isEditData}
-                id="courseCode"
-                onChange={handleFormChange}
-                error={Boolean(formErrors?.courseCode)}
-                helperText={formErrors?.courseCode}
-                value={formData?.courseCode || ""}
-                fullWidth
-                label={isEditData ? "Course Code" : "Course Code *"}
-                variant="outlined"
-              />
+
               {/* Box for Course Hours and Requires PC */}
-              <Box display="flex" alignItems="center" gap={2}>
-                {/* Number Input for Course Hours */}
-                <TextField
-                  id="courseTime"
-                  onChange={handleFormChange}
-                  error={Boolean(formErrors?.courseTime)}
-                  helperText={formErrors?.courseTime}
-                  value={formData?.courseTime || ""}
-                  type="number"
-                  label="Course Hours *"
-                  variant="outlined"
-                  sx={{ flex: 1 }}
-                />
-              </Box>
             </Box>
 
             {/* Right Side */}
             <Box flex={1} display="flex" flexDirection="column" gap={2}>
-              {!isEditData && (
+              {/* {!isEditData && (
                 <CourseExtras
                   isEdit={isEditData}
                   editData={editedCourseExtras}
@@ -359,7 +335,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   isError={Boolean(formErrors?.extras)}
                   onDataChange={handleCourseExtrasChange}
                 />
-              )}
+              )} */}
 
               {/* Price for Members and Non-Members */}
               <Box display="flex" gap={2}>
@@ -384,6 +360,32 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   type="number"
                   label="Price for Non-Members *"
                   variant="outlined"
+                />
+              </Box>
+              <TextField
+                disabled={isEditData}
+                id="courseCode"
+                onChange={handleFormChange}
+                error={Boolean(formErrors?.courseCode)}
+                helperText={formErrors?.courseCode}
+                value={formData?.courseCode || ""}
+                fullWidth
+                label={isEditData ? "Course Code" : "Course Code *"}
+                variant="outlined"
+              />
+
+              <Box display="flex" alignItems="center" gap={2}>
+                {/* Number Input for Course Hours */}
+                <TextField
+                  id="courseTime"
+                  onChange={handleFormChange}
+                  error={Boolean(formErrors?.courseTime)}
+                  helperText={formErrors?.courseTime}
+                  value={formData?.courseTime || ""}
+                  type="number"
+                  label="Course Hours *"
+                  variant="outlined"
+                  sx={{ flex: 1 }}
                 />
               </Box>
 

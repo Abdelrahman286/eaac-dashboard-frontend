@@ -149,11 +149,11 @@ const Notifications = () => {
                       color="primary"
                       size="small"
                       startIcon={<CalendarMonthIcon />}
-                      onClick={() =>
+                      onClick={() => {
                         navigate(
-                          `/attendance/students?paramsRound=${note?.RoundID?.id}1`
-                        )
-                      }
+                          `/attendance/students?paramsRound=${note?.RoundID?.id}`
+                        );
+                      }}
                     >
                       Students Attendance
                     </Button>
@@ -170,7 +170,7 @@ const Notifications = () => {
                       startIcon={<CalendarMonthIcon />}
                       onClick={() =>
                         navigate(
-                          `/attendance/instructors?paramsRound=${note?.RoundID?.id}1`
+                          `/attendance/instructors?paramsRound=${note?.RoundID?.id}`
                         )
                       }
                     >

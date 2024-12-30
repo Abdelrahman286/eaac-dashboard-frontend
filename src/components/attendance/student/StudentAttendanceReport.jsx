@@ -28,7 +28,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from "@mui/icons-material/Print";
 
 // excel
-import ExportToExcel from "../../ExportToExcel";
+import ExportToExcel from "../../ExportToExcelWithInfo";
 
 const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
   const { token } = useContext(UserContext);
@@ -127,14 +127,18 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
           const attendanceFlag = session?.AttendFlag;
 
           // Check the value of AttendFlag and return the appropriate string
-          const status = !attendanceFlag
-            ? ""
-            : attendanceFlag == 1
-            ? "attended"
-            : attendanceFlag == 0
-            ? "absent"
-            : "";
+
+          const status =
+            attendanceFlag == "1"
+              ? "attended"
+              : attendanceFlag == "0"
+              ? "absent"
+              : !attendanceFlag
+              ? ""
+              : "";
+
           acc[`cell-${sessionIndex + 1}`] = status;
+
           return acc;
         }, {}) // Start with an empty object and accumulate properties
       : Array(excelHeader.length - 1)
@@ -147,27 +151,60 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
     return { ...firstCell, ...restOfCells };
   });
 
+  const additionalRows = [
+    [
+      "Round Code",
+      "Instructor",
+      "Course Name",
+      "No. of Students",
+      "Start/End Date",
+      "Time",
+      "Room",
+      "Today's Date",
+    ],
+    [
+      `${studentAttendance[0]?.roundData?.RoundCode || "N/A"}`,
+      `${studentAttendance[0]?.roundData?.InstructorID?.Name || "N/A"}`,
+      `${studentAttendance[0]?.roundData?.CourseID?.Name_en || "N/A"}`,
+      `${studentAttendance[0]?.roundData?.numOfStudents || "N/A"}`,
+      `${studentAttendance[0]?.roundData?.StartDate?.split(" ")[0] || "N/A"}/
+                ${
+                  studentAttendance[0]?.roundData?.EndDate?.split(" ")[0] ||
+                  "N/A"
+                }`,
+
+      `${studentAttendance[0]?.time || "N/A"}`,
+
+      `${studentAttendance[0]?.roundData?.RoomID?.Name_en || "N/A"}`,
+      `${new Date().getDate()}/${
+        new Date().getMonth() + 1
+      }/${new Date().getFullYear()}`,
+    ],
+  ];
+
   const handlePrintPdf = () => {
     const documentClass = "student-report-content";
     const element = document.querySelector(`.${documentClass}`);
 
     if (element) {
+      const pdfWidth = element.scrollWidth; // Final width for the PDF
+      // const tableHeight = element.scrollHeight;
+      // const pdfHeight = tableHeight + 100; // Add extra space for the height
       const opt = {
-        margin: [0, 20, 0, 20], // [top, left, bottom, right] in px (adjusted for 1200px width)
+        margin: [10, 10, 10, 10], // Margins in pixels
         filename: "document.pdf",
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2, // Increase scale for better quality with larger width
           logging: true,
-          width: 1200, // Set width to 1200px
-          windowWidth: 1200, // Ensure the capture area matches the div size
+          windowWidth: pdfWidth, // Adjust window width to match the table
           allowTaint: true, // Allow cross-origin images
           useCORS: true, // Enable CORS for cross-origin image support
         },
         jsPDF: {
           unit: "px", // Use pixels for precise size control
-          format: [1240, 1754], // Width 1200px + 40px margins, height in pixels
-          orientation: "portrait",
+          format: [pdfWidth, 1754], // Dynamic Scale Pdf
+          orientation: "landscape", // landscape
           putTotalPages: true,
         },
         pagebreak: {
@@ -200,6 +237,7 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
           data={excelData}
           fileName={"student-attendance-report"}
           headers={excelHeader}
+          additionalRows={additionalRows}
         ></ExportToExcel>
 
         <Button
@@ -339,10 +377,6 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
               </p>
             </div>
 
-            {/* <div>
-              <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>Days</h4>
-              <p style={{ margin: 0 }}>{studentAttendance[0]?.days || "N/A"}</p>
-            </div> */}
             <div>
               <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
                 Today's Date

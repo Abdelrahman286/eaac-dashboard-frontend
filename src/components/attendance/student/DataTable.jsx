@@ -100,6 +100,7 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
     data: paginationData,
     isLoading: isPaginationLoading,
     isError: paginationErr,
+    error: paginationErrorMessage,
   } = useQuery({
     queryFn: () => {
       // pagination request body is the same as data list body
@@ -244,7 +245,7 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
       field: "SessionDate",
       headerName: "Session Date",
       valueGetter: (value, row) => {
-        return `${row?.SessionID?.created_at?.split(" ")[0] || "-"}`;
+        return `${row?.SessionID?.SessionDate?.split(" ")[0] || "-"}`;
       },
       flex: 1,
       minWidth: 100,
@@ -300,7 +301,8 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
       field: "percentageOfSessionsAttended",
       headerName: "Percentage",
       valueGetter: (value, row) => {
-        return `${row?.percentageOfSessionsAttended || "-"}`;
+        const percentage = row?.percentageOfSessionsAttended;
+        return percentage !== undefined ? `${Math.round(percentage)}` : "-";
       },
       flex: 1,
       minWidth: 100,
@@ -350,9 +352,14 @@ const DataTable = ({ clientId, sessionId, roundId, onDataChange }) => {
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (
-        <h2 className="invalid-message">
-          No data available. Please try again.
-        </h2>
+        <div>
+          <h2 className="invalid-message">
+            No data available. Please try again.
+          </h2>
+          <h2 className="invalid-message">
+            {paginationErrorMessage?.responseError?.failed?.response?.msg || ""}
+          </h2>
+        </div>
       )}
 
       <Box sx={{ height: "100%", width: "100%" }}>

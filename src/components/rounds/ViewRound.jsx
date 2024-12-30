@@ -131,7 +131,7 @@ const ViewRound = ({ onClose, roundData }) => {
               component="div"
               sx={{ textAlign: "center", color: "black" }}
             >
-              {roundData?.CourseID?.Name_en || ""} Round
+              {roundData?.Name_en || ""} Round
             </Typography>
           </Toolbar>
         </AppBar>
@@ -156,9 +156,9 @@ const ViewRound = ({ onClose, roundData }) => {
           >
             <div>
               <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
-                Round Name
+                Round Code
               </h4>
-              <p style={{ margin: 0 }}>{roundData?.RoomID?.Name_en || "N/A"}</p>
+              <p style={{ margin: 0 }}>{roundData?.RoundCode || "N/A"}</p>
             </div>
             <div>
               <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>

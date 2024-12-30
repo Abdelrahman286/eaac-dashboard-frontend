@@ -203,9 +203,17 @@ const ArabicReceipt = ({ data }) => {
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <p style={{ margin: "4px 0", flex: "1" }}>الخصم</p>
+              <p style={{ margin: "4px 0", flex: "1" }}>كود الخصم</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
                 {data?.DiscountVoucherID?.VoucherCode || "--"}
+              </p>
+              <p style={{ margin: "4px 0", flex: "1" }}>قيمه الخصم</p>
+              <p style={{ margin: "4px 0", flex: "2" }}>
+                {data?.DiscountVoucherID?.DiscountPercentage || "--"}
+                {data?.DiscountVoucherID?.DiscountPercentage == 1 &&
+                data?.DiscountVoucherID?.VoucherCode
+                  ? " % "
+                  : "  EGP  "}
               </p>
             </div>
 

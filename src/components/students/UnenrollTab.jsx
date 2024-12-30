@@ -82,7 +82,12 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
   const paidAmount = paidAmountObj?.success?.response?.Balance;
 
   //------------ Send unEnroll data
-  const { mutate: sendUnenrollData, isPending: unEnrollLoading } = useMutation({
+  const {
+    mutate: sendUnenrollData,
+    isPending: unEnrollLoading,
+    isError: isAddError,
+    error: addError,
+  } = useMutation({
     mutationFn: unEnrollStudentFn,
     onSuccess: () => {
       showSnackbar("Student Unenrolled Successfully ", "success");
@@ -404,6 +409,13 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
             </Box>
           </Box>
         </Box>
+      )}
+
+      {isAddError && (
+        <p className="invalid-message">
+          {addError?.responseError?.failed?.response?.msg ||
+            "An Error Occured, please try again"}
+        </p>
       )}
     </Box>
   );

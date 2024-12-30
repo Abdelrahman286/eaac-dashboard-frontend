@@ -39,6 +39,7 @@ import {
   convertDateFormat,
   convertDateFormatStudent,
   convertDateFromDashToSlash,
+  convertDateFormatStudentReverse,
 } from "../../utils/functions";
 
 const membershipTypes = [
@@ -140,6 +141,9 @@ const Renew = ({ onClose, data }) => {
       membershipCode: data?.MembershipCode || "",
       cardStatusId: data?.CardStatusID?.id,
       period: "Annual",
+
+      startDate: convertDateFormatStudentReverse(data?.endAt) || "",
+
       //   statusId: data?.StatusID?.id || "",
     };
 

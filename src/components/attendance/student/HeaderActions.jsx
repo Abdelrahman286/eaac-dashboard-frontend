@@ -41,25 +41,6 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   // attendance report
   const [showReport, setShowReport] = useState(false);
 
-  // get params student
-  const { data: studentObj, isLoading: getStudentLoading } = useQuery({
-    retry: 2,
-    queryFn: () => {
-      return getStudentFn(
-        {
-          ...(paramStudentId && { id: paramStudentId }),
-        },
-        token,
-
-        { isFormData: false }
-      );
-    },
-    enabled: !!paramStudentId,
-    queryKey: ["paramsStudent", paramStudentId],
-  });
-  const paramsStudent =
-    getDataForTableRows(studentObj?.success?.response?.data)[0] || {};
-
   // get groups
   const { data: groupsList, isLoading: groupsLoading } = useQuery({
     retry: 2,
@@ -126,10 +107,14 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   // handle notification redirect
   const roundParamsId = useQueryParam("paramsRound");
   useEffect(() => {
-    if (roundParamsId) {
+    if (roundParamsId && !groupsLoading) {
       setRoundId(roundParamsId);
+      onChange({
+        roundId: roundParamsId,
+      });
     }
-  }, [roundParamsId]);
+  }, [roundParamsId, groupsLoading]);
+
   return (
     <div className="header-wrapper">
       <Box

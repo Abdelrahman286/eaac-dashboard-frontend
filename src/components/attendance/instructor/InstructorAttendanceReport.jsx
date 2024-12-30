@@ -147,6 +147,34 @@ const InstructorAttendanceReport = ({
     }
   };
 
+  const getTotalHours = () => {
+    if (!Array.isArray(rows) || rows.length == 0) return;
+
+    let totalMinutes = 0;
+
+    rows.forEach((ele) => {
+      const timeDiff = getTimeDifference(ele?.AttendTime, ele?.LeaveTime);
+      if (timeDiff) {
+        const [hours, minutes, seconds] = timeDiff.split(":").map(Number);
+        totalMinutes += hours * 60 + minutes;
+      }
+    });
+
+    // Convert total minutes back to hours and minutes
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+
+    // console.log(
+    //   `Total Time: ${totalHours} hours and ${remainingMinutes} minutes`
+    // );
+
+    return {
+      totalHours: totalHours,
+      remainingMinutes: remainingMinutes,
+    };
+  };
+
+
   return (
     <div
       style={{
@@ -236,6 +264,7 @@ const InstructorAttendanceReport = ({
                     Instructor
                   </h4>
                   <p style={{ margin: 0 }}>
+                    {filterDataView?.instructorId?.InstructorID || "N/A"} -
                     {filterDataView?.instructorId?.Name || "N/A"}
                   </p>
                 </div>
@@ -269,10 +298,22 @@ const InstructorAttendanceReport = ({
 
                 <div>
                   <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
+                    Branch
+                  </h4>
+                  <p style={{ margin: 0 }}>
+                    {filterDataView?.instructorId?.BranchID?.name_en || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
                     Total Hours
                   </h4>
                   <p style={{ margin: 0 }}>
-                    {filterDataView?.roundId?.Capacity?.totalHours || "N/A"}
+                    {getTotalHours()?.totalHours ?? "N/A"}
+                    <span style={{ fontWeight: "bold" }}> Hours</span> &nbsp;
+                    {getTotalHours()?.remainingMinutes ?? "N/A"}
+                    <span style={{ fontWeight: "bold" }}> Minutes</span>
                   </p>
                 </div>
 
@@ -334,10 +375,10 @@ const InstructorAttendanceReport = ({
                   <div className="report-table">
                     <div className="header">
                       <span>#</span>
+                      <span>Session Date</span>
                       <span>Check In</span>
                       <span>Check Out</span>
                       <span>Hours</span>
-                      <span>Round Code</span>
                       <span>Notes</span>
                       <span>Signature</span>
                     </div>
@@ -348,6 +389,13 @@ const InstructorAttendanceReport = ({
                           <div className="row-wrapper" key={index}>
                             <div className="data-row">
                               <span>{index + 1 || "-"}</span>
+                              <span>
+                                {ele?.SessionID?.Name_en || ""}
+                                <br />
+
+                                {ele?.SessionID?.SessionDate.split(" ")[0] ||
+                                  "-"}
+                              </span>
                               <span>{ele?.AttendTime || "-"}</span>
                               <span>{ele?.LeaveTime || "-"}</span>
                               <span>
@@ -356,8 +404,7 @@ const InstructorAttendanceReport = ({
                                   ele?.LeaveTime
                                 ) || "-"}
                               </span>
-                              <span>{ele?.RoundID?.RoundCode}</span>
-                              <span>{""}</span>
+                              <span>{ele?.Notes || ""}</span>
                               <span>{""}</span>
                             </div>
                           </div>

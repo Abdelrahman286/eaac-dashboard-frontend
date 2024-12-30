@@ -411,35 +411,37 @@ const MutationForm = ({ onClose, isEditData, data }) => {
         )}
 
         {/* Field 1 : Membership type */}
-        <Autocomplete
-          sx={{
-            flex: 1,
-          }}
-          value={
-            membershipTypes.find(
-              (item) => item?.id == formData?.membershipTypeId
-            ) || null
-          }
-          onChange={(e, value) => {
-            setFormData({
-              ...formData,
-              fee: handleFeeChange(value),
-              membershipTypeId: value?.id || "",
-            });
-          }}
-          options={membershipTypes || []}
-          getOptionLabel={(option) => `${option?.value}` || ""}
-          size="small"
-          renderInput={(params) => (
-            <TextField
-              error={Boolean(formErrors?.membershipTypeId)}
-              helperText={formErrors?.membershipTypeId}
-              {...params}
-              label="Membership Type*"
-              fullWidth
-            />
-          )}
-        />
+        {!isEditData && (
+          <Autocomplete
+            sx={{
+              flex: 1,
+            }}
+            value={
+              membershipTypes.find(
+                (item) => item?.id == formData?.membershipTypeId
+              ) || null
+            }
+            onChange={(e, value) => {
+              setFormData({
+                ...formData,
+                fee: handleFeeChange(value),
+                membershipTypeId: value?.id || "",
+              });
+            }}
+            options={membershipTypes || []}
+            getOptionLabel={(option) => `${option?.value}` || ""}
+            size="small"
+            renderInput={(params) => (
+              <TextField
+                error={Boolean(formErrors?.membershipTypeId)}
+                helperText={formErrors?.membershipTypeId}
+                {...params}
+                label="Membership Type*"
+                fullWidth
+              />
+            )}
+          />
+        )}
 
         {!isEditData && (
           <Box
@@ -500,7 +502,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
             }}
           />
         )}
-        {isEditData && (
+        {/* {isEditData && (
           <TextField
             size={"small"}
             label="Start Date*"
@@ -521,7 +523,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               shrink: true,
             }}
           />
-        )}
+        )} */}
 
         {!isEditData && (
           <TextField

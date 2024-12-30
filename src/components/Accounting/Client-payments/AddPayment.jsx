@@ -200,6 +200,26 @@ const AddPayment = ({ onClose }) => {
     }
   };
 
+  // automatically add the price of course extra
+
+  useEffect(() => {
+    if (selectedExtra?.id && selectedStudent?.id && selectedRound?.id) {
+      if (selectedStudent?.membership?.MembershipCode) {
+        console.log(selectedExtra?.MemberPrice);
+
+        setFormData({
+          ...formData,
+          paymentAmount: selectedExtra?.MemberPrice || "",
+        });
+      } else {
+        setFormData({
+          ...formData,
+          paymentAmount: selectedExtra?.NonMemberPrice || "",
+        });
+      }
+    }
+  }, [selectedExtra, selectedStudent, selectedRound]);
+
   return (
     <div>
       <Box

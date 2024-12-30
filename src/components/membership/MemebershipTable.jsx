@@ -29,7 +29,8 @@ import Modal from "../Modal";
 import ReceiptPage from "../ReceiptModal/ReceiptModal";
 
 const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
-  const { search, cardStatusId, clientId, membershipTypeId } = filterData;
+  const { search, cardStatusId, clientId, membershipTypeId, disabled } =
+    filterData;
   const queryClient = useQueryClient();
 
   const { token, hasPermission } = useContext(UserContext);
@@ -59,6 +60,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     ...(cardStatusId && { cardStatusId }),
     ...(clientId && { clientId }),
     ...(membershipTypeId && { membershipTypeId }),
+    ...(disabled && { disabled }),
   };
   const dataListReqBody = {
     numOfElements: paginationModel.pageSize,
@@ -68,6 +70,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     ...(cardStatusId && { cardStatusId }),
     ...(clientId && { clientId }),
     ...(membershipTypeId && { membershipTypeId }),
+    ...(disabled && { disabled }),
   };
 
   const {

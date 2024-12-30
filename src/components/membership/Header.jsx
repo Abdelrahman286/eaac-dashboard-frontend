@@ -144,11 +144,17 @@ const Header = ({ excelData, onFilterChange }) => {
 
           <Box sx={{ flex: 1, minWidth: "200px" }}>
             <Autocomplete
-              disabled
               sx={{
                 flex: 1,
               }}
               options={memebershipStatus || []}
+              onChange={(e, value) => {
+                if (value?.id == 2) {
+                  setFormData({ ...formData, disabled: 1 });
+                } else {
+                  setFormData({ ...formData, disabled: "" });
+                }
+              }}
               getOptionLabel={(option) => `${option?.value}` || ""}
               size="small"
               renderInput={(params) => (

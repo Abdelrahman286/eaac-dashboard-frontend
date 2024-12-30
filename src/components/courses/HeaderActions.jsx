@@ -196,7 +196,7 @@ const HeaderActions = ({ data }) => {
         <Modal
           title={"Add Course"}
           onClose={handleClose}
-          classNames={"h-70per course-form-width"}
+          classNames={"course-form-width"}
         >
           <MutationForm onClose={handleClose}></MutationForm>
         </Modal>

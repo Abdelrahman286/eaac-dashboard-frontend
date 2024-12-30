@@ -397,7 +397,7 @@ const CoursesTable = ({ onDataChange }) => {
 
       {showEditModal && (
         <Modal
-          classNames={"h-70per"}
+        //   classNames={"h-70per"}
           title={"Edit Course"}
           onClose={() => setShowEditModal(false)}
         >

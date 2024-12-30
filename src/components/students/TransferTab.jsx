@@ -123,7 +123,12 @@ const TransferTab = ({ data, groups, closeFn }) => {
   );
 
   //------------ Send Transfer data
-  const { mutate: sendTransferData, isPending: transferLoading } = useMutation({
+  const {
+    mutate: sendTransferData,
+    isPending: transferLoading,
+    isError: isAddError,
+    error: addError,
+  } = useMutation({
     mutationFn: transferStudentFn,
     onSuccess: () => {
       showSnackbar("Student Transfered Successfully ", "success");
@@ -667,6 +672,13 @@ const TransferTab = ({ data, groups, closeFn }) => {
               </Button>
             </Box>
           </Box>
+
+          {isAddError && (
+            <p className="invalid-message">
+              {addError?.responseError?.failed?.response?.msg ||
+                "An Error Occured, please try again"}
+            </p>
+          )}
         </Box>
       )}
     </>

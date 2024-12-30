@@ -123,9 +123,8 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
-    console.log(data);
-    // Handle edit data initialization
 
+    // Handle edit data initialization
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
     const rawFormData = {
       id: [data.InstructorID],
@@ -138,6 +137,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       whatsappNum: data?.WhatsappNumber || "",
       courseId: data?.CourseID?.id || "",
       birthDate: data?.BirthDate,
+      notes: data?.Notes || "",
     };
 
     // Remove properties with empty string, null, or undefined values

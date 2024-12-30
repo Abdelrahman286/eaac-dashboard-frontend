@@ -163,6 +163,7 @@ const DataTable = ({
     data: paginationData,
     isLoading: isPaginationLoading,
     isError: paginationErr,
+    error: paginationErrorMessage,
   } = useQuery({
     queryFn: () => {
       return getInstructorsAttendanceFn(dataListReqBody, token, {
@@ -491,9 +492,14 @@ const DataTable = ({
   return (
     <div className="instuctors-table-wrapper">
       {paginationErr && (
-        <h2 className="invalid-message">
-          No data available. Please try again.
-        </h2>
+        <div>
+          <h2 className="invalid-message">
+            No data available. Please try again.
+          </h2>
+          <h2 className="invalid-message">
+            {paginationErrorMessage?.responseError?.failed?.response?.msg || ""}
+          </h2>
+        </div>
       )}
 
       {showNotesModal && (
