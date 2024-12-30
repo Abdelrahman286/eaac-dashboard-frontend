@@ -57,8 +57,8 @@ const CoursesPage = () => {
             </Box>
           ) : (
             <>
-              {selectedTab === 0 && <CoursesList />}
-              {selectedTab === 1 && <CategoriesList />}
+              {selectedTab == 0 && <CoursesList />}
+              {selectedTab == 1 && <CategoriesList />}
             </>
           )}
         </div>

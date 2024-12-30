@@ -229,7 +229,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   setFormData({ ...formData, branchId: value?.id });
                 }}
                 value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
+                  branches.find((branch) => branch.id == formData.branchId) ||
                   null
                 }
                 options={branches}
@@ -280,7 +280,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 }}
                 value={
                   subCategories.find(
-                    (item) => item.id === formData.courseSubCategoryId
+                    (item) => item.id == formData.courseSubCategoryId
                   ) || null
                 }
                 options={subCategories}

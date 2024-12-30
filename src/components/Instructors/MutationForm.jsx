@@ -294,7 +294,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <Autocomplete
                 loading={coursesLoading}
                 value={
-                  courses.find((course) => course.id === formData.courseId) ||
+                  courses.find((course) => course.id == formData.courseId) ||
                   null
                 }
                 options={courses}

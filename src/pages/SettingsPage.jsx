@@ -26,7 +26,7 @@ const SettingsPage = () => {
     );
     if (activeTabIndex !== -1) {
       setCurrentTabIndex(activeTabIndex);
-    } else if (location.pathname === "/settings") {
+    } else if (location.pathname == "/settings") {
       navigate(tabData[0].path); // Default to the first tab (Students)
     }
   }, [location.pathname, navigate, tabData]);

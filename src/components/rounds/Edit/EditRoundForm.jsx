@@ -144,7 +144,6 @@ const EditRoundForm = ({ data, onClose }) => {
     error,
   } = useMutation({
     onError: (error) => {
-
       showSnackbar("Faild to edit Round Data", "error");
     },
     mutationFn: EditRoundFn,
@@ -213,9 +212,8 @@ const EditRoundForm = ({ data, onClose }) => {
                 <Autocomplete
                   loading={branchesLoading}
                   value={
-                    branches.find(
-                      (branch) => branch.id === formData.branchId
-                    ) || null
+                    branches.find((branch) => branch.id == formData.branchId) ||
+                    null
                   }
                   options={branches}
                   getOptionLabel={(option) => option?.Name_en}
@@ -241,7 +239,7 @@ const EditRoundForm = ({ data, onClose }) => {
                 <Autocomplete
                   loading={roomsLoading}
                   value={
-                    rooms.find((room) => room.id === formData.roomId) || null
+                    rooms.find((room) => room.id == formData.roomId) || null
                   }
                   options={rooms}
                   getOptionLabel={(option) => {
@@ -299,7 +297,7 @@ const EditRoundForm = ({ data, onClose }) => {
                 <Autocomplete
                   loading={coursesLoading}
                   value={
-                    courses.find((course) => course.id === formData.courseId) ||
+                    courses.find((course) => course.id == formData.courseId) ||
                     null
                   }
                   options={courses}
@@ -328,7 +326,7 @@ const EditRoundForm = ({ data, onClose }) => {
                     formData?.instructorId
                       ? instructors.find(
                           (instructor) =>
-                            instructor?.InstructorID === formData.instructorId
+                            instructor?.InstructorID == formData.instructorId
                         ) || null
                       : null
                   }

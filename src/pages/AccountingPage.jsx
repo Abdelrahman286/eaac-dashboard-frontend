@@ -25,7 +25,7 @@ const AccountingPage = () => {
     );
     if (activeTabIndex !== -1) {
       setCurrentTabIndex(activeTabIndex);
-    } else if (location.pathname === "/accounting") {
+    } else if (location.pathname == "/accounting") {
       navigate(tabData[0].path); // Default to the first tab (Students)
     }
   }, [location.pathname, navigate, tabData]);

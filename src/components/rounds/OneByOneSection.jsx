@@ -229,12 +229,12 @@ const OneByOneSection = ({ mainFormData, onClose, instructors, rooms }) => {
         }
 
         // Update firstSessionDate if the current date is earlier
-        if (currDate < acc.firstSessionDate || acc.firstSessionDate === null) {
+        if (currDate < acc.firstSessionDate || acc.firstSessionDate == null) {
           acc.firstSessionDate = currDate;
         }
 
         // Update lastSessionDate if the current date is later
-        if (currDate > acc.lastSessionDate || acc.lastSessionDate === null) {
+        if (currDate > acc.lastSessionDate || acc.lastSessionDate == null) {
           acc.lastSessionDate = currDate;
         }
 

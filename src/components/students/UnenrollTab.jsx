@@ -79,7 +79,7 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
     enabled: !!data?.id && !!selectedGroup?.id,
     queryKey: ["paidAmount", data?.id, selectedGroup?.id],
   });
-  const paidAmount = paidAmountObj?.success?.response?.Balance;
+  const paidAmount = paidAmountObj?.success?.response?.data?.paiedAmount;
 
   //------------ Send unEnroll data
   const {
@@ -323,7 +323,7 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
               justifyContent: "space-evenly",
             }}
           >
-            <Box sx={{ flex: 1 }}>
+            <Box>
               <Box
                 sx={{
                   paddingLeft: "10px",
@@ -345,7 +345,8 @@ const UnenrollTab = ({ data, groups, closeFn }) => {
                   Paid Amount For this round
                 </Typography>
                 <Typography variant="body1">
-                  {paidAmountLoading ? "Loading..." : paidAmount || "-"}
+                  {paidAmountLoading ? "Loading..." : paidAmount || "0"}{" "}
+                  <span>EGP</span>
                 </Typography>
               </Box>
             </Box>

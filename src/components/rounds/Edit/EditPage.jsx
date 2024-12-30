@@ -18,13 +18,13 @@ const EditPage = ({ onClose, data }) => {
         <Tab label="Sessions" />
       </Tabs>
 
-      {selectedTab === 0 && (
+      {selectedTab == 0 && (
         <div style={{ padding: "20px 10px" }}>
           <EditRoundForm data={data} onClose={onClose}></EditRoundForm>
         </div>
       )}
 
-      {selectedTab === 1 && (
+      {selectedTab == 1 && (
         <div style={{ padding: "20px 10px" }}>
           <EditSessionsForm data={data} onClose={onClose}></EditSessionsForm>
         </div>

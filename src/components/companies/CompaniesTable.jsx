@@ -357,7 +357,7 @@ const CompaniesTable = ({ onDataChange }) => {
       flex: 2,
       minWidth: 250,
       renderCell: (params) => {
-        if (disabledList?.key === "company") {
+        if (disabledList?.key == "company") {
           return (
             <Tooltip title="Restore">
               <IconButton

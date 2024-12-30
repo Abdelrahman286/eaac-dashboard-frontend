@@ -31,7 +31,7 @@ const AccountingPage = () => {
     );
     if (activeTabIndex !== -1) {
       setCurrentTabIndex(activeTabIndex);
-    } else if (location.pathname === "/financial-reports") {
+    } else if (location.pathname == "/financial-reports") {
       navigate(tabData[0].path); // Default to the first tab (Students)
     }
   }, [location.pathname, navigate, tabData]);

@@ -175,7 +175,7 @@ const HeaderActions = ({ onChange, paramsInstructorId, excelData }) => {
             <Autocomplete
               value={
                 instructors.find(
-                  (item) => item?.InstructorID === instructorId
+                  (item) => item?.InstructorID == instructorId
                 ) || null
               }
               onChange={(e, value) => {

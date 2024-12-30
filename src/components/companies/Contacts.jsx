@@ -31,7 +31,7 @@ const ContactsTable = ({ onContactsChange, error, isError }) => {
     setContacts(updatedContacts);
 
     // Ensure the row ID is valid
-    if (!updatedContacts.some((contact) => contact.id === newRow.id)) {
+    if (!updatedContacts.some((contact) => contact.id == newRow.id)) {
       console.error(`Row with ID ${newRow.id} not found.`);
     }
 

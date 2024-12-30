@@ -79,7 +79,7 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
   } = useQuery({
     queryFn: () => {
       return getReceiptsFn(paginationReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=1`,
       });
     },
@@ -102,7 +102,7 @@ const ReceiptsTable = ({ onDataChange = () => {}, filterData }) => {
     ],
     queryFn: () => {
       return getReceiptsFn(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
     },

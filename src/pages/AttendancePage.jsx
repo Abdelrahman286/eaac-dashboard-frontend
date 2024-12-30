@@ -25,7 +25,7 @@ const AttendancePage = () => {
     );
     if (activeTabIndex !== -1) {
       setCurrentTabIndex(activeTabIndex);
-    } else if (location.pathname === "/attendance") {
+    } else if (location.pathname == "/attendance") {
       navigate(tabData[0].path); // Default to the first tab (Students)
     }
   }, [location.pathname, navigate, tabData]);

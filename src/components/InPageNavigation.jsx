@@ -16,7 +16,7 @@ const TabNavigation = () => {
 
   // Find the index of the current tab based on the current path
   const currentTab = routes.findIndex(
-    (route) => route.path === location.pathname
+    (route) => route.path == location.pathname
   );
   const [selectedTab, setSelectedTab] = useState(
     currentTab !== -1 ? currentTab : 0

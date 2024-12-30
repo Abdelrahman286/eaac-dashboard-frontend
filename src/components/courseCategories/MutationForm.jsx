@@ -231,7 +231,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     loading={mainCategoriesLoading}
                     value={
                       mainCategories.find(
-                        (item) => item.id === formData.parentId
+                        (item) => item.id == formData.parentId
                       ) || null
                     }
                     options={mainCategories}
@@ -273,7 +273,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     loading={mainCategoriesLoading}
                     value={
                       mainCategories.find(
-                        (item) => item.id === formData.parentId
+                        (item) => item.id == formData.parentId
                       ) || null
                     }
                     options={mainCategories}

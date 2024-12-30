@@ -27,7 +27,7 @@ export const makeRequest = async (
       if (Array.isArray(data)) {
         data.forEach((item, index) => {
           if (
-            typeof item === "object" &&
+            typeof item == "object" &&
             item !== null &&
             !(item instanceof File)
           ) {
@@ -47,7 +47,7 @@ export const makeRequest = async (
             formData.append(`${parentKey}[]`, item); // For primitive arrays
           }
         });
-      } else if (typeof data === "object" && data !== null) {
+      } else if (typeof data == "object" && data !== null) {
         // Handle nested objects
         Object.keys(data).forEach((key) => {
           appendNestedObjects(data[key], `${parentKey}[${key}]`);
@@ -66,7 +66,7 @@ export const makeRequest = async (
       if (Array.isArray(value)) {
         // Handle arrays (including array of objects)
         appendNestedObjects(value, key);
-      } else if (typeof value === "object" && value !== null) {
+      } else if (typeof value == "object" && value !== null) {
         // Handle nested objects
         appendNestedObjects(value, key);
       } else {
@@ -111,11 +111,11 @@ export const makeRequest = async (
 
       // Check if validationErrorMessages is an object
       if (
-        typeof validationErrorMessages === "object" &&
+        typeof validationErrorMessages == "object" &&
         validationErrorMessages !== null
       ) {
         combinedErrorMsgs = Object.values(validationErrorMessages).join(", ");
-      } else if (typeof validationErrorMessages === "string") {
+      } else if (typeof validationErrorMessages == "string") {
         // If it's a single string, just use it as the error message
         combinedErrorMsgs = validationErrorMessages;
       }

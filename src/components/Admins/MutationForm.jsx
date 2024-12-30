@@ -245,7 +245,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <Autocomplete
                 loading={branchesLoading}
                 value={
-                  branches.find((branch) => branch.id === formData.branchId) ||
+                  branches.find((branch) => branch.id == formData.branchId) ||
                   null
                 }
                 options={branches}

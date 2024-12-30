@@ -165,7 +165,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     loading={branchesLoading}
                     value={
                       branches.find(
-                        (branch) => branch.id === formData.branchId
+                        (branch) => branch.id == formData.branchId
                       ) || null
                     }
                     options={branches}
@@ -192,7 +192,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                   <Autocomplete
                     loading={roomsLoading}
                     value={
-                      rooms.find((room) => room.id === formData.roomId) || null
+                      rooms.find((room) => room.id == formData.roomId) || null
                     }
                     options={rooms}
                     getOptionLabel={(option) => {
@@ -234,7 +234,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                     loading={coursesLoading}
                     value={
                       courses.find(
-                        (course) => course.id === formData.courseId
+                        (course) => course.id == formData.courseId
                       ) || null
                     }
                     options={courses}
@@ -263,7 +263,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                       formData?.instructorId
                         ? instructors.find(
                             (instructor) =>
-                              instructor?.InstructorID === formData.instructorId
+                              instructor?.InstructorID == formData.instructorId
                           ) || null
                         : null
                     }

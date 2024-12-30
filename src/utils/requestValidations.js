@@ -125,6 +125,15 @@ export const validateAddCompany = (formData) => {
       errors.contacts = "Please fill in a valid phone number";
     }
 
+    // validate email
+    if (
+      formData?.contacts?.some(
+        (contact) => !isBlank(contact?.email) && !isValidEmail(contact?.email)
+      )
+    ) {
+      errors.contacts = "Please fill in a valid Email";
+    }
+
     if (hasEmptyKeys(formData.contacts, ["fullName", "phone"])) {
       errors.contacts =
         "Please complete the empty fields or remove any empty rows";

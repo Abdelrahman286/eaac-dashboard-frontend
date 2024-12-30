@@ -32,13 +32,13 @@ const CourseExtras = ({ onDataChange, error, isError, isEdit, editData }) => {
     console.log("Processing row update:", newRow);
 
     const updatedData = data.map((item) =>
-      item.id === newRow.id ? newRow : item
+      item.id == newRow.id ? newRow : item
     );
 
     setData(updatedData);
 
     // Ensure the row ID is valid
-    if (!updatedData.some((item) => item.id === newRow.id)) {
+    if (!updatedData.some((item) => item.id == newRow.id)) {
       console.error(`Row with ID ${newRow.id} not found.`);
     }
 

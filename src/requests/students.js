@@ -88,8 +88,16 @@ export const getClientBalanceFn = (reqBody, token, config) => {
 };
 
 // get paid amount for round
+// export const getPaidAmountFn = (reqBody, token, config) => {
+//   return makeRequest(`${URL}/payment/getClientBalance`, reqBody, token, config);
+// };
 export const getPaidAmountFn = (reqBody, token, config) => {
-  return makeRequest(`${URL}/payment/getClientBalance`, reqBody, token, config);
+  return makeRequest(
+    `${URL}/payment/getClientRoundPaied`,
+    reqBody,
+    token,
+    config
+  );
 };
 
 // get tranfer amount

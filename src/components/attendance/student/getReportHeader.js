@@ -2,7 +2,7 @@ export const getReportHeader = (attendanceData) => {
   let userData = attendanceData[0]?.userData;
 
   // Return early if userData is not an array or is empty
-  if (!Array.isArray(userData) || userData.length === 0) {
+  if (!Array.isArray(userData) || userData.length == 0) {
     return null; // or any default value you prefer
   }
 

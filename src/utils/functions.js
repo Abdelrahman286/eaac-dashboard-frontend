@@ -112,7 +112,7 @@ export function ensureSecondsInTime(timeString) {
 }
 
 export const getConflictString = (conflictsArray) => {
-  if (!Array.isArray(conflictsArray) || conflictsArray.length === 0) {
+  if (!Array.isArray(conflictsArray) || conflictsArray.length == 0) {
     return ""; // Return empty string if input is not an array or is empty
   }
 

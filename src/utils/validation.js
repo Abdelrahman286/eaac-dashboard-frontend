@@ -1,5 +1,5 @@
 export const isBlank = (text) => {
-  if (text === undefined || text === null || text === "") return true;
+  if (text == undefined || text == null || text == "") return true;
   return !String(text).trim();
 };
 
@@ -41,9 +41,9 @@ export const hasEmptyKeys = (contacts, keyNames) => {
       // Check if the key exists in the object and if its value is empty (null, undefined, or empty string)
       if (
         contact.hasOwnProperty(key) &&
-        (contact[key] === "" ||
-          contact[key] === null ||
-          contact[key] === undefined)
+        (contact[key] == "" ||
+          contact[key] == null ||
+          contact[key] == undefined)
       ) {
         return true; // Return true as soon as we find an empty value for any key
       }

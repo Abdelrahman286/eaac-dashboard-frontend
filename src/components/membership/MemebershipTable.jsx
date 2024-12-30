@@ -80,7 +80,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
   } = useQuery({
     queryFn: () => {
       return getUsersMemeberships(paginationReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=1`,
       });
     },
@@ -109,7 +109,7 @@ const MemebershipTable = ({ onDataChange = () => {}, filterData }) => {
     ],
     queryFn: () => {
       return getUsersMemeberships(dataListReqBody, token, {
-        isFormData: true,
+        isFormData: false,
         urlParams: `page=${paginationModel.page + 1}`,
       });
     },
