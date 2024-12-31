@@ -205,8 +205,6 @@ const AddPayment = ({ onClose }) => {
   useEffect(() => {
     if (selectedExtra?.id && selectedStudent?.id && selectedRound?.id) {
       if (selectedStudent?.membership?.MembershipCode) {
-        console.log(selectedExtra?.MemberPrice);
-
         setFormData({
           ...formData,
           paymentAmount: selectedExtra?.MemberPrice || "",

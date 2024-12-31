@@ -55,6 +55,13 @@ const Notifications = () => {
     queryClient.setQueryData(["notifications"], []);
     setShowDeleteModal(false);
   };
+
+  const [expanded, setExpanded] = useState("panel1");
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
   return (
     <Box
       sx={{
@@ -78,7 +85,11 @@ const Notifications = () => {
         </Modal>
       )}
       {/* Accordion for Notifications */}
-      <Accordion sx={{ boxShadow: 2, borderRadius: "12px" }}>
+      <Accordion
+        expanded={expanded === "panel1"}
+        onChange={handleChange("panel1")}
+        sx={{ boxShadow: 2, borderRadius: "12px" }}
+      >
         {/* Accordion Summary */}
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

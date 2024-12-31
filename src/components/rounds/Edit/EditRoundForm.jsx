@@ -110,7 +110,6 @@ const EditRoundForm = ({ data, onClose }) => {
 
   // initial data filling
   useEffect(() => {
-    console.log(data);
     const {
       BranchID,
       CourseID,
@@ -162,7 +161,6 @@ const EditRoundForm = ({ data, onClose }) => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      console.log(errors);
     } else {
       setFormErrors({});
 

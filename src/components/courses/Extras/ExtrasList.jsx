@@ -89,7 +89,6 @@ const ExtrasList = ({ data, courseId }) => {
       )}
       <div className="data-list">
         {arrayWithIndex.map((ele) => {
-          console.log(ele);
           return (
             <div className="contact-row" key={ele?.rowIndex}>
               {idToEdit !== ele.id && (

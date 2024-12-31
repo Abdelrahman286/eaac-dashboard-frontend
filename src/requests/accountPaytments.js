@@ -1,7 +1,12 @@
 import { URL, makeRequest } from "./main";
 
 export const getExpensesFn = (reqBody, token, config) => {
-  return makeRequest(`${URL}/payment/getExpenses`, reqBody, token, config);
+  return makeRequest(
+    `${URL}/payment/getMainAccountPayments`,
+    reqBody,
+    token,
+    config
+  );
 };
 export const addExpensesFn = ({ reqBody, token, config }) => {
   return makeRequest(`${URL}/payment/payExpense`, reqBody, token, config);

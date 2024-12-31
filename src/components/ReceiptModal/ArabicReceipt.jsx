@@ -39,6 +39,8 @@ const ArabicReceipt = ({ data }) => {
     }
   };
 
+  console.log(data);
+
   return (
     <div>
       <div

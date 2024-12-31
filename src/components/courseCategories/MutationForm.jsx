@@ -174,7 +174,6 @@ const MutationForm = ({ onClose, isEditData, data }) => {
 
     const isSubcategory = Boolean(data?.ParentID?.id);
     const errors = validateEditCourseCategory(formData, isSubcategory);
-    console.log(errors);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {

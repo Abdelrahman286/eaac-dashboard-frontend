@@ -187,7 +187,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       field: "type",
       headerName: "Type",
       valueGetter: (value, row) => {
-        return `${row?.ExpenseTypeID?.Name_en || ""}`;
+        return `${row?.PaymentTypeID?.Name_en || ""}`;
       },
       flex: 1,
       minWidth: 100,
@@ -245,6 +245,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
+
   return (
     <div className="membership-table-wrapper">
       {paginationErr && (

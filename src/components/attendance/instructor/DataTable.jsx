@@ -312,7 +312,7 @@ const DataTable = ({
       field: "SessionDate",
       headerName: "Session Date",
       valueGetter: (value, row) => {
-        return `${row?.Date || ""}`;
+        return `${row?.SessionID?.SessionDate || ""}`;
       },
       flex: 1,
       minWidth: 100,

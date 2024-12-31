@@ -225,7 +225,7 @@ const OneByOneForm = ({ mainFormData, handleGoBack, rooms, instructors }) => {
     };
 
     const formattedSessionList = sessionsList.map((session) => {
-      console.log(mainFormData);
+      
       const {
         sessionName,
         sessionDescription,

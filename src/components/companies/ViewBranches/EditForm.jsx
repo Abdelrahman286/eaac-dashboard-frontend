@@ -68,7 +68,6 @@ const EditForm = ({ branch, onCancel, companyId }) => {
     const { Name_ar, Name_en, Description_ar, MainPhone, id, BranchCode } =
       branch;
 
-    console.log(branch);
 
     const intialFill = {
       id: [id],
@@ -92,8 +91,6 @@ const EditForm = ({ branch, onCancel, companyId }) => {
     error,
   } = useMutation({
     onError: (error) => {
-      //   console.log(error.responseError?.failed?.response?.msg);
-      console.log("Error at editing Session data", error);
       showSnackbar("Faild to edit Session Data", "error");
     },
     mutationFn: editBranchFn,
@@ -106,8 +103,6 @@ const EditForm = ({ branch, onCancel, companyId }) => {
 
   const handleSubmit = () => {
     const errors = validateEditBranch(formData);
-
-    console.log(formData);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);

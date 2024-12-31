@@ -15,7 +15,11 @@ const ReceiptPage = ({ data, onClose, paymentId, membershipId }) => {
   const { token } = useContext(UserContext);
 
   // membershipt receipt query
-  const { membershipReceiptObj } = useQuery({
+  const {
+    data: membershipReceiptObj,
+    isLoading: membershipReceiptLoading,
+    isError: error1,
+  } = useQuery({
     queryFn: () => {
       return getReceiptsFn(
         {
@@ -33,7 +37,11 @@ const ReceiptPage = ({ data, onClose, paymentId, membershipId }) => {
   )[0];
 
   // payment receipt
-  const { paymentReceiptObj } = useQuery({
+  const {
+    data: paymentReceiptObj,
+    isLoading: paymentLoading,
+    isError: error2,
+  } = useQuery({
     queryFn: () => {
       return getReceiptsFn(
         {
@@ -95,6 +103,35 @@ const ReceiptPage = ({ data, onClose, paymentId, membershipId }) => {
       };
     }
   }, []);
+
+  if (paymentLoading || membershipReceiptLoading) {
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          minWidth: "700px",
+          minHeight: "40vh",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
+  if (error1 || error2) {
+    return (
+      <div
+        className="invalid-message"
+        style={{
+          textAlign: "center",
+          minWidth: "700px",
+          minHeight: "40vh",
+        }}
+      >
+        Can't Find Receipt Data
+      </div>
+    );
+  }
 
   return (
     <Box sx={{ width: "100%" }}>

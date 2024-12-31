@@ -224,7 +224,6 @@ const InstructorsTable = ({ onDataChange }) => {
       showSnackbar("Instructor Data Restored Successfully ", "success");
     },
     onError: (error) => {
-      console.log("error at restoring Instructor data", error);
       showSnackbar("Failed to Restore Instructor Data", "error");
     },
   });

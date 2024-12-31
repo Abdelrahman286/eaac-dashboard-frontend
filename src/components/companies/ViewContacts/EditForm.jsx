@@ -81,8 +81,6 @@ const EditForm = ({ contact, onCancel, companyId }) => {
   const handleSubmit = () => {
     const errors = validateEditContact(formData);
 
-    console.log(formData);
-
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
     } else {
