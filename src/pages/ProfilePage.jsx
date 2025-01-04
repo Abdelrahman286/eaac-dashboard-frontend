@@ -254,7 +254,7 @@ const UserProfile = () => {
                     readOnly
                   />
                   <TextField
-                    label="Job Title"
+                    label="certificate"
                     value={userData?.JobTitle || ""}
                     variant="outlined"
                     readOnly
@@ -310,7 +310,7 @@ const UserProfile = () => {
                     type="number"
                   />
                   <TextField
-                    label="Facebook Profile"
+                    label="Materials/Hands-Out"
                     value={userData?.FacebookUrl || ""}
                     variant="outlined"
                     readOnly

@@ -28,6 +28,7 @@ import Modal from "../../Modal";
 
 // hooks
 import useQueryParam from "../../../hooks/useQueryParams";
+import { useParams } from "react-router-dom";
 
 const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
   const { showSnackbar } = useContext(AppContext);
@@ -114,6 +115,16 @@ const HeaderActions = ({ onChange, paramStudentId, excelData }) => {
       });
     }
   }, [roundParamsId, groupsLoading]);
+
+  // handle redirect from students table
+  const studentTableRedirectId = useParams();
+  useEffect(() => {
+    if (studentTableRedirectId?.studentId) {
+      onChange({
+        clientId: studentTableRedirectId?.studentId,
+      });
+    }
+  }, [studentTableRedirectId]);
 
   return (
     <div className="header-wrapper">

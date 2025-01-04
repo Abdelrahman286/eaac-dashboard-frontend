@@ -4,26 +4,36 @@ import { TrendingUp } from "@mui/icons-material";
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 const Stats = ({ data }) => {
-  const cardData = [
-    {
-      label: "Cash",
-      value: data?.paymentMethods[0]?.balance || "",
-      icon: <TrendingUp />,
-      gradient: "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
-    },
-    {
-      label: "Vodafone Cash",
-      value: data?.paymentMethods[1]?.balance || "",
-      icon: <TrendingUp />,
-      gradient: "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
-    },
-    {
-      label: "InstaPay",
-      value: data?.paymentMethods[2]?.balance || "",
-      icon: <TrendingUp />,
-      gradient: "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
-    },
+  let cardData = [];
+  const gradients = [
+    "linear-gradient(135deg, #9c27b0, #ba68c8)", // Purple gradient
+    "linear-gradient(135deg, #3f51b5, #5c6bc0)", // Blue gradient
+    "linear-gradient(135deg, #4caf50, #81c784)", // Green gradient
+    "linear-gradient(135deg, #ff9800, #ffb74d)", // Orange gradient
+    "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
+    "linear-gradient(135deg, #673ab7, #9575cd)", // Deep Purple gradient
+    "linear-gradient(135deg, #00bcd4, #4dd0e1)", // Cyan gradient
+    "linear-gradient(135deg, #ffeb3b, #fff176)", // Yellow gradient
+    "linear-gradient(135deg, #e91e63, #f06292)", // Pink gradient
   ];
+
+  function getRandomGradient() {
+    return gradients[Math.floor(Math.random() * gradients.length)];
+  }
+
+  if (
+    Array.isArray(data?.paymentMethods) &&
+    data?.paymentMethods?.length !== 0
+  ) {
+    cardData = data?.paymentMethods?.map((ele) => {
+      return {
+        label: ele?.name_en || "",
+        value: Math.round(ele?.balance) || "0",
+        icon: <TrendingUp />,
+        gradient: getRandomGradient(),
+      };
+    });
+  }
 
   return (
     <Box

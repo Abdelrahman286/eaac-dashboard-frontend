@@ -31,6 +31,9 @@ import MutationForm from "./MutationForm";
 import Modal from "../Modal";
 import SearchableDropdown from "../SearchableDropdown";
 
+// hooks
+import useQueryParam from "../../hooks/useQueryParams";
+
 // They aren't handled in the backend
 const memebershipStatus = [
   { id: 1, value: "Active" },
@@ -109,6 +112,16 @@ const Header = ({ excelData, onFilterChange }) => {
     { key: "newCardStatus", label: "Card Status" },
     { key: "membershipType", label: "Membership Type" },
   ];
+
+  // handle student table redirect
+  const redirectStudentId = useQueryParam("studentTableId");
+  useEffect(() => {
+    if (redirectStudentId) {
+      onFilterChange({
+        clientId: redirectStudentId,
+      });
+    }
+  }, [redirectStudentId]);
 
   return (
     <div className="header-wrapper">

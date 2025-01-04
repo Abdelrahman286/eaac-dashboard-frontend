@@ -39,6 +39,9 @@ import AddPayment from "./AddPayment";
 import Refund from "./Refund";
 import CorrectMovement from "./CorrectMovement";
 
+// hooks
+import useQueryParam from "../../../hooks/useQueryParams";
+
 const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
@@ -106,6 +109,16 @@ const Header = ({ excelData, onFilterChange }) => {
   const paymentMethods = getDataForTableRows(
     paymentMethodsList?.success?.response?.data
   );
+
+  // handle student table redirect
+  const redirectStudentId = useQueryParam("studentTableId");
+  useEffect(() => {
+    if (redirectStudentId) {
+      onFilterChange({
+        studentId: redirectStudentId,
+      });
+    }
+  }, [redirectStudentId]);
 
   return (
     <div className="header-wrapper">

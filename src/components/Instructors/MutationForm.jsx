@@ -215,7 +215,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.jobTitle)}
                 helperText={formErrors?.jobTitle}
                 value={formData?.jobTitle || ""}
-                label="Job Title *"
+                label="Job Title"
                 name="jobTitle"
               />
 

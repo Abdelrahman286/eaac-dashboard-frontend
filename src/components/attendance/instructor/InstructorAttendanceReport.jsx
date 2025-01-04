@@ -148,7 +148,7 @@ const InstructorAttendanceReport = ({
   };
 
   const getTotalHours = () => {
-    if (!Array.isArray(rows) || rows.length == 0) return;
+    if (!Array.isArray(rows) || rows?.length == 0) return;
 
     let totalMinutes = 0;
 
@@ -173,7 +173,6 @@ const InstructorAttendanceReport = ({
       remainingMinutes: remainingMinutes,
     };
   };
-
 
   return (
     <div
@@ -332,7 +331,8 @@ const InstructorAttendanceReport = ({
                     Time
                   </h4>
                   <p style={{ margin: 0 }}>
-                    {filterDataView?.totalHours || "N/A"}
+                    {rows[0]?.SessionID?.StartTime?.split(" ")[1] || "N/A"} -
+                    {rows[0]?.SessionID?.EndTime?.split(" ")[1] || "N/A"}
                   </p>
                 </div>
 
@@ -344,7 +344,7 @@ const InstructorAttendanceReport = ({
                     {filterDataView?.roundId?.RoomID?.RoomCode || "N/A"}
                   </p>
                 </div>
-
+                {/* 
                 <div>
                   <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
                     Days
@@ -352,7 +352,7 @@ const InstructorAttendanceReport = ({
                   <p style={{ margin: 0 }}>
                     {filterDataView?.roundId?.days || "N/A"}
                   </p>
-                </div>
+                </div> */}
                 <div>
                   <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
                     Today's Date

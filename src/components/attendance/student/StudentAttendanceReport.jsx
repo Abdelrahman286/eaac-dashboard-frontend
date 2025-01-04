@@ -219,6 +219,22 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
     }
   };
 
+  // get total students count
+
+  const getTotalStudentsCount = () => {
+    if (
+      !Array.isArray(studentAttendance[0]?.userData) ||
+      studentAttendance[0]?.userData?.length == 0
+    )
+      return;
+    let total = 0;
+    studentAttendance[0]?.userData?.forEach((ele) => {
+      total++;
+    });
+
+    return total || "";
+  };
+
   return (
     <div
       style={{
@@ -336,9 +352,7 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
               <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>
                 No. of Students
               </h4>
-              <p style={{ margin: 0 }}>
-                {studentAttendance[0]?.roundData?.numOfStudents || "N/A"}
-              </p>
+              <p style={{ margin: 0 }}>{getTotalStudentsCount() || "N/A"}</p>
             </div>
 
             {/* <div>
@@ -366,7 +380,13 @@ const StudentAttendanceReport = ({ clientId, roundId, sessionId }) => {
             <div>
               <h4 style={{ marginBottom: "4px", color: "#6c757d" }}>Time</h4>
               <p style={{ margin: 0 }}>
-                {studentAttendance[0]?.totalHours || "N/A"}
+                {studentAttendance[0]?.userData[0]?.Attendance[0]?.SessionID[0]?.StartTime?.split(
+                  " "
+                )[1] || "N/A"}{" "}
+                -{" "}
+                {studentAttendance[0]?.userData[0]?.Attendance[0]?.SessionID[0]?.EndTime?.split(
+                  " "
+                )[1] || "N/A"}
               </p>
             </div>
 

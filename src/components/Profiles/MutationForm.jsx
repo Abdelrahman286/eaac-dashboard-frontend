@@ -25,6 +25,10 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat); // Ensure the plugin is loaded
 
 const MutationForm = ({ onClose, isEditData, data }) => {
+  //nationality ---> Project
+  //facebook ---> Materials/Hands-Out
+  //job title ---> Certificate
+
   const { showSnackbar } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { token } = useContext(UserContext);
@@ -58,9 +62,10 @@ const MutationForm = ({ onClose, isEditData, data }) => {
     if (!isEditData || !data) return;
 
     // Name ,  JobTitle ,  PhoneNumber , GovIssuedID ,  Email , WhatsappNumber , BirthDate (d/m/y) , CourseID.id
+
+    // FacebookUrl , Nationality
     const rawFormData = {
       id: [data.id],
-      branchId: data?.BranchID?.id || "",
       name: data?.Name || "",
       jobTitle: data?.JobTitle || "",
       phone: data?.PhoneNumber || "",
@@ -69,6 +74,9 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       whatsappNum: data?.WhatsappNumber || "",
       courseId: data?.CourseID?.id || "",
       birthDate: data?.BirthDate,
+      branchId: data?.BranchID || "",
+      facebookUrl: data?.FacebookUrl || "",
+      Nationality: data?.Nationality || "",
     };
 
     // Remove properties with empty string, null, or undefined values
@@ -146,7 +154,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.jobTitle)}
                 helperText={formErrors?.jobTitle}
                 value={formData?.jobTitle || ""}
-                label="Job Title"
+                label="Certificate"
                 name="jobTitle"
               />
 
@@ -166,7 +174,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.whatsappNum)}
                 helperText={formErrors?.whatsappNum}
                 value={formData?.whatsappNum || ""}
-                label="WhatsApp Number *"
+                label="WhatsApp Number"
                 name="whatsappNum"
               />
 
@@ -176,7 +184,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.facebookUrl)}
                 helperText={formErrors?.facebookUrl}
                 value={formData?.facebookUrl || ""}
-                label="Facebook URL "
+                label="Materials/Hands-Out"
                 name="facebookUrl"
               />
 
@@ -184,7 +192,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
               <TextField
                 error={Boolean(formErrors?.birthDate)}
                 helperText={formErrors?.birthDate}
-                label="Birth Date *"
+                label="Birth Date"
                 type="date"
                 value={formData?.birthDate ? formData.birthDate : ""}
                 onChange={(e) => {
@@ -237,7 +245,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.govIssuedId)}
                 helperText={formErrors?.govIssuedId}
                 value={formData?.govIssuedId || ""}
-                label="Government ID *"
+                label="Government ID"
                 name="govIssuedId"
               />
               <TextField
@@ -256,7 +264,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
                 error={Boolean(formErrors?.nationality)}
                 helperText={formErrors?.nationality}
                 value={formData?.nationality || ""}
-                label="Nationality"
+                label="Project"
                 name="nationality"
               />
 

@@ -244,6 +244,19 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                   </Typography>
                 </Box>
 
+                <Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Total Revenue
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${getTotal()} Egp` || "N/A"}
+                  </Typography>
+                </Box>
+
                 <Box
                   sx={{
                     display: "flex",

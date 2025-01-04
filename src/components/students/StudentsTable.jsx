@@ -493,13 +493,19 @@ const StudentsTable = ({ onDataChange }) => {
             <CustomIconButton
               icon={"memberships"}
               title="Membership"
-              onClick={() => navigate(`/membership`)}
+              onClick={() =>
+                navigate(`/membership?studentTableId=${params?.row?.id}`)
+              }
             ></CustomIconButton>
             <CustomIconButton
               icon={"payments"}
               title="Payments"
               //   onClick={() => setStudentReceipt({ name: "test" })}
-              onClick={() => navigate(`/accounting/client-payments`)}
+              onClick={() =>
+                navigate(
+                  `/accounting/client-payments?studentTableId=${params?.row?.id}`
+                )
+              }
             ></CustomIconButton>
 
             {hasPermission("Block Client") && (

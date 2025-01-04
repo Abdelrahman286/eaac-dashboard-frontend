@@ -392,8 +392,8 @@ export const validateAddInstructor = (formData) => {
   if (isBlank(formData?.name))
     errors.name = "Please Fill in the instructor's name";
 
-  if (isBlank(formData?.jobTitle))
-    errors.jobTitle = "Please Fill in the instructor's Job Title";
+  //   if (isBlank(formData?.jobTitle))
+  //     errors.jobTitle = "Please Fill in the instructor's Job Title";
 
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";
@@ -434,8 +434,8 @@ export const validateEditInstuctor = (formData) => {
   if (isBlank(formData?.name))
     errors.name = "Please Fill in the instructor's name";
 
-  if (isBlank(formData?.jobTitle))
-    errors.jobTitle = "Please Fill in the instructor's Job Title";
+  //   if (isBlank(formData?.jobTitle))
+  //     errors.jobTitle = "Please Fill in the instructor's Job Title";
 
   if (!validatePhoneNumber(formData.phone)) {
     errors.phone = "Please Enter a Valid Phone Number";

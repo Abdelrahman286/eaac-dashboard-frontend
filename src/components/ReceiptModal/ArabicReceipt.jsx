@@ -39,8 +39,6 @@ const ArabicReceipt = ({ data }) => {
     }
   };
 
-  console.log(data);
-
   return (
     <div>
       <div
@@ -76,7 +74,17 @@ const ArabicReceipt = ({ data }) => {
                 fontSize: "20px",
               }}
             >
-              إيصال الدفع #{data?.BillCode || "--"}
+              إيصال {data?.PaymentTypeID?.Name_ar}
+              <span
+                style={{
+                  direction: "ltr",
+                  display: "inline-block",
+                  unicodeBidi: "isolate",
+                  margin: "0px 2px",
+                }}
+              >
+                ( {data?.BillCode || "--"})
+              </span>
             </h4>
             <p style={{ color: "#6c757d", margin: "4px 0" }}>
               {data?.created_at?.split(" ")[0] || "--"} |{" "}
@@ -198,7 +206,11 @@ const ArabicReceipt = ({ data }) => {
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <p style={{ margin: "4px 0", flex: "1" }}>إجمالي سعر الدورة</p>
+              <p style={{ margin: "4px 0", flex: "1" }}>
+                {" "}
+                إجمالي سعر الدورة
+                {data?.DiscountVoucherID?.VoucherCode && "(بعد الخصم)"}
+              </p>
               <p style={{ margin: "4px 0", flex: "2" }}>
                 {data?.CoursePrice || "--"}
               </p>
@@ -222,7 +234,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>المتبقي</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Balance || "EGP"}
+                {data?.RemainingAmount || "EGP"}
               </p>
             </div>
 

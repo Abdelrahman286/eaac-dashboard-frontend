@@ -73,7 +73,14 @@ const ArabicReceipt = ({ data }) => {
                 fontSize: "20px",
               }}
             >
-              Payment Receipt #{data?.BillCode || "--"}
+              {data?.PaymentTypeID?.Name_en} Receipt
+              <span
+                style={{
+                  margin: "0px 2px",
+                }}
+              >
+                ( {data?.BillCode || "--"})
+              </span>
             </h4>
             <p style={{ color: "#6c757d", margin: "4px 0" }}>
               {data?.created_at?.split(" ")[0] || "--"} |{" "}
@@ -195,7 +202,10 @@ const ArabicReceipt = ({ data }) => {
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <p style={{ margin: "4px 0", flex: "1" }}>Total Round Price</p>
+              <p style={{ margin: "4px 0", flex: "1" }}>
+                Total Round Price
+                {data?.DiscountVoucherID?.VoucherCode && "(After Disocunt)"}
+              </p>
               <p style={{ margin: "4px 0", flex: "2" }}>
                 {data?.CoursePrice || "--"}
               </p>
@@ -219,7 +229,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Remaining</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Balance || "EGP"}
+                {data?.RemainingAmount || "EGP"}
               </p>
             </div>
 

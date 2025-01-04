@@ -262,7 +262,7 @@ const Profiles = ({ onDataChange }) => {
 
     {
       field: "JobTitle",
-      headerName: "Job Title",
+      headerName: "Certificate",
       valueGetter: (value, row) => {
         return `${row?.JobTitle || ""}`;
       },
@@ -282,7 +282,7 @@ const Profiles = ({ onDataChange }) => {
 
     {
       field: "nationality",
-      headerName: "Nationality",
+      headerName: "Project",
       valueGetter: (value, row) => {
         return `${row?.Nationality || ""}`;
       },
@@ -312,7 +312,7 @@ const Profiles = ({ onDataChange }) => {
 
     {
       field: "Facebook",
-      headerName: "Facebook",
+      headerName: "Materials/Hands-Out",
       valueGetter: (value, row) => {
         return `${row?.FacebookUrl || ""}`;
       },

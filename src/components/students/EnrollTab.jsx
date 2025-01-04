@@ -290,20 +290,36 @@ const EnrollTab = ({ data, closeFn }) => {
                     variant="body2"
                     color="text.secondary"
                     fontWeight="bold"
+                    sx={{
+                      opacity: data?.membership?.MembershipCode ? "0.5" : "1",
+                    }}
                   >
                     Non Members Price
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      opacity: data?.membership?.MembershipCode ? "0.5" : "1",
+                    }}
+                  >
                     {selectedGroup?.CourseID?.NonMemberPrice || ""}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     fontWeight="bold"
+                    sx={{
+                      opacity: data?.membership?.MembershipCode ? "1" : "0.5",
+                    }}
                   >
                     Members Price
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      opacity: data?.membership?.MembershipCode ? "1" : "0.5",
+                    }}
+                  >
                     {" "}
                     {selectedGroup?.CourseID?.MemberPrice || ""}
                   </Typography>

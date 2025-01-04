@@ -175,7 +175,7 @@ const AddNewContact = ({ id }) => {
               onChange={handleFormChange}
               id="phoneNum2"
               size="small"
-              label="Phone Number 2*"
+              label="Phone Number 2"
               name="Name"
               fullWidth
             />

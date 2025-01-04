@@ -105,6 +105,19 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
     }
   };
 
+  const getTotal = () => {
+    let sum = 0;
+    if (reportData?.length == 0 || !Array.isArray(reportData)) return 0;
+
+    reportData?.forEach((ele) => {
+      if (ele?.Debit) {
+        sum += ele?.Debit;
+      }
+    });
+
+    return sum;
+  };
+
   return (
     <div>
       <div style={{ width: "900px" }}>
@@ -224,6 +237,19 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                   </Typography>
                 </Box>
 
+                <Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                  >
+                    Total Refunds
+                  </Typography>
+                  <Typography variant="body1">
+                    {`${getTotal()} Egp` || "N/A"}
+                  </Typography>
+                </Box>
+
                 <Box
                   sx={{
                     display: "flex",
@@ -295,7 +321,9 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
                                 ? "-"
                                 : ele?.Debit || "0"}
                             </span>
-                            <span>{ele?.receiptSerialNum || "-"}</span>
+                            <span>
+                              {ele?.DiscountVoucherID?.VoucherCode || "-"}
+                            </span>
                           </div>
                         </div>
                       );
