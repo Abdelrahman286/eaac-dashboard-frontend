@@ -72,7 +72,7 @@ const ViewStudentData = ({ data }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"],
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 

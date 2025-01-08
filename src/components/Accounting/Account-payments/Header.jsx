@@ -35,8 +35,9 @@ import { getDataForTableRows } from "../../../utils/tables";
 import AddPayment from "./AddPayment";
 import Reconcile from "./Reconcile";
 
-// import Refund from "./Refund";
-// import CorrectMovement from "./CorrectMovement";
+// hooks
+
+import useQueryParam from "../../../hooks/useQueryParams";
 
 const Header = ({ excelData, onFilterChange }) => {
   const { showSnackbar } = useContext(AppContext);
@@ -88,6 +89,14 @@ const Header = ({ excelData, onFilterChange }) => {
   const paymentMethods = getDataForTableRows(
     paymentMethodsList?.success?.response?.data
   );
+
+  // url action handler
+  const urlAction = useQueryParam("action");
+  useEffect(() => {
+    if (urlAction == "add") {
+      setShowAddPayment(true);
+    }
+  }, [urlAction]);
 
   return (
     <div className="header-wrapper">

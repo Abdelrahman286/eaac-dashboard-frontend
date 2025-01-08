@@ -120,7 +120,7 @@ const ArabicReceipt = ({ data }) => {
             <div style={{ display: "flex", gap: "10px" }}>
               <p style={{ margin: "4px 0", flex: "1" }}>Paid Amount</p>
               <p style={{ margin: "4px 0", flex: "2" }}>
-                {data?.Debit || "--"}
+                {data?.Credit || "--"}
               </p>
             </div>
 

@@ -13,8 +13,8 @@ const Stats = ({ data }) => {
     "linear-gradient(135deg, #f44336, #e57373)", // Red gradient
     "linear-gradient(135deg, #673ab7, #9575cd)", // Deep Purple gradient
     "linear-gradient(135deg, #00bcd4, #4dd0e1)", // Cyan gradient
-    "linear-gradient(135deg, #ffeb3b, #fff176)", // Yellow gradient
     "linear-gradient(135deg, #e91e63, #f06292)", // Pink gradient
+    // "linear-gradient(135deg, #ffeb3b, #fff176)", // Yellow gradient
   ];
 
   function getRandomGradient() {

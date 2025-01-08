@@ -113,7 +113,8 @@ const Shortcuts = () => {
     {
       icon: <Receipt fontSize="large" />,
       label: "Add Expenses",
-      link: "/settings/expenses-types?action=add",
+      //   link: "/settings/expenses-types?action=add",
+      link: "/accounting/account-payments?action=add",
     },
     {
       icon: <AddCircle fontSize="large" />,

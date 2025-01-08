@@ -257,7 +257,7 @@ const DataTable = ({ onDataChange }) => {
     },
     {
       field: "BranchID.Name_en",
-      headerName: "BranchID",
+      headerName: "Branch",
       valueGetter: (value, row) => {
         return `${row?.BranchID?.Name_en || ""}`;
       },
@@ -329,7 +329,7 @@ const DataTable = ({ onDataChange }) => {
       {showEditModal && (
         <Modal
           //   classNames={"h-70per"}
-          title={"Edit Coupon"}
+          title={"Edit Expenses Type"}
           onClose={() => setShowEditModal(false)}
         >
           <MutationForm

@@ -94,7 +94,7 @@ const ReportModal = ({ filterData, onClose, filterDataView }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"],
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 

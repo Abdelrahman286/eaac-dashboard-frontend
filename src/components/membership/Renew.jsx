@@ -550,7 +550,7 @@ const Renew = ({ onClose, data }) => {
           }}
           isLoading={addLoading}
           onClick={handleSubmit}
-          buttonText="Edit Membership"
+          buttonText="Renew Membership"
           className="main-btn form-add-btn"
         />
       </Box>

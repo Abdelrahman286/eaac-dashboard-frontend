@@ -146,6 +146,16 @@ const DataTable = ({ filterData }) => {
     },
 
     {
+      field: "receiptNumber",
+      headerName: "Receipt Num.",
+      valueGetter: (value, row) => {
+        return `${row?.BillID?.BillCode || ""}`;
+      },
+      flex: 1.2,
+      minWidth: 120,
+    },
+
+    {
       field: "type",
       headerName: "Type",
       valueGetter: (value, row) => {

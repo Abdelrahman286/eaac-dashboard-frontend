@@ -35,11 +35,13 @@ export const validateAddMembership = (formData) => {
     errors.image = "Please Add Client Image";
   }
 
-  if (
-    !isBlank(formData?.image[0]) &&
-    !formData?.image[0]?.type?.startsWith("image")
-  ) {
-    errors.image = "Invalid Image Format";
+  if (formData?.image) {
+    if (
+      !isBlank(formData?.image[0]) &&
+      !formData?.image[0]?.type?.startsWith("image")
+    ) {
+      errors.image = "Invalid Image Format";
+    }
   }
 
   if (isBlank(formData?.fee)) {
@@ -76,11 +78,13 @@ export const validateRenew = (formData) => {
   //     errors.startDate = "Start Date Can't be in the past";
   //   }
 
-  if (
-    !isBlank(formData?.image[0]) &&
-    !formData?.image[0]?.type?.startsWith("image")
-  ) {
-    errors.image = "Invalid Image Format";
+  if (formData?.image) {
+    if (
+      !isBlank(formData?.image[0]) &&
+      !formData?.image[0]?.type?.startsWith("image")
+    ) {
+      errors.image = "Invalid Image Format";
+    }
   }
 
   if (isBlank(formData?.fee)) {

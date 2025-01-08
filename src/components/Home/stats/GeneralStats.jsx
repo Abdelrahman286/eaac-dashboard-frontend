@@ -15,7 +15,7 @@ const DashboardStats = ({ data }) => {
   const stats = [
     {
       label: "Students",
-      value: data?.numberOfActiveCompanies || "",
+      value: data?.numberOfActiveStudents || "",
       icon: <PeopleIcon />,
     },
     {

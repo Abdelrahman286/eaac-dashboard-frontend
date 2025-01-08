@@ -88,7 +88,7 @@ const ViewCompany = ({ rowData }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"], // Avoid breaking important elements
+          //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 

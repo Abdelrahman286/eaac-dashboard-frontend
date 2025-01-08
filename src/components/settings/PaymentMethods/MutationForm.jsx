@@ -98,13 +98,14 @@ const MutationForm = ({ onClose, isEditData, data }) => {
   //   initialize edit data filling
   useEffect(() => {
     if (!isEditData || !data) return;
+
     const rawFormData = {
       id: [data.id],
       nameAr: data?.Method_ar || "",
       nameEn: data?.Method_en || "",
       descriptionAr: data?.Description_ar || "",
       descriptionEn: data?.Description_en || "",
-      branchId: data?.BranchID || "",
+      branchId: data?.BranchID?.id || "",
     };
 
     // Remove properties with empty string, null, or undefined values

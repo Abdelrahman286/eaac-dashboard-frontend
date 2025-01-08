@@ -16,6 +16,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 import DeleteConfirmation from "../DeleteConfirmation";
 import Modal from "../Modal";
@@ -96,9 +97,26 @@ const Notifications = () => {
           aria-controls="notifications-content"
           id="notifications-header"
         >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Notifications
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <NotificationsIcon
+              sx={{ fontSize: 32, color: "#1976d2", marginRight: 0 }}
+            ></NotificationsIcon>
+            <Typography
+              variant="h5"
+              component="h1"
+              sx={{ fontWeight: "bold", color: "#333" }}
+            >
+              Notifications
+            </Typography>
+          </Box>
         </AccordionSummary>
 
         {/* Accordion Details */}

@@ -195,6 +195,15 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
       minWidth: 100,
     },
     {
+      field: "InstallmentNo",
+      headerName: "Installment No.",
+      valueGetter: (value, row) => {
+        return `${row?.InstallmentNumber || ""}`;
+      },
+      flex: 1,
+      minWidth: 100,
+    },
+    {
       field: "Credit",
       headerName: "Credit",
 
@@ -257,6 +266,7 @@ const DataTable = ({ onDataChange = () => {}, filterData }) => {
   if (paginationErr) {
     updatedDataList = [];
   }
+
   return (
     <div className="membership-table-wrapper">
       {paginationErr && (

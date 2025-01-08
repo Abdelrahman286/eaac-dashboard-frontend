@@ -104,7 +104,7 @@ const MutationForm = ({ onClose, isEditData, data }) => {
       nameEn: data?.Name_en || "",
       descriptionAr: data?.Description_ar || "",
       descriptionEn: data?.Description_en || "",
-      branchId: data?.BranchID || "",
+      branchId: data?.BranchID?.id || "",
     };
 
     // Remove properties with empty string, null, or undefined values

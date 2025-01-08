@@ -67,7 +67,7 @@ const ViewRound = ({ onClose, roundData }) => {
           putTotalPages: true,
         },
         pagebreak: {
-          mode: ["avoid-all", "css", "legacy"],
+        //   mode: ["avoid-all", "css", "legacy"],
         },
       };
 
